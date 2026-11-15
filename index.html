@@ -34,11 +34,15 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .reader-transition { transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease; }
   </style>
+
+  <!-- Firebase SDKs (CDN Compat Version) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
 <body class="bg-stone-50 text-slate-800 font-sans antialiased selection:bg-emerald-100 selection:text-emerald-900">
 
   <!-- ==========================================
-       MAIN LIBRARY VIEW (ទំព័រដើមបណ្ណាល័យ)
+        MAIN LIBRARY VIEW (ទំព័រដើមបណ្ណាល័យ)
   =========================================== -->
   <div id="library-view" class="min-h-screen flex flex-col">
     
@@ -47,7 +51,7 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between py-3.5 gap-3">
           
-          <!-- Brand Logo & Mobile Admin Action -->
+          <!-- Brand Logo -->
           <div class="flex items-center justify-between">
             <a href="#" onclick="resetFilters(event)" class="flex items-center gap-3 group">
               <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-700 to-teal-800 flex items-center justify-center text-amber-300 shadow-md shadow-emerald-900/15 group-hover:scale-105 transition-transform">
@@ -56,33 +60,20 @@
               <div>
                 <div class="flex items-center gap-2">
                   <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight leading-none">បណ្ណាល័យឌីជីថលខ្មែរ</h1>
-                  <span id="admin-badge-header" class="hidden inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
-                    <i data-lucide="shield-check" class="w-3 h-3"></i> Admin
-                  </span>
                 </div>
-                <span class="text-xs text-slate-500 font-medium">អានសៀវភៅ និងចែករំលែកមតិយោបល់</span>
+                <span class="text-xs text-slate-500 font-medium">អានសៀវភៅ និងចែករំលែកចំណេះដឹង</span>
               </div>
             </a>
-
-            <!-- Mobile Right Controls -->
-            <div class="flex items-center gap-2 md:hidden">
-              <button id="mobile-admin-panel-btn" onclick="openBookEditorModal()" class="hidden inline-flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow-sm transition">
-                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                <span>បន្ថែមសៀវភៅ</span>
-              </button>
-              <button id="mobile-admin-logout-btn" onclick="logoutAdmin()" title="ចាកចេញពី Admin" class="hidden p-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 transition">
-                <i data-lucide="log-out" class="w-4 h-4"></i>
-              </button>
-            </div>
           </div>
 
-          <!-- Search Bar & Desktop Actions -->
+          <!-- Search Bar & Favorites -->
           <div class="flex items-center gap-2.5 flex-1 md:max-w-2xl md:ml-6">
             <div class="relative flex-1">
               <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
               <input 
                 type="text" 
                 id="search-input" 
+                oninput="handleSearchInput(this.value)"
                 placeholder="ស្វែងរកចំណងជើងសៀវភៅ ឬឈ្មោះអ្នកនិពន្ធ..." 
                 class="w-full pl-10 pr-9 py-2.5 bg-stone-100/90 hover:bg-stone-100 focus:bg-white border border-transparent focus:border-emerald-600 rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 transition"
               />
@@ -102,21 +93,6 @@
               <span class="hidden lg:inline">រក្សាទុក</span>
               <span id="fav-count-badge" class="bg-stone-100 text-slate-600 text-xs px-1.5 py-0.5 rounded-full font-semibold">០</span>
             </button>
-
-            <!-- Desktop Admin Controls (Shown ONLY when logged in as Admin) -->
-            <div id="desktop-admin-controls" class="hidden md:flex items-center gap-2 shrink-0">
-              <button onclick="openBookEditorModal()" class="inline-flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-sm transition">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                <span>បន្ថែមសៀវភៅ</span>
-              </button>
-              <button onclick="openAdminSettingsModal()" title="ការកំណត់គណនី Admin" class="p-2.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-slate-600 transition">
-                <i data-lucide="settings" class="w-4 h-4"></i>
-              </button>
-              <button onclick="logoutAdmin()" title="ចាកចេញពី Admin" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-sm font-medium transition">
-                <i data-lucide="log-out" class="w-4 h-4"></i>
-                <span>ចាកចេញ</span>
-              </button>
-            </div>
           </div>
         </div>
 
@@ -143,37 +119,8 @@
             បើកទំព័រសៀវភៅ បើកទ្វារទៅកាន់ពិភពចំណេះដឹង
           </h2>
           <p class="text-sm sm:text-base text-emerald-100/90 leading-relaxed">
-            ស្វាគមន៍មកកាន់បណ្ណាល័យឌីជីថលខ្មែរ។ អ្នកអាចជ្រើសរើសអានរឿងប្រលោមលោក ប្រវត្តិសាស្ត្រ និងមេរៀនផ្សេងៗដោយសេរី ព្រមទាំងអាចចែករំលែកមតិយោបល់ និងវាយតម្លៃសៀវភៅនីមួយៗបានភ្លាមៗ។
+            ស្វាគមន៍មកកាន់បណ្ណាល័យឌីជីថលខ្មែរ។ រាល់សៀវភៅដែលបានបន្ថែមនឹងរក្សាទុកលើ  ដែលអាចមើលឃើញទូទាំងគ្រប់ឧបករណ៍ទាំងអស់។
           </p>
-        </div>
-      </section>
-
-      <!-- Continue Reading Banner (Saved per user in localStorage) -->
-      <section id="continue-reading-section" class="hidden mb-8">
-        <div class="bg-white border border-amber-200/80 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div class="flex items-center gap-4">
-            <div id="continue-cover-mini" class="w-12 h-16 rounded-xl shadow shrink-0 flex items-center justify-center text-white text-xl bg-gradient-to-br from-emerald-700 to-teal-800 overflow-hidden">
-              📖
-            </div>
-            <div>
-              <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full mb-1">
-                <i data-lucide="clock" class="w-3 h-3"></i>
-                <span>បន្តការអានចុងក្រោយ</span>
-              </div>
-              <h3 id="continue-book-title" class="text-base sm:text-lg font-bold text-slate-900 leading-snug">ចំណងជើងសៀវភៅ</h3>
-              <p id="continue-chapter-info" class="text-xs sm:text-sm text-slate-500">ជំពូកទី ១ • អ្នកនិពន្ធ</p>
-            </div>
-          </div>
-
-          <div class="flex items-center gap-2.5 self-end sm:self-center">
-            <button onclick="dismissContinueReading()" title="បិទផ្ទាំងនេះ" class="p-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-slate-500 transition">
-              <i data-lucide="x" class="w-4 h-4"></i>
-            </button>
-            <button id="continue-read-btn" class="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white font-semibold text-sm px-4 py-2.5 rounded-xl shadow-sm transition">
-              <span>បន្តការអាន</span>
-              <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </button>
-          </div>
         </div>
       </section>
 
@@ -191,22 +138,6 @@
       <!-- Loading Skeleton State -->
       <div id="loading-state" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div class="bg-white rounded-2xl border border-stone-200 h-80 animate-pulse p-5 flex flex-col justify-between">
-          <div class="h-40 bg-stone-200 rounded-xl"></div>
-          <div class="space-y-2.5">
-            <div class="h-4 bg-stone-200 rounded w-3/4"></div>
-            <div class="h-3 bg-stone-100 rounded w-full"></div>
-            <div class="h-9 bg-stone-200 rounded-xl mt-3"></div>
-          </div>
-        </div>
-        <div class="bg-white rounded-2xl border border-stone-200 h-80 animate-pulse p-5 hidden sm:flex flex-col justify-between">
-          <div class="h-40 bg-stone-200 rounded-xl"></div>
-          <div class="space-y-2.5">
-            <div class="h-4 bg-stone-200 rounded w-3/4"></div>
-            <div class="h-3 bg-stone-100 rounded w-full"></div>
-            <div class="h-9 bg-stone-200 rounded-xl mt-3"></div>
-          </div>
-        </div>
-        <div class="bg-white rounded-2xl border border-stone-200 h-80 animate-pulse p-5 hidden lg:flex flex-col justify-between">
           <div class="h-40 bg-stone-200 rounded-xl"></div>
           <div class="space-y-2.5">
             <div class="h-4 bg-stone-200 rounded w-3/4"></div>
@@ -235,7 +166,7 @@
       </div>
     </main>
 
-   <!-- Footer (ស្អាត គ្មានប៊ូតុង Admin) -->
+    <!-- Footer -->
     <footer class="bg-white border-t border-stone-200 mt-12">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500">
         <div class="flex items-center gap-2">
@@ -243,1749 +174,349 @@
           <span class="font-bold text-slate-700">បណ្ណាល័យឌីជីថលខ្មែរ</span>
           <span>— លើកកម្ពស់វប្បធម៌អាន</span>
         </div>
-        <div class="flex items-center gap-4 text-xs text-slate-400">
-          <span>អ្នកអានទូទៅអាចអាន និងបញ្ចេញមតិដោយសេរី</span>
-        </div>
       </div>
     </footer>
-
-
   </div>
 
-
   <!-- ==========================================
-       BOOK DETAILS & LIVE COMMENTS MODAL
+        BOOK EDITOR MODAL (ADMIN ADD BOOK)
   =========================================== -->
-  <div id="book-detail-modal" class="hidden fixed inset-0 z-40 flex items-center justify-center p-3 sm:p-5 bg-slate-900/65 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden">
-      
-      <!-- Top Bar -->
-      <div class="px-5 py-3.5 border-b border-stone-100 flex items-center justify-between bg-stone-50/70 shrink-0">
-        <div class="flex items-center gap-2">
-          <span id="detail-category-badge" class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-semibold">ប្រភេទ</span>
-          <span id="detail-rating-summary" class="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200/60">
-            <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400 text-amber-400"></i>
-            <span>មិនទាន់មានពិន្ទុ</span>
-          </span>
-        </div>
-        <button onclick="closeBookDetailModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-stone-200/70 transition">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <!-- Scrollable Body -->
-      <div class="flex-1 overflow-y-auto p-5 sm:p-7 space-y-8">
-        
-        <!-- Book Overview Section -->
-        <div class="flex flex-col sm:flex-row gap-6">
-          <!-- Cover Image / Stylized Poster -->
-          <div id="detail-cover-box" class="w-full sm:w-48 h-64 rounded-2xl shadow-md shrink-0 overflow-hidden relative flex items-center justify-center bg-gradient-to-br from-emerald-700 to-teal-900">
-            <!-- Injected via JS -->
-          </div>
-
-          <!-- Info & Actions -->
-          <div class="flex-1 flex flex-col justify-between">
-            <div>
-              <h2 id="detail-title" class="text-2xl sm:text-3xl font-bold text-slate-900 font-serif leading-snug">
-                ចំណងជើងសៀវភៅ
-              </h2>
-              <p id="detail-author" class="text-sm font-medium text-emerald-800 mt-1.5 flex items-center gap-1.5">
-                <i data-lucide="pen-tool" class="w-4 h-4"></i>
-                <span>អ្នកនិពន្ធ</span>
-              </p>
-              <p id="detail-description" class="text-sm sm:text-base text-slate-600 mt-4 leading-relaxed">
-                សេចក្តីសង្ខេបសៀវភៅ...
-              </p>
-            </div>
-
-            <div class="mt-6 pt-4 border-t border-stone-100 flex flex-wrap items-center gap-3">
-              <button id="detail-start-read-btn" class="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white font-semibold text-sm px-6 py-3 rounded-xl shadow-sm transition">
-                <i data-lucide="book-open" class="w-4 h-4"></i>
-                <span>ចាប់ផ្តើមអានពីជំពូកទី ១</span>
-              </button>
-              <button id="detail-bookmark-btn" class="inline-flex items-center gap-2 border border-stone-200 hover:bg-stone-50 text-slate-700 font-medium text-sm px-4 py-3 rounded-xl transition">
-                <i data-lucide="bookmark" class="w-4 h-4"></i>
-                <span>រក្សាទុក</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Chapters Table of Contents -->
-        <div>
-          <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
-            <i data-lucide="list-ordered" class="w-5 h-5 text-emerald-700"></i>
-            <span>មាតិកាជំពូកទាំងអស់ (<span id="detail-chapters-count">០</span> ជំពូក)</span>
-          </h3>
-          <div id="detail-chapters-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <!-- Chapter items injected via JS -->
-          </div>
-        </div>
-
-        <!-- Live Reader Comments & Reviews Section -->
-        <div class="pt-6 border-t border-stone-200">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
-              <i data-lucide="message-square" class="w-5 h-5 text-emerald-700"></i>
-              <span>មតិយោបល់របស់អ្នកអាន (<span id="detail-comments-count">០</span>)</span>
-            </h3>
-            <span class="text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full font-medium">ផ្ទាល់ (Real-time)</span>
-          </div>
-
-          <!-- Add Comment Form (Available to all public readers) -->
-          <form id="comment-form" onsubmit="handlePostComment(event)" class="bg-stone-50 border border-stone-200/90 rounded-2xl p-4 sm:p-5 mb-6 space-y-3.5">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div class="flex-1">
-                <label class="block text-xs font-semibold text-slate-600 mb-1">ឈ្មោះរបស់អ្នក <span class="text-rose-500">*</span></label>
-                <input 
-                  type="text" 
-                  id="comment-user-name" 
-                  required 
-                  maxlength="50"
-                  placeholder="បញ្ចូលឈ្មោះ ឬរហស្សនាមរបស់អ្នក..." 
-                  class="w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition"
-                />
-              </div>
-
-              <!-- Interactive Star Rating Selector -->
-              <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">វាយតម្លៃសៀវភៅ</label>
-                <div class="flex items-center gap-1 bg-white border border-stone-200 rounded-xl px-3 py-1.5" id="star-rating-selector">
-                  <button type="button" onclick="setCommentRating(1)" data-star="1" class="star-btn p-0.5 text-amber-400 hover:scale-110 transition"><i data-lucide="star" class="w-5 h-5 fill-amber-400"></i></button>
-                  <button type="button" onclick="setCommentRating(2)" data-star="2" class="star-btn p-0.5 text-amber-400 hover:scale-110 transition"><i data-lucide="star" class="w-5 h-5 fill-amber-400"></i></button>
-                  <button type="button" onclick="setCommentRating(3)" data-star="3" class="star-btn p-0.5 text-amber-400 hover:scale-110 transition"><i data-lucide="star" class="w-5 h-5 fill-amber-400"></i></button>
-                  <button type="button" onclick="setCommentRating(4)" data-star="4" class="star-btn p-0.5 text-amber-400 hover:scale-110 transition"><i data-lucide="star" class="w-5 h-5 fill-amber-400"></i></button>
-                  <button type="button" onclick="setCommentRating(5)" data-star="5" class="star-btn p-0.5 text-amber-400 hover:scale-110 transition"><i data-lucide="star" class="w-5 h-5 fill-amber-400"></i></button>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">មតិយោបល់របស់អ្នក <span class="text-rose-500">*</span></label>
-              <textarea 
-                id="comment-text" 
-                rows="2" 
-                required 
-                maxlength="500"
-                placeholder="សរសេរចំណាប់អារម្មណ៍របស់អ្នកចំពោះសៀវភៅនេះ..." 
-                class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition"
-              ></textarea>
-            </div>
-
-            <div class="flex justify-end">
-              <button type="submit" id="submit-comment-btn" class="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition">
-                <i data-lucide="send" class="w-4 h-4"></i>
-                <span>បញ្ជូនមតិយោបល់</span>
-              </button>
-            </div>
-          </form>
-
-          <!-- Comments Feed -->
-          <div id="comments-list" class="space-y-3">
-            <!-- Comments rendered dynamically -->
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-
-  <!-- ==========================================
-       DEDICATED READER VIEW (ទំព័រអានសៀវភៅ)
-  =========================================== -->
-  <div id="reader-view" class="hidden fixed inset-0 z-50 flex flex-col bg-white text-slate-800 reader-transition">
-    
-    <!-- Top Reading Progress Bar -->
-    <div class="w-full h-1 bg-stone-200/60 shrink-0">
-      <div id="reading-progress-bar" class="h-full bg-emerald-600 transition-all duration-150" style="width: 0%"></div>
-    </div>
-
-    <!-- Reader Top Toolbar -->
-    <header id="reader-header" class="border-b border-stone-200/80 px-3 sm:px-6 py-3 flex items-center justify-between gap-2 shrink-0 reader-transition">
-      <div class="flex items-center gap-2.5 min-w-0">
-        <button onclick="closeReader()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl hover:bg-black/5 active:scale-95 text-sm font-medium transition shrink-0">
-          <i data-lucide="arrow-left" class="w-4 h-4"></i>
-          <span class="hidden sm:inline">ត្រឡប់ក្រោយ</span>
-        </button>
-        <div class="h-5 w-px bg-current opacity-15 shrink-0"></div>
-        <div class="min-w-0">
-          <h2 id="reader-book-title" class="text-sm sm:text-base font-bold truncate">ចំណងជើងសៀវភៅ</h2>
-          <p id="reader-book-author" class="text-xs opacity-65 truncate">ឈ្មោះអ្នកនិពន្ធ</p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-        <!-- Chapter Dropdown -->
-        <div class="relative">
-          <select 
-            id="chapter-select" 
-            onchange="selectChapter(this.value)" 
-            aria-label="ជ្រើសរើសជំពូក"
-            class="appearance-none bg-black/5 hover:bg-black/10 text-xs sm:text-sm font-medium pl-3 pr-8 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 cursor-pointer max-w-[140px] sm:max-w-[220px] truncate"
-          ></select>
-          <i data-lucide="chevron-down" class="w-4 h-4 opacity-60 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-        </div>
-
-        <!-- Comments Shortcut inside Reader -->
-        <button 
-          onclick="openCommentsFromReader()" 
-          title="មើល និងបញ្ចេញមតិយោបល់"
-          class="p-2.5 rounded-xl hover:bg-black/5 active:scale-95 transition"
-        >
-          <i data-lucide="message-square" class="w-4 h-4"></i>
-        </button>
-
-        <!-- Typography & Theme Settings Toggle -->
-        <button 
-          onclick="toggleSettingsPanel()" 
-          title="ការកំណត់ការអាន"
-          class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-600/15 text-emerald-700 hover:bg-emerald-600/25 font-semibold text-xs sm:text-sm transition"
-        >
-          <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
-          <span class="hidden md:inline">កំណត់ការអាន</span>
-        </button>
-      </div>
-    </header>
-
-    <!-- Collapsible Reading Settings Panel -->
-    <div id="reader-settings-panel" class="hidden border-b border-stone-200/80 px-4 sm:px-6 py-4 bg-black/[0.02] shrink-0 reader-transition">
-      <div class="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div>
-          <label class="block text-xs font-semibold opacity-70 mb-2">ពណ៌ផ្ទៃអាន</label>
-          <div class="grid grid-cols-3 gap-2">
-            <button onclick="setReaderTheme('light')" data-theme-btn="light" class="theme-btn flex flex-col items-center justify-center gap-1 py-2 px-2 rounded-xl border text-xs font-medium transition bg-white text-slate-800 border-slate-300">
-              <span class="w-4 h-4 rounded-full bg-white border border-slate-300"></span>
-              <span>ពន្លឺថ្ងៃ</span>
-            </button>
-            <button onclick="setReaderTheme('sepia')" data-theme-btn="sepia" class="theme-btn flex flex-col items-center justify-center gap-1 py-2 px-2 rounded-xl border text-xs font-medium transition bg-[#f6efe2] text-[#433422] border-[#dcd0ba]">
-              <span class="w-4 h-4 rounded-full bg-[#f6efe2] border border-[#c7b699]"></span>
-              <span>ពណ៌ក្រដាស</span>
-            </button>
-            <button onclick="setReaderTheme('dark')" data-theme-btn="dark" class="theme-btn flex flex-col items-center justify-center gap-1 py-2 px-2 rounded-xl border text-xs font-medium transition bg-slate-900 text-slate-200 border-slate-700">
-              <span class="w-4 h-4 rounded-full bg-slate-900 border border-slate-600"></span>
-              <span>ពេលយប់</span>
-            </button>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold opacity-70 mb-2">ទំហំអក្សរ</label>
-          <div class="flex items-center justify-between bg-black/5 rounded-xl p-1">
-            <button onclick="changeFontSize(-2)" class="flex-1 py-1.5 rounded-lg hover:bg-black/10 font-bold text-sm transition">A-</button>
-            <span id="font-size-display" class="px-3 text-xs font-semibold">19px</span>
-            <button onclick="changeFontSize(2)" class="flex-1 py-1.5 rounded-lg hover:bg-black/10 font-bold text-base transition">A+</button>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold opacity-70 mb-2">គម្លាតបន្ទាត់</label>
-          <div class="grid grid-cols-3 gap-1.5 bg-black/5 rounded-xl p-1">
-            <button onclick="setLineHeight('1.7')" data-lh-btn="1.7" class="lh-btn py-1.5 rounded-lg text-xs font-medium transition">តូច</button>
-            <button onclick="setLineHeight('2.05')" data-lh-btn="2.05" class="lh-btn py-1.5 rounded-lg text-xs font-medium transition">មធ្យម</button>
-            <button onclick="setLineHeight('2.4')" data-lh-btn="2.4" class="lh-btn py-1.5 rounded-lg text-xs font-medium transition">ទូលាយ</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Scrollable Reading Content Area -->
-    <div id="reader-scroll-container" onscroll="updateReadingProgress()" class="flex-1 overflow-y-auto px-4 sm:px-8 py-8 sm:py-12 scroll-smooth">
-      <article class="max-w-3xl mx-auto">
-        <div class="mb-8 pb-6 border-b border-current/10">
-          <span id="reader-chapter-badge" class="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-emerald-600/15 text-emerald-700 mb-3">
-            ជំពូកទី ១
-          </span>
-          <h1 id="reader-chapter-title" class="text-2xl sm:text-3xl font-bold font-serif leading-snug">
-            ចំណងជើងជំពូក
-          </h1>
-        </div>
-
-        <div id="reader-content-body" class="font-serif space-y-6 text-justify" style="font-size: 19px; line-height: 2.05;">
-          <!-- Paragraphs rendered here -->
-        </div>
-
-        <!-- Bottom Chapter Navigation -->
-        <div class="mt-14 pt-8 border-t border-current/10 flex items-center justify-between gap-4">
-          <button 
-            id="prev-chapter-btn" 
-            onclick="navigateChapter(-1)" 
-            class="inline-flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl bg-black/5 hover:bg-black/10 disabled:opacity-35 disabled:pointer-events-none font-medium text-sm transition"
-          >
-            <i data-lucide="chevron-left" class="w-4 h-4"></i>
-            <span>ជំពូកមុន</span>
-          </button>
-
-          <span id="bottom-chapter-indicator" class="text-xs sm:text-sm opacity-60 font-medium">
-            ១ / ៣
-          </span>
-
-          <button 
-            id="next-chapter-btn" 
-            onclick="navigateChapter(1)" 
-            class="inline-flex items-center gap-2 px-4 sm:px-5 py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white disabled:opacity-35 disabled:pointer-events-none font-medium text-sm shadow-sm transition"
-          >
-            <span>ជំពូកបន្ទាប់</span>
-            <i data-lucide="chevron-right" class="w-4 h-4"></i>
-          </button>
-        </div>
-      </article>
-    </div>
-  </div>
-
-
-  <!-- ==========================================
-       ADMIN LOGIN MODAL (ចូលជា Admin)
-  =========================================== -->
-  <div id="admin-login-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/65 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+  <div id="book-editor-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/65 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden">
       <div class="px-6 py-4 border-b border-stone-100 flex items-center justify-between bg-emerald-950 text-white">
-        <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-amber-400/20 text-amber-300 flex items-center justify-center">
-            <i data-lucide="shield-check" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h3 class="text-base font-bold">ចូលប្រើប្រាស់ក្នុងនាម Admin</h3>
-            <p class="text-xs text-emerald-300/80">សម្រាប់គ្រប់គ្រង បន្ថែម និងកែសម្រួលសៀវភៅ</p>
-          </div>
-        </div>
-        <button onclick="closeAdminLoginModal()" class="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-white/10 transition">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <form onsubmit="handleAdminLogin(event)" class="p-6 space-y-4">
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1.5">បញ្ចូលលេខសម្ងាត់ Admin <span class="text-rose-500">*</span></label>
-          <input 
-            type="password" 
-            id="admin-password-input" 
-            required 
-            placeholder="••••••••" 
-            class="w-full px-4 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition"
-          />
-          <p class="text-xs text-slate-400 mt-1.5">លេខសម្ងាត់លំនាំដើម​ default​: <code class="bg-stone-100 text-slate-700 px-1.5 py-0.5 rounded font-mono"></code></p>
-        </div>
-
-        <div id="admin-login-error" class="hidden text-xs font-medium text-rose-600 bg-rose-50 border border-rose-200 px-3.5 py-2.5 rounded-xl">
-          លេខសម្ងាត់មិនត្រឹមត្រូវទេ! សូមព្យាយាមម្តងទៀត។
-        </div>
-
-        <div class="flex items-center justify-end gap-2.5 pt-2">
-          <button type="button" onclick="closeAdminLoginModal()" class="px-4 py-2.5 rounded-xl border border-stone-200 text-slate-600 hover:bg-stone-50 text-sm font-medium transition">បោះបង់</button>
-          <button type="submit" class="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition">
-            <i data-lucide="unlock" class="w-4 h-4"></i>
-            <span>ចូលប្រើប្រាស់</span>
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-
-  <!-- ==========================================
-       ADMIN SETTINGS MODAL (ផ្លាស់ប្តូរលេខសម្ងាត់)
-  =========================================== -->
-  <div id="admin-settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/65 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
-      <div class="px-6 py-4 border-b border-stone-100 flex items-center justify-between bg-stone-50">
-        <div class="flex items-center gap-2">
-          <i data-lucide="settings" class="w-5 h-5 text-emerald-700"></i>
-          <h3 class="text-base font-bold text-slate-900">ការកំណត់សុវត្ថិភាព Admin</h3>
-        </div>
-        <button onclick="closeAdminSettingsModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-stone-200/60 transition">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <form onsubmit="handleUpdateAdminPassword(event)" class="p-6 space-y-4">
-        <p class="text-xs text-slate-500 leading-relaxed">
-          ផ្លាស់ប្តូរលេខសម្ងាត់ Admin របស់អ្នក ដើម្បីការពារកុំឱ្យអ្នកដទៃចូលបន្ថែម ឬលុបសៀវភៅនៅលើគេហទំព័រនេះ។
-        </p>
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1.5">លេខសម្ងាត់ Admin ថ្មី</label>
-          <input 
-            type="text" 
-            id="new-admin-password-input" 
-            required 
-            minlength="4"
-            placeholder="បញ្ចូលលេខសម្ងាត់ថ្មី (យ៉ាងតិច ៤ ខ្ទង់)..." 
-            class="w-full px-4 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition"
-          />
-        </div>
-        <div class="flex items-center justify-end gap-2.5 pt-2">
-          <button type="button" onclick="closeAdminSettingsModal()" class="px-4 py-2.5 rounded-xl border border-stone-200 text-slate-600 hover:bg-stone-50 text-sm font-medium transition">បិទ</button>
-          <button type="submit" class="bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition">
-            រក្សាទុកលេខសម្ងាត់ថ្មី
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-
-  <!-- ==========================================
-       ADMIN BOOK EDITOR MODAL (បន្ថែម / កែសម្រួលសៀវភៅ)
-  =========================================== -->
-  <div id="book-editor-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/65 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden">
-      
-      <!-- Modal Header -->
-      <div class="px-6 py-4 border-b border-stone-100 flex items-center justify-between bg-emerald-950 text-white shrink-0">
-        <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-amber-400/20 text-amber-300 flex items-center justify-center">
-            <i data-lucide="book-plus" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <h3 id="editor-modal-title" class="text-base sm:text-lg font-bold">បង្ហោះសៀវភៅថ្មី (Admin)</h3>
-            <p class="text-xs text-emerald-300/80">បំពេញព័ត៌មានសៀវភៅ និងបន្ថែមជំពូកម្តងមួយៗ</p>
-          </div>
-        </div>
+        <h3 class="text-base font-bold">បន្ថែមសៀវភៅថ្មីទៅកាន់ Cloud (Admin Panel)</h3>
         <button onclick="closeBookEditorModal()" class="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-white/10 transition">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
-
-      <!-- Modal Form Body -->
-      <form id="book-editor-form" onsubmit="handleSaveBook(event)" class="flex-1 overflow-y-auto p-6 space-y-5">
-        <input type="hidden" id="edit-book-id" value="" />
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-1.5">ចំណងជើងសៀវភៅ <span class="text-rose-500">*</span></label>
-            <input type="text" id="book-title-input" required placeholder="ឧទាហរណ៍៖ ផ្កាស្រពោន" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition" />
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-1.5">ឈ្មោះអ្នកនិពន្ធ <span class="text-rose-500">*</span></label>
-            <input type="text" id="book-author-input" required placeholder="ឧទាហរណ៍៖ នូ ហាច" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition" />
-          </div>
+      <form onsubmit="handleSaveNewBook(event)" class="p-6 overflow-y-auto space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">ចំណងជើងសៀវភៅ <span class="text-rose-500">*</span></label>
+          <input type="text" id="edit-title" required class="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:border-emerald-600 outline-none" placeholder="ឧ. គតិជីវិត..." />
         </div>
-
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-1.5">ប្រភេទសៀវភៅ</label>
-            <select id="book-category-input" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm bg-white outline-none transition">
-              <option value="រឿងប្រលោមលោក">រឿងប្រលោមលោក</option>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">អ្នកនិពន្ធ <span class="text-rose-500">*</span></label>
+            <input type="text" id="edit-author" required class="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:border-emerald-600 outline-none" placeholder="ឈ្មោះអ្នកនិពន្ធ" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">ប្រភេទសៀវភៅ <span class="text-rose-500">*</span></label>
+            <!-- ផ្លាស់ប្តូរមកជា Dropdown Select ជាមួយប្រភេទសៀវភៅស្រាប់ -->
+            <select id="edit-category" required class="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm bg-white focus:border-emerald-600 outline-none">
+              <option value="">-- ជ្រើសរើសប្រភេទសៀវភៅ --</option>
+              <option value="ប្រលោមលោក">ប្រលោមលោក</option>
+              <option value="អភិវឌ្ឍខ្លួន">អភិវឌ្ឍខ្លួន</option>
               <option value="ប្រវត្តិសាស្ត្រ">ប្រវត្តិសាស្ត្រ</option>
-              <option value="អប់រំ និងភាសា">អប់រំ និងភាសា</option>
-              <option value="អភិវឌ្ឍន៍ខ្លួន">អភិវឌ្ឍន៍ខ្លួន</option>
+              <option value="អប់រំ និងចំណេះដឹង">អប់រំ និងចំណេះដឹង</option>
+              <option value="ទស្សនវិជ្ជា">ទស្សនវិជ្ជា</option>
+              <option value="កម្រងរឿងខ្លីៗ">កម្រងរឿងខ្លីៗ</option>
             </select>
           </div>
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-1.5">តំណភ្ជាប់រូបភាពគម្រប (Cover URL - ជាជម្រើស)</label>
-            <input type="url" id="book-cover-url-input" placeholder="https://example.com/cover.jpg" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition" />
-          </div>
         </div>
-
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1.5">សេចក្តីសង្ខេបសៀវភៅ <span class="text-rose-500">*</span></label>
-          <textarea id="book-desc-input" rows="2" required placeholder="សរសេរសេចក្តីសង្ខេបខ្លីអំពីខ្លឹមសារសៀវភៅ..." class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition"></textarea>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">តំណភ្ជាប់រូបភាពគម្រប (Cover Image URL)</label>
+          <input type="url" id="edit-cover" class="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:border-emerald-600 outline-none" placeholder="https://example.com/image.jpg" />
         </div>
-
-        <!-- Chapters Builder -->
-        <div class="pt-3 border-t border-stone-200">
-          <div class="flex items-center justify-between mb-3">
-            <div>
-              <h4 class="text-sm font-bold text-slate-800">ជំពូកសៀវភៅ (Chapters)</h4>
-              <p class="text-xs text-slate-500">អ្នកអាចបន្ថែមជំពូកទី ១, ទី ២, ទី ៣... បានតាមតម្រូវការ</p>
-            </div>
-            <button type="button" onclick="addChapterInputBlock()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold border border-emerald-200 transition">
-              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-              <span>បន្ថែមជំពូកថ្មី</span>
-            </button>
-          </div>
-
-          <div id="chapters-builder-container" class="space-y-4">
-            <!-- Chapter input cards injected dynamically -->
-          </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">សេចក្តីសង្ខេបសៀវភៅ</label>
+          <textarea id="edit-desc" rows="2" class="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:border-emerald-600 outline-none" placeholder="សេចក្តីសង្ខេបសាច់រឿង..."></textarea>
         </div>
-
-        <!-- Submit Footer -->
-        <div class="pt-4 border-t border-stone-100 flex items-center justify-end gap-3">
-          <button type="button" onclick="closeBookEditorModal()" class="px-5 py-2.5 rounded-xl border border-stone-200 text-slate-600 hover:bg-stone-50 text-sm font-medium transition">
-            Cencel
-          </button>
-          <button type="submit" id="save-book-btn" class="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white text-sm font-semibold px-6 py-2.5 rounded-xl shadow-sm transition">
-            <i data-lucide="upload-cloud" class="w-4 h-4"></i>
-            <span>Upload</span>
-          </button>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">ជំពូកទី ១ (ចំណងជើង និងអត្ថបទ)</label>
+          <input type="text" id="edit-ch-title" class="w-full px-3.5 py-2 mb-2 rounded-xl border border-stone-200 text-sm focus:border-emerald-600 outline-none" placeholder="ឈ្មោះជំពូក ឧ. ជំពូកទី ១: ចាប់ផ្តើម" />
+          <textarea id="edit-ch-content" rows="4" class="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:border-emerald-600 outline-none" placeholder="អត្ថបទសាច់រឿងក្នុងជំពូក..."></textarea>
+        </div>
+        <div class="flex justify-end gap-3 pt-4 border-t border-stone-100">
+          <button type="button" onclick="closeBookEditorModal()" class="px-4 py-2.5 rounded-xl border border-stone-200 text-slate-600 text-sm font-medium">បោះបង់</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold shadow-sm">រក្សាទុកទៅ Cloud</button>
         </div>
       </form>
     </div>
   </div>
 
-
   <!-- ==========================================
-       CUSTOM CONFIRMATION MODAL (ជំនួស confirm())
+        BOOK DETAILS MODAL
   =========================================== -->
-  <div id="confirm-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/65 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4">
-      <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
-        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+  <div id="book-detail-modal" class="hidden fixed inset-0 z-40 flex items-center justify-center p-3 sm:p-5 bg-slate-900/65 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden">
+      <div class="px-5 py-3.5 border-b border-stone-100 flex items-center justify-between bg-stone-50/70 shrink-0">
+        <span id="detail-category-badge" class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-semibold">ប្រភេទ</span>
+        <button onclick="closeBookDetailModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
       </div>
-      <div>
-        <h3 id="confirm-modal-title" class="text-lg font-bold text-slate-900">បញ្ជាក់ការលុប</h3>
-        <p id="confirm-modal-msg" class="text-sm text-slate-500 mt-1">តើអ្នកពិតជាចង់លុបទិន្នន័យនេះមែនទេ?</p>
-      </div>
-      <div class="flex items-center justify-center gap-3 pt-2">
-        <button onclick="closeConfirmModal()" class="flex-1 py-2.5 rounded-xl border border-stone-200 text-slate-600 hover:bg-stone-50 text-sm font-medium transition">បោះបង់</button>
-        <button id="confirm-modal-yes-btn" class="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold shadow-sm transition">លុបចោល</button>
+      <div class="flex-1 overflow-y-auto p-5 sm:p-7 space-y-6">
+        <div class="flex flex-col sm:flex-row gap-6">
+          <div id="detail-cover-box" class="w-full sm:w-48 h-64 rounded-2xl shadow-md shrink-0 flex items-center justify-center text-white text-2xl bg-gradient-to-br from-emerald-700 to-teal-900">
+            📖
+          </div>
+          <div class="flex-1 flex flex-col justify-between">
+            <div>
+              <h2 id="detail-title" class="text-2xl sm:text-3xl font-bold text-slate-900 font-serif">ចំណងជើងសៀវភៅ</h2>
+              <p id="detail-author" class="text-sm font-medium text-emerald-800 mt-1">អ្នកនិពន្ធ</p>
+              <p id="detail-description" class="text-sm sm:text-base text-slate-600 mt-3">សេចក្តីសង្ខេប...</p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-stone-100 flex items-center gap-3">
+              <button id="detail-start-read-btn" class="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-sm px-6 py-3 rounded-xl shadow-sm transition">
+                ចាប់ផ្តើមអាន
+              </button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-slate-900 mb-3">មាតិកាជំពូក</h3>
+          <div id="detail-chapters-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+        </div>
       </div>
     </div>
   </div>
 
-
-  <!-- Toast Notification -->
-  <div id="toast-notification" class="fixed bottom-5 right-5 z-[70] transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-slate-900 text-white text-sm font-medium px-4 py-3 rounded-xl shadow-lg flex items-center gap-2.5">
-    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
-    <span id="toast-message">រក្សាទុកជោគជ័យ!</span>
+  <!-- ==========================================
+        READER VIEW (ទំព័រអានសៀវភៅ)
+  =========================================== -->
+  <div id="reader-view" class="hidden fixed inset-0 z-50 flex flex-col bg-white text-slate-800 reader-transition">
+    <header class="border-b border-stone-200/80 px-4 py-3 flex items-center justify-between gap-2 shrink-0">
+      <div class="flex items-center gap-2">
+        <button onclick="closeReader()" class="px-3 py-2 rounded-xl hover:bg-black/5 text-sm font-medium">ត្រឡប់ក្រោយ</button>
+        <h2 id="reader-book-title" class="text-sm sm:text-base font-bold truncate">ចំណងជើង</h2>
+      </div>
+      <button onclick="closeReader()" class="p-2 rounded-xl hover:bg-black/5"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </header>
+    <div id="reader-scroll-container" class="flex-1 overflow-y-auto px-4 sm:px-8 py-8">
+      <article class="max-w-3xl mx-auto">
+        <h1 id="reader-chapter-title" class="text-2xl font-bold mb-6 font-serif">ជំពូក</h1>
+        <div id="reader-content-body" class="font-serif space-y-4 text-justify text-lg leading-relaxed"></div>
+      </article>
+    </div>
   </div>
 
-
-  <!-- ==========================================
-       FIREBASE & APPLICATION LOGIC (សម្រាប់ VS Code & Web Hosting)
-  =========================================== -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    // 1. ការកំណត់ Firebase សម្រាប់គម្រោង E-library (e-library-d144a)
-    const appId = 'khmer-digital-library';
+  <!-- JavaScript Application Logic with Firebase Cloud Database -->
+  <script>
+    // Firebase Configuration from your Project Settings[cite: 5]
     const firebaseConfig = {
-  apiKey: "AIzaSyBDXE3NYj9MSZIAQaex_qPOV7HBIOsCfGQ",
-  authDomain: "ebook-library-fbfb1.firebaseapp.com",
-  projectId: "ebook-library-fbfb1",
-  storageBucket: "ebook-library-fbfb1.firebasestorage.app",
-  messagingSenderId: "3271667741",
-  appId: "1:3271667741:web:8edffbe9a067d59f1fd6f4",
-  measurementId: "G-G1032LJSR6"
-};
+      apiKey: "AIzaSyDSBIRnMEaRLCUdg2aOYLRHJPh9fcgRm54",
+      authDomain: "ebooklibrarykh.firebaseapp.com",
+      projectId: "ebooklibrarykh",
+      storageBucket: "ebooklibrarykh.firebasestorage.app",
+      messagingSenderId: "819610849220",
+      appId: "1:819610849220:web:3f5eab7483c0a2de6cde91",
+      measurementId: "G-G7JHL0W38E"
+    };
 
-    let app = null;
-    let auth = null;
-    let db = null;
-    let currentUser = null;
-    let useLocalFallback = false;
+    // Initialize Firebase & Firestore
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-    // Collection References ក្នុង Cloud Firestore
-    const getBooksCollection = () => collection(db, 'artifacts', appId, 'public', 'data', 'books');
-    const getCommentsCollection = () => collection(db, 'artifacts', appId, 'public', 'data', 'comments');
-    const getConfigDocRef = () => doc(db, 'artifacts', appId, 'public', 'data', 'library_config', 'admin_settings');
-
-    // 2. Sample Rich Khmer Books for Initial Seeding
-    const INITIAL_SAMPLE_BOOKS = [
-      {
-        title: "អាថ៌កំបាំងស្ថាបត្យកម្មប្រាសាទអង្គរ",
-        author: "សាស្ត្រាចារ្យ វង្ស សុធារ៉ា (សម្រង់)",
-        category: "ប្រវត្តិសាស្ត្រ",
-        coverGradient: "from-amber-800 via-orange-900 to-stone-900",
-        coverUrl: "",
-        description: "ស្វែងយល់ពីបច្ចេកទេសសាងសង់ ប្រព័ន្ធធារាសាស្ត្រដ៏អស្ចារ្យ និងសិល្បៈចម្លាក់ក្បាច់រចនានៃប្រាសាទអង្គរវត្តក្នុងសម័យមហានគរ។",
-        createdAt: Date.now() - 40000,
-        chapters: [
-          {
-            title: "ជំពូកទី ១៖ ការជ្រើសរើសទីតាំង និងគ្រឹះប្រាសាទ",
-            content: "ប្រាសាទអង្គរវត្តត្រូវបានកសាងឡើងនៅដើមសតវត្សរ៍ទី១២ ក្នុងរជ្ជកាលព្រះបាទសូរ្យវរ្ម័នទី២។ ភាពអស្ចារ្យដំបូងបំផុតនៃស្ថាបត្យកម្មខ្មែរបុរាណ គឺការរៀបចំគ្រឹះដ៏រឹងមាំដោយប្រើប្រាស់ដីខ្សាច់បង្ហាប់ និងថ្មបាយក្រៀម ដើម្បីទ្រទ្រង់ទម្ងន់ថ្មភក់រាប់លានតោនឱ្យឈរយ៉ាងរឹងមាំឆ្លងកាត់រាប់សតវត្សរ៍។\n\nនៅជុំវិញបរិវេណប្រាសាទ មានគូទឹកដ៏ធំល្វឹងល្វើយដែលមិនត្រឹមតែជានិមិត្តរូបនៃមហាសមុទ្រព័ទ្ធជុំវិញភ្នំព្រះសុមេរុប៉ុណ្ណោះទេ ប៉ុន្តែថែមទាំងដើរតួនាទីយ៉ាងសំខាន់ក្នុងការរក្សាសំណើមដីខ្សាច់នៅក្រោមគ្រឹះប្រាសាទ កុំឱ្យស្រុតឬប្រេះស្រាំនៅរដូវប្រាំងទៀតផង។"
-          },
-          {
-            title: "ជំពូកទី ២៖ ការដឹកជញ្ជូនថ្មភក់ពីភ្នំគូលែន",
-            content: "ថ្មភក់ដែលយកមកសាងសង់ប្រាសាទអង្គរវត្ត ត្រូវបានកាត់ចេញពីជើងភ្នំគូលែន ដែលមានចម្ងាយប្រមាណជាង ៣០ គីឡូម៉ែត្រពីទីតាំងប្រាសាទ។ បុព្វបុរសខ្មែរបានជីកព្រែកជីកបុរាណតភ្ជាប់ពីភ្នំគូលែនមកកាន់តំបន់អង្គរ ដើម្បីប្រើប្រាស់ក្បូនឬស្សីដឹកជញ្ជូនថ្មធំៗតាមផ្លូវទឹកនៅរដូវវស្សា។\n\nការរៀបចំថ្មនីមួយៗឱ្យជាប់គ្នាដោយមិនប្រើកំបោរ ឬស៊ីម៉ង់ត៍ គឺជាសិល្បៈនៃការដុសខាត់ផ្ទៃថ្មឱ្យរាបស្មើឥតខ្ចោះ និងការចោះរន្ធពន្លួញថ្មដើម្បីតភ្ជាប់គ្នាឱ្យណែនដូចជាសាច់មួយ។"
-          }
-        ]
-      },
-      {
-        title: "មេរៀនភាសាកូរ៉េកម្រិតដំបូង (한글)",
-        author: "ម៉ៅ​ មួយ",
-        category: "អប់រំ និងភាសា",
-        coverGradient: "from-sky-800 via-blue-900 to-indigo-950",
-        coverUrl: "",
-        description: "សៀវភៅសម្រាប់ការយល់ដឹងពីអក្ខរក្រមកូរ៉េ (ហាន់ហ្គឹល) ការបញ្ចេញសំឡេង និងឃ្លាសន្ទនាគួរសមប្រចាំថ្ងៃសម្រាប់អ្នកចាប់ផ្តើមដំបូង។",
-        createdAt: Date.now() - 30000,
-        chapters: [
-          {
-            title: "ជំពូកទី ១៖ ព្យញ្ជនៈ និងស្រៈមូលដ្ឋានក្នុងភាសាកូរ៉េ",
-            content: "អក្សរកូរ៉េ ឬហៅថា ហាន់ហ្គឹល (한글) ត្រូវបានបង្កើតឡើងដោយព្រះបាទសេជុងមហារាជ នៅក្នុងឆ្នាំ ១៤៤៣ ដើម្បីឱ្យប្រជាជនកូរ៉េគ្រប់រូបអាចរៀនអាន និងសរសេរបានយ៉ាងងាយស្រួល។\n\nនៅក្នុងភាសាកូរ៉េ ព្យញ្ជនៈមូលដ្ឋានមានចំនួន ១៤ តួ ដូចជា ㄱ (គ/ខ), ㄴ (ន), ㄷ (ដ/ថ), ㄹ (រ/ល), ㅁ (ម), ㅂ (ប/ផ), ㅅ (ស), ㅇ (អ/ង) ជាដើម។ ការផ្សំព្យញ្ជនៈ និងស្រៈត្រូវរៀបជាប្លុកព្យាង្គ ដោយត្រូវមានព្យញ្ជនៈនាំមុខជានិច្ច។"
-          },
-          {
-            title: "ជំពូកទី ២៖ ឃ្លាសួរសុខទុក្ខ និងការណែនាំខ្លួន",
-            content: "ការនិយាយស្តីប្រកបដោយភាពគួរសមគឺជាវប្បធម៌ដ៏សំខាន់បំផុតនៅក្នុងប្រទេសកូរ៉េ។ ខាងក្រោមនេះជាឃ្លាសន្ទនាមូលដ្ឋានដែលអ្នកត្រូវចេះ៖\n\n១. 안녕하세요? (អាន់យ៉ង់ហាសេយ៉ូ?) — សួស្តី! (ប្រើបានគ្រប់ពេលវេលា)\n២. 감사합니다. (ខាំសាហាំនីដា) — សូមអរគុណ។\n៣. 만나서 반갑습니다. (ម៉ាន់ណាស ផាន់កាប់ស៊ឹមនីដា) — រីករាយដែលបានស្គាល់អ្នក។"
-          }
-        ]
-      },
-      {
-        title: "យុទ្ធសិល្ប៍ដាវទេពភ្នំដងរែក",
-        author: "សុវណ្ណ វិសាល",
-        category: "រឿងប្រលោមលោក",
-        coverGradient: "from-purple-900 via-violet-950 to-slate-900",
-        coverUrl: "",
-        description: "ប្រលោមលោកបែបយុទ្ធសិល្ប៍បុរាណ និយាយអំពីយុវជនម្នាក់ដែលបានរកឃើញគម្ពីរដាវបុរាណនៅលើកំពូលភ្នំដងរែក ហើយហ្វឹកហាត់ដើម្បីការពារយុត្តិធម៌។",
-        createdAt: Date.now() - 20000,
-        chapters: [
-          {
-            title: "ជំពូកទី ១៖ ព្យុះភ្លៀងនៅជើងភ្នំដងរែក",
-            content: "រាត្រីនោះ ផ្ទៃមេឃនៅលើជួរភ្នំដងរែកងងឹតសូន្យឈឹង ផ្លេកបន្ទោរបាញ់ឆ្វេចឆ្វាចបំភ្លឺព្រៃព្រឹក្សាដែលកំពុងបោកបក់ដោយខ្យល់ព្យុះ។ នៅក្នុងខ្ទមឈើតូចមួយក្បែរជ្រោះទឹកធ្លាក់ យុវជន តារា កំពុងអង្គុយសំលៀងដាវដែកចាស់របស់ឪពុកខ្លួនដោយទឹកមុខម៉ឺងម៉ាត់។\n\nរំពេចនោះ សំឡេងសម្រឹបជើងស្រាលៗបានលាន់ឮឡើងពីខាងក្រៅខ្ទម។ បុរសចំណាស់សក់សក្បុសម្នាក់ក្នុងឈុតអាវផាយពណ៌ប្រផេះបានដើរចូលមក ដោយក្នុងដៃមានកាន់គម្ពីរស្បែកសត្វបុរាណមួយក្បាល។"
-          },
-          {
-            title: "ជំពូកទី ២៖ អាថ៌កំបាំងក្បាច់ដាវទាំងប្រាំបួន",
-            content: "តារាបានបើកគម្ពីរស្បែកសត្វនោះឡើងដោយការគោរព។ នៅលើទំព័រទីមួយ មានគំនូរមនុស្សកាន់ដាវឈរលើផ្ទាំងថ្ម ជាមួយនឹងអក្សរចារឹកថា៖ «ដាវកើតចេញពីចិត្ត ប្រសិនបើចិត្តស្ងប់ ដាវនឹងមានកម្លាំងដូចភ្នំ»។\n\nចាប់ពីថ្ងៃនោះមក តារាបានចំណាយពេលរៀងរាល់ព្រឹកព្រលឹមហាត់ប្រាណ និងដកដង្ហើមតាមក្បួនក្នុងគម្ពីរ រហូតដល់រាងកាយរបស់គេស្រាលដូចស្លាបបក្សី។"
-          }
-        ]
-      },
-      {
-        title: "ទម្លាប់តូចៗ បង្កើតភាពជោគជ័យធំ",
-        author: "ចាន់ ដារ៉ាវុធ",
-        category: "អភិវឌ្ឍន៍ខ្លួន",
-        coverGradient: "from-emerald-800 via-teal-900 to-cyan-950",
-        coverUrl: "",
-        description: "វិធីសាស្ត្រកែប្រែទម្លាប់ប្រចាំថ្ងៃបន្តិចម្តងៗ ការគ្រប់គ្រងពេលវេលា និងការកសាងផ្នត់គំនិតវិជ្ជមានដើម្បីសម្រេចគោលដៅជីវិត។",
-        createdAt: Date.now() - 10000,
-        chapters: [
-          {
-            title: "ជំពូកទី ១៖ អានុភាពនៃការរីកចម្រើន ១% រៀងរាល់ថ្ងៃ",
-            content: "មនុស្សភាគច្រើនតែងតែរំពឹងចង់ឃើញការផ្លាស់ប្តូរដ៏ធំធេងភ្លាមៗ ប៉ុន្តែការពិតភាពជោគជ័យដ៏រឹងមាំគឺកើតចេញពីទម្លាប់តូចៗដែលយើងធ្វើជាប្រចាំរៀងរាល់ថ្ងៃ។ ប្រសិនបើអ្នកអាចអភិវឌ្ឍខ្លួនឯងឱ្យប្រសើរជាងម្សិលមិញត្រឹមតែ ១% រៀងរាល់ថ្ងៃ ក្នុងរយៈពេលមួយឆ្នាំ អ្នកនឹងរីកចម្រើនរហូតដល់ ៣៧ ដង។\n\nចូរចាប់ផ្តើមពីរឿងងាយៗ ដូចជាការអានសៀវភៅឱ្យបាន ១៥ នាទីមុនពេលចូលគេង ឬការកត់ត្រាផែនការការងារប្រចាំថ្ងៃ។"
-          }
-        ]
-      }
-    ];
-
-    // 3. Application State
     let allBooks = [];
-    let allComments = [];
-    let activeCategory = 'ទាំងអស់';
-    let searchQuery = '';
-    let showOnlyFavorites = false;
-    let favorites = JSON.parse(localStorage.getItem('khmer_lib_favorites') || '[]');
-    let lastRead = JSON.parse(localStorage.getItem('khmer_lib_last_read') || 'null');
+    let currentFilteredBooks = [];
+    let currentSelectedBook = null;
+    let currentChapterIndex = 0;
+    let isAdminLoggedIn = localStorage.getItem('library_admin_logged') === 'true';
 
-    // Admin State
-    let isAdmin = sessionStorage.getItem('khmer_lib_is_admin') === 'true';
-    let adminPasscode = localStorage.getItem('khmer_lib_admin_pass') || 'adminmuoy2';
-
-    // Active Book / Reader State
-    let activeDetailBookId = null;
-    let selectedCommentRating = 5;
-    let activeReaderBook = null;
-    let activeChapterIndex = 0;
-
-    let readerSettings = JSON.parse(localStorage.getItem('khmer_lib_reader_settings') || JSON.stringify({
-      theme: 'light',
-      fontSize: 19,
-      lineHeight: '2.05'
-    }));
-
-    // Helper: Convert Western numerals to Khmer numerals
-    const KHMER_DIGITS = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
-    function toKhmerNum(num) {
-      return String(num).replace(/\d/g, d => KHMER_DIGITS[d]);
-    }
-
-    function escapeHTML(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-
-    function showToast(message) {
-      const toast = document.getElementById('toast-notification');
-      document.getElementById('toast-message').textContent = message;
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 3000);
-    }
-
-    // 4. Initialize Firebase & App (ដំណើរការស្វ័យប្រវត្តិលើ VS Code)
-    async function bootApplication() {
-      renderCategories();
-      updateFavBadge();
-      applyReaderSettings();
-      updateAdminUI();
-      if (window.lucide) {
-        lucide.createIcons();
-      }
-
-      try {
-        app = initializeApp(firebaseConfig);
-        auth = getAuth(app);
-        db = getFirestore(app);
-
-        // ចូលប្រើប្រាស់ដោយស្វ័យប្រវត្តិ (Anonymous Auth)
-        await signInAnonymously(auth);
-        currentUser = auth.currentUser;
-
-        await syncAdminConfig();
-        subscribeToBooks();
-        subscribeToComments();
-
-      } catch (err) {
-        console.warn("កំពុងប្រើប្រាស់ប្រព័ន្ធរក្សាទុកក្នុង Browser (Local Storage Mode):", err);
-        activateLocalFallbackMode();
-      }
-    }
-
-    // ប្រព័ន្ធដំណើរការបម្រុង (Local Storage) ដើម្បីឱ្យដំណើរការជានិច្ចលើ VS Code ទោះគ្មានអ៊ីនធឺណិត
-    function activateLocalFallbackMode() {
-      useLocalFallback = true;
-      const savedBooks = JSON.parse(localStorage.getItem('khmer_lib_local_books') || 'null');
-      if (savedBooks && savedBooks.length > 0) {
-        allBooks = savedBooks;
-      } else {
-        allBooks = INITIAL_SAMPLE_BOOKS.map((b, idx) => ({ ...b, id: 'local_book_' + idx }));
-        localStorage.setItem('khmer_lib_local_books', JSON.stringify(allBooks));
-      }
-      allComments = JSON.parse(localStorage.getItem('khmer_lib_local_comments') || '[]');
-      
-      document.getElementById('loading-state').classList.add('hidden');
-      renderLibrary();
-      renderContinueReading();
-    }
-
-    async function syncAdminConfig() {
-      if (useLocalFallback) return;
-      try {
-        const snap = await getDoc(getConfigDocRef());
-        if (snap.exists() && snap.data().passcode) {
-          adminPasscode = snap.data().passcode;
-          localStorage.setItem('khmer_lib_admin_pass', adminPasscode);
-        } else {
-          await setDoc(getConfigDocRef(), { passcode: adminPasscode }, { merge: true });
-        }
-      } catch (e) {
-        console.warn("ប្រើប្រាស់លេខសម្ងាត់ក្នុង Browser:", e);
-      }
-    }
-
-    let hasAttemptedSeeding = false;
-
-    function subscribeToBooks() {
-      onSnapshot(getBooksCollection(), async (snapshot) => {
-        if (snapshot.empty && !hasAttemptedSeeding) {
-          hasAttemptedSeeding = true;
-          for (const sampleBook of INITIAL_SAMPLE_BOOKS) {
-            await addDoc(getBooksCollection(), sampleBook);
-          }
-          return;
-        }
-
-        const fetched = [];
-        snapshot.forEach(docSnap => {
-          fetched.push({ id: docSnap.id, ...docSnap.data() });
-        });
-
-        fetched.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-        allBooks = fetched;
-
-        document.getElementById('loading-state').classList.add('hidden');
-        renderLibrary();
-        renderContinueReading();
-      }, (error) => {
-        console.warn("ប្តូរទៅប្រើ Local Fallback ដោយសារ Firestore Rules ឬ Auth:", error);
-        activateLocalFallbackMode();
-      });
-    }
-
-    function subscribeToComments() {
-      onSnapshot(getCommentsCollection(), (snapshot) => {
-        const fetched = [];
-        snapshot.forEach(docSnap => {
-          fetched.push({ id: docSnap.id, ...docSnap.data() });
-        });
-        fetched.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-        allComments = fetched;
-
-        renderLibrary();
-        if (activeDetailBookId) {
-          renderDetailComments(activeDetailBookId);
-        }
-      }, (error) => {
-        console.warn("មិនអាចទាញយកមតិយោបល់ពី Cloud:", error);
-      });
-    }
-
-    // 5. Admin Authentication & UI Controls
-    function updateAdminUI() {
-      const headerBadge = document.getElementById('admin-badge-header');
-      const desktopControls = document.getElementById('desktop-admin-controls');
-      const mobilePanelBtn = document.getElementById('mobile-admin-panel-btn');
-      const mobileLogoutBtn = document.getElementById('mobile-admin-logout-btn');
-
-      if (isAdmin) {
-        if (headerBadge) headerBadge.classList.remove('hidden');
-        if (desktopControls) {
-          desktopControls.classList.remove('hidden');
-          desktopControls.classList.add('md:flex');
-        }
-        if (mobilePanelBtn) mobilePanelBtn.classList.remove('hidden');
-        if (mobileLogoutBtn) mobileLogoutBtn.classList.remove('hidden');
-      } else {
-        if (headerBadge) headerBadge.classList.add('hidden');
-        if (desktopControls) {
-          desktopControls.classList.add('hidden');
-          desktopControls.classList.remove('md:flex');
-        }
-        if (mobilePanelBtn) mobilePanelBtn.classList.add('hidden');
-        if (mobileLogoutBtn) mobileLogoutBtn.classList.add('hidden');
-      }
-      renderLibrary();
-    }
-
-    window.openAdminLoginModal = function() {
-      document.getElementById('admin-login-error').classList.add('hidden');
-      document.getElementById('admin-password-input').value = '';
-      document.getElementById('admin-login-modal').classList.remove('hidden');
-      setTimeout(() => document.getElementById('admin-password-input').focus(), 100);
-    };
-
-    window.closeAdminLoginModal = function() {
-      document.getElementById('admin-login-modal').classList.add('hidden');
-    };
-
-    window.handleAdminLogin = function(e) {
-      e.preventDefault();
-      const entered = document.getElementById('admin-password-input').value.trim();
-      if (entered === adminPasscode) {
-        isAdmin = true;
-        sessionStorage.setItem('khmer_lib_is_admin', 'true');
-        closeAdminLoginModal();
-        updateAdminUI();
-        showToast('ចូលប្រើប្រាស់ក្នុងនាម Admin បានជោគជ័យ!');
-      } else {
-        document.getElementById('admin-login-error').classList.remove('hidden');
-      }
-    };
-
-    window.logoutAdmin = function() {
-      isAdmin = false;
-      sessionStorage.removeItem('khmer_lib_is_admin');
-      updateAdminUI();
-      showToast('បានចាកចេញពីគណនី Admin');
-    };
-
-    window.openAdminSettingsModal = function() {
-      if (!isAdmin) return;
-      document.getElementById('new-admin-password-input').value = adminPasscode;
-      document.getElementById('admin-settings-modal').classList.remove('hidden');
-    };
-
-    window.closeAdminSettingsModal = function() {
-      document.getElementById('admin-settings-modal').classList.add('hidden');
-    };
-
-    window.handleUpdateAdminPassword = async function(e) {
-      e.preventDefault();
-      if (!isAdmin) return;
-      const newPass = document.getElementById('new-admin-password-input').value.trim();
-      if (newPass.length < 4) return;
-
-      // រក្សាទុកក្នុង Browser ភ្លាមៗជានិច្ច
-      adminPasscode = newPass;
-      localStorage.setItem('khmer_lib_admin_pass', newPass);
-
-      // ព្យាយាមរក្សាទុកទៅ Firestore ផងដែរ
-      if (!useLocalFallback && db) {
-        try {
-          await setDoc(getConfigDocRef(), { passcode: newPass }, { merge: true });
-        } catch (err) {
-          console.warn("រក្សាទុកលេខសម្ងាត់ក្នុង Browser រួចរាល់ (Firebase sync skipped):", err);
-        }
-      }
-
-      closeAdminSettingsModal();
-      showToast('បានផ្លាស់ប្តូរលេខសម្ងាត់ Admin ថ្មីជោគជ័យ!');
-    };
-
-    // 6. Categories & Library Rendering
-    const CATEGORIES = ['ទាំងអស់', 'រឿងប្រលោមលោក', 'ប្រវត្តិសាស្ត្រ', 'អប់រំ និងភាសា', 'អភិវឌ្ឍន៍ខ្លួន'];
-
-    function renderCategories() {
-      const container = document.getElementById('category-pills');
-      container.innerHTML = CATEGORIES.map(cat => {
-        const isActive = !showOnlyFavorites && activeCategory === cat;
-        return `
-          <button 
-            onclick="selectCategory('${cat}')"
-            class="px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition ${
-              isActive 
-                ? 'bg-emerald-700 text-white shadow-sm' 
-                : 'bg-stone-100 hover:bg-stone-200/80 text-slate-600'
-            }"
-          >
-            ${cat}
-          </button>
-        `;
-      }).join('');
-    }
-
-    window.selectCategory = function(cat) {
-      activeCategory = cat;
-      showOnlyFavorites = false;
-      updateFavButtonUI();
-      renderCategories();
-      renderLibrary();
-    };
-
-    window.toggleFavoritesFilter = function() {
-      showOnlyFavorites = !showOnlyFavorites;
-      updateFavButtonUI();
-      renderCategories();
-      renderLibrary();
-    };
-
-    function updateFavButtonUI() {
-      const btn = document.getElementById('fav-filter-btn');
-      if (showOnlyFavorites) {
-        btn.classList.add('border-amber-400', 'bg-amber-50', 'text-amber-900');
-        btn.classList.remove('border-stone-200', 'bg-white', 'text-slate-700');
-      } else {
-        btn.classList.remove('border-amber-400', 'bg-amber-50', 'text-amber-900');
-        btn.classList.add('border-stone-200', 'bg-white', 'text-slate-700');
-      }
-    }
-
-    function updateFavBadge() {
-      document.getElementById('fav-count-badge').textContent = toKhmerNum(favorites.length);
-    }
-
-    window.toggleFavorite = function(event, bookId) {
-      event.stopPropagation();
-      const index = favorites.indexOf(bookId);
-      if (index === -1) {
-        favorites.push(bookId);
-        showToast('បានរក្សាទុកសៀវភៅក្នុងបញ្ជី');
-      } else {
-        favorites.splice(index, 1);
-        showToast('បានដកចេញពីបញ្ជីរក្សាទុក');
-      }
-      localStorage.setItem('khmer_lib_favorites', JSON.stringify(favorites));
-      updateFavBadge();
-      renderLibrary();
-      if (activeDetailBookId === bookId) {
-        updateDetailBookmarkButton(bookId);
-      }
-    };
-
-    document.getElementById('search-input').addEventListener('input', (e) => {
-      searchQuery = e.target.value.trim().toLowerCase();
-      const clearBtn = document.getElementById('clear-search-btn');
-      if (searchQuery.length > 0) {
-        clearBtn.classList.remove('hidden');
-      } else {
-        clearBtn.classList.add('hidden');
-      }
-      renderLibrary();
+    // On page load
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      loadBooksFromDatabase();
     });
 
-    window.clearSearch = function() {
-      searchQuery = '';
-      document.getElementById('search-input').value = '';
-      document.getElementById('clear-search-btn').classList.add('hidden');
-      renderLibrary();
-    };
+    // Keyboard shortcut (Ctrl + M) with Password Prompt
+    document.addEventListener('keydown', function(event) {
+      if (event.ctrlKey && event.key.toLowerCase() === 'm') {
+        event.preventDefault(); // Prevent default browser behavior
 
-    window.resetFilters = function(e) {
-      if (e) e.preventDefault();
-      activeCategory = 'ទាំងអស់';
-      showOnlyFavorites = false;
-      clearSearch();
-      updateFavButtonUI();
-      renderCategories();
-      renderLibrary();
-    };
+        // Prompt for Admin Password
+        let password = prompt("សូមបញ្ចូលលេខសម្ងាត់ Admin:");
 
-    function getBookStats(bookId) {
-      const bookComments = allComments.filter(c => c.bookId === bookId);
-      if (bookComments.length === 0) return { count: 0, avg: 0 };
-      const sum = bookComments.reduce((acc, item) => acc + (Number(item.rating) || 5), 0);
-      return {
-        count: bookComments.length,
-        avg: (sum / bookComments.length).toFixed(1)
-      };
-    }
+        if (password === "adminmuoy2") { // អ្នកអាចប្តូរពាក្យសម្ងាត់តាមចិត្តចង់ទីនេះ
+          isAdminLoggedIn = true;
+          localStorage.setItem('library_admin_logged', 'true');
+          openBookEditorModal();
+        } else if (password !== null) {
+          alert('លេខសម្ងាត់មិនត្រឹមត្រូវទេ!');
+        }
+      }
+    });
 
-    function renderLibrary() {
-      const grid = document.getElementById('books-grid');
-      const emptyState = document.getElementById('empty-state');
-      const heading = document.getElementById('library-heading');
+    // Load Books from Firestore Cloud Database
+    function loadBooksFromDatabase() {
+      const loadingState = document.getElementById('loading-state');
+      const booksGrid = document.getElementById('books-grid');
       const countLabel = document.getElementById('book-count-label');
 
-      const filtered = allBooks.filter(book => {
-        if (showOnlyFavorites && !favorites.includes(book.id)) return false;
-        if (!showOnlyFavorites && activeCategory !== 'ទាំងអស់' && book.category !== activeCategory) return false;
-        if (searchQuery) {
-          const matchTitle = (book.title || '').toLowerCase().includes(searchQuery);
-          const matchAuthor = (book.author || '').toLowerCase().includes(searchQuery);
-          if (!matchTitle && !matchAuthor) return false;
-        }
-        return true;
-      });
+      db.collection("books").orderBy("createdAt", "desc").get()
+        .then((querySnapshot) => {
+          allBooks = [];
+          querySnapshot.forEach((doc) => {
+            let book = doc.data();
+            book.id = doc.id;
+            allBooks.push(book);
+          });
 
-      if (showOnlyFavorites) {
-        heading.textContent = 'សៀវភៅដែលបានរក្សាទុក';
-      } else if (activeCategory !== 'ទាំងអស់') {
-        heading.textContent = activeCategory;
-      } else {
-        heading.textContent = 'សៀវភៅទាំងអស់';
-      }
+          loadingState.classList.add('hidden');
+          booksGrid.classList.remove('hidden');
+          currentFilteredBooks = [...allBooks];
+          renderBooks(currentFilteredBooks);
+          renderCategories();
+          countLabel.innerText = `សរុប ${allBooks.length} ក្បាល`;
+        })
+        .catch((error) => {
+          console.error("Error loading books: ", error);
+          loadingState.innerHTML = `<p class="text-rose-500 text-center col-span-3">មានបញ្ហាក្នុងការទាញយកទិន្នន័យពី Cloud.</p>`;
+        });
+    }
 
-      countLabel.textContent = `${toKhmerNum(filtered.length)} ក្បាល`;
+    // Render Books to Grid
+    function renderBooks(books) {
+      const grid = document.getElementById('books-grid');
+      const emptyState = document.getElementById('empty-state');
+      grid.innerHTML = '';
 
-      if (filtered.length === 0) {
-        grid.classList.add('hidden');
+      if (books.length === 0) {
         emptyState.classList.remove('hidden');
         return;
       }
-
       emptyState.classList.add('hidden');
-      grid.classList.remove('hidden');
 
-      grid.innerHTML = filtered.map(book => {
-        const isFav = favorites.includes(book.id);
-        const chaptersCount = (book.chapters || []).length;
-        const gradient = book.coverGradient || 'from-emerald-800 via-teal-900 to-slate-900';
-        const stats = getBookStats(book.id);
+      books.forEach(book => {
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl border border-stone-200/90 shadow-sm hover:shadow-md transition-all p-5 flex flex-col justify-between group cursor-pointer";
+        card.onclick = () => openBookDetail(book.id);
 
-        const coverVisual = book.coverUrl
-          ? `<img src="${escapeHTML(book.coverUrl)}" alt="${escapeHTML(book.title)}" onerror="this.style.display='none'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />`
-          : `<div class="w-full h-full bg-gradient-to-br ${gradient} p-5 flex flex-col justify-between relative overflow-hidden">
-               <div class="absolute -right-6 -bottom-6 w-28 h-28 rounded-full bg-white/10"></div>
-               <div class="flex items-center justify-between relative z-10">
-                 <span class="px-2.5 py-1 rounded-lg bg-black/25 backdrop-blur-sm text-white/95 text-xs font-medium">
-                   ${escapeHTML(book.category || 'ទូទៅ')}
-                 </span>
-               </div>
-               <div class="relative z-10 my-auto pt-3">
-                 <h3 class="text-white font-serif font-bold text-lg sm:text-xl leading-snug line-clamp-2 drop-shadow-sm">
-                   ${escapeHTML(book.title)}
-                 </h3>
-               </div>
-             </div>`;
-
-        const adminActions = isAdmin
-          ? `<div class="flex items-center gap-1.5 pt-3 mt-3 border-t border-stone-100" onclick="event.stopPropagation()">
-               <button onclick="openBookEditorModal('${book.id}')" class="flex-1 inline-flex items-center justify-center gap-1 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-semibold transition">
-                 <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                 <span>កែសម្រួល</span>
-               </button>
-               <button onclick="confirmDeleteBook('${book.id}', '${escapeHTML(book.title)}')" class="inline-flex items-center justify-center p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition" title="លុបសៀវភៅ">
-                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-               </button>
-             </div>`
-          : '';
-
-        return `
-          <div onclick="openBookDetailModal('${book.id}')" class="group cursor-pointer bg-white rounded-2xl border border-stone-200/90 hover:border-emerald-300 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden">
-            <div class="h-44 relative overflow-hidden bg-stone-100">
-              ${coverVisual}
-              ${book.coverUrl ? `<span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-black/55 backdrop-blur-sm text-white text-xs font-medium">${escapeHTML(book.category)}</span>` : ''}
-              
-              <!-- Rating Pill -->
-              ${stats.count > 0 ? `
-                <div class="absolute bottom-3 left-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-black/60 backdrop-blur-sm text-amber-300 text-xs font-bold">
-                  <i data-lucide="star" class="w-3 h-3 fill-amber-400 text-amber-400"></i>
-                  <span>${toKhmerNum(stats.avg)}</span>
-                </div>
-              ` : ''}
-
-              <!-- Bookmark Button -->
-              <button 
-                onclick="toggleFavorite(event, '${book.id}')" 
-                title="${isFav ? 'ដកចេញពីបញ្ជីរក្សាទុក' : 'រក្សាទុកសៀវភៅ'}"
-                class="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-sm text-white flex items-center justify-center transition"
-              >
-                <i data-lucide="bookmark" class="w-4 h-4 ${isFav ? 'fill-amber-400 text-amber-400' : ''}"></i>
-              </button>
+        card.innerHTML = `
+          <div>
+            <div class="h-44 rounded-xl overflow-hidden bg-gradient-to-br from-emerald-800 to-teal-900 mb-4 flex items-center justify-center text-white text-3xl shadow-inner relative">
+              ${book.cover ? `<img src="${book.cover}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.remove()">` : '📖'}
+              <span class="absolute top-3 left-3 bg-black/40 backdrop-blur-md text-white text-[11px] px-2.5 py-1 rounded-lg font-medium">${book.category || 'ទូទៅ'}</span>
             </div>
-
-            <div class="p-5 flex-1 flex flex-col justify-between">
-              <div>
-                <div class="flex items-center gap-2 text-xs text-slate-500 mb-1.5 flex-wrap">
-                  <span class="font-medium text-emerald-800 flex items-center gap-1">
-                    <i data-lucide="pen-tool" class="w-3 h-3"></i>
-                    ${escapeHTML(book.author)}
-                  </span>
-                  <span>•</span>
-                  <span>${toKhmerNum(chaptersCount)} ជំពូក</span>
-                  <span>•</span>
-                  <span class="inline-flex items-center gap-1 text-slate-500">
-                    <i data-lucide="message-square" class="w-3 h-3"></i>
-                    ${toKhmerNum(stats.count)} មតិ
-                  </span>
-                </div>
-                <h4 class="font-bold text-slate-900 text-base mb-1.5 line-clamp-1 group-hover:text-emerald-800 transition-colors">
-                  ${escapeHTML(book.title)}
-                </h4>
-                <p class="text-xs sm:text-sm text-slate-500 line-clamp-2 leading-relaxed">
-                  ${escapeHTML(book.description || '')}
-                </p>
-              </div>
-
-              <div class="mt-4 pt-3 border-t border-stone-100">
-                <div class="flex items-center gap-2">
-                  <button 
-                    onclick="event.stopPropagation(); openBook('${book.id}', 0)" 
-                    class="flex-1 inline-flex items-center justify-center gap-2 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white font-semibold text-xs sm:text-sm py-2.5 px-3 rounded-xl transition"
-                  >
-                    <i data-lucide="book-open" class="w-4 h-4"></i>
-                    <span>អានឥឡូវនេះ</span>
-                  </button>
-                  <button 
-                    onclick="event.stopPropagation(); openBookDetailModal('${book.id}', true)" 
-                    title="មើលមតិយោបល់"
-                    class="inline-flex items-center justify-center gap-1 px-3 py-2.5 rounded-xl border border-stone-200 hover:bg-stone-50 text-slate-600 text-xs font-medium transition"
-                  >
-                    <i data-lucide="message-square" class="w-4 h-4 text-emerald-700"></i>
-                    <span>មតិ</span>
-                  </button>
-                </div>
-                ${adminActions}
-              </div>
-            </div>
+            <h3 class="font-bold text-slate-900 text-base line-clamp-1 group-hover:text-emerald-700 transition">${book.title}</h3>
+            <p class="text-xs text-emerald-800 font-medium mt-1">${book.author}</p>
+            <p class="text-xs text-slate-500 line-clamp-2 mt-2">${book.description || 'គ្មានសេចក្តីសង្ខេប'}</p>
+          </div>
+          <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-slate-500">
+            <span>${book.chapters ? book.chapters.length : 0} ជំពូក</span>
+            <span class="text-emerald-700 font-semibold group-hover:underline">អានសៀវភៅ &rarr;</span>
           </div>
         `;
-      }).join('');
-
-      if (window.lucide) {
-        lucide.createIcons();
-      }
+        grid.appendChild(card);
+      });
+      lucide.createIcons();
     }
 
-    // 7. Book Details Modal & Live Reader Comments
-    window.openBookDetailModal = function(bookId, scrollToComments = false) {
-      const book = allBooks.find(b => b.id === bookId);
-      if (!book) return;
+    // Render Categories
+    function renderCategories() {
+      const container = document.getElementById('category-pills');
+      const categories = ['ទាំងអស់', ...new Set(allBooks.map(b => b.category).filter(Boolean))];
+      
+      container.innerHTML = categories.map((cat, idx) => `
+        <button onclick="filterByCategory('${cat}')" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${idx === 0 ? 'bg-emerald-700 text-white shadow-sm' : 'bg-white border border-stone-200 text-slate-600 hover:bg-stone-50'}">
+          ${cat}
+        </button>
+      `).join('');
+    }
 
-      activeDetailBookId = bookId;
-      const stats = getBookStats(bookId);
-
-      document.getElementById('detail-category-badge').textContent = book.category || 'ទូទៅ';
-      document.getElementById('detail-title').textContent = book.title;
-      document.getElementById('detail-author').innerHTML = `<i data-lucide="pen-tool" class="w-4 h-4"></i><span>អ្នកនិពន្ធ៖ ${escapeHTML(book.author)}</span>`;
-      document.getElementById('detail-description').textContent = book.description || '';
-
-      const ratingSummary = document.getElementById('detail-rating-summary');
-      ratingSummary.innerHTML = stats.count > 0
-        ? `<i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400 text-amber-400"></i><span>${toKhmerNum(stats.avg)} / ៥ (${toKhmerNum(stats.count)} មតិ)</span>`
-        : `<i data-lucide="star" class="w-3.5 h-3.5 text-amber-400"></i><span>មិនទាន់មានពិន្ទុ</span>`;
-
-      const gradient = book.coverGradient || 'from-emerald-700 to-teal-900';
-      const coverBox = document.getElementById('detail-cover-box');
-      if (book.coverUrl) {
-        coverBox.innerHTML = `<img src="${escapeHTML(book.coverUrl)}" alt="${escapeHTML(book.title)}" class="w-full h-full object-cover" />`;
+    function filterByCategory(cat) {
+      if (cat === 'ទាំងអស់') {
+        currentFilteredBooks = [...allBooks];
       } else {
-        coverBox.innerHTML = `
-          <div class="w-full h-full bg-gradient-to-br ${gradient} p-5 flex flex-col justify-between text-white">
-            <span class="text-xs bg-white/20 px-2.5 py-1 rounded-lg w-fit">${escapeHTML(book.category)}</span>
-            <h4 class="font-serif font-bold text-xl leading-snug">${escapeHTML(book.title)}</h4>
-          </div>`;
+        currentFilteredBooks = allBooks.filter(b => b.category === cat);
       }
+      renderBooks(currentFilteredBooks);
+    }
 
-      const startBtn = document.getElementById('detail-start-read-btn');
-      startBtn.onclick = () => {
-        closeBookDetailModal();
-        openBook(bookId, 0);
+    // Search Input
+    function handleSearchInput(keyword) {
+      const query = keyword.toLowerCase().trim();
+      currentFilteredBooks = allBooks.filter(b => 
+        b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query)
+      );
+      renderBooks(currentFilteredBooks);
+    }
+
+    function clearSearch() {
+      document.getElementById('search-input').value = '';
+      currentFilteredBooks = [...allBooks];
+      renderBooks(currentFilteredBooks);
+    }
+
+    // Book Editor Modal (Add Book)
+    function openBookEditorModal() {
+      document.getElementById('book-editor-modal').classList.remove('hidden');
+    }
+    function closeBookEditorModal() { document.getElementById('book-editor-modal').classList.add('hidden'); }
+
+    // Save New Book to Firestore Cloud
+    function handleSaveNewBook(e) {
+      e.preventDefault();
+      const title = document.getElementById('edit-title').value;
+      const author = document.getElementById('edit-author').value;
+      const category = document.getElementById('edit-category').value;
+      const cover = document.getElementById('edit-cover').value;
+      const description = document.getElementById('edit-desc').value;
+      const chTitle = document.getElementById('edit-ch-title').value || 'ជំពូកទី ១';
+      const chContent = document.getElementById('edit-ch-content').value || 'អត្ថបទសាច់រឿង...';
+
+      const newBook = {
+        title,
+        author,
+        category,
+        cover,
+        description,
+        chapters: [{ title: chTitle, content: chContent }],
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      const bookmarkBtn = document.getElementById('detail-bookmark-btn');
-      bookmarkBtn.onclick = (e) => toggleFavorite(e, bookId);
-      updateDetailBookmarkButton(bookId);
+      db.collection("books").add(newBook)
+        .then(() => {
+          alert('បានបន្ថែមសៀវភៅទៅកាន់ Cloud Database ជោគជ័យ!');
+          closeBookEditorModal();
+          loadBooksFromDatabase();
+        })
+        .catch(error => {
+          console.error("Error adding book: ", error);
+          alert('មានបញ្ហាក្នុងการបន្ថែមសៀវភៅ។');
+        });
+    }
 
-      // Chapters list
-      const chapters = book.chapters || [];
-      document.getElementById('detail-chapters-count').textContent = toKhmerNum(chapters.length);
-      document.getElementById('detail-chapters-list').innerHTML = chapters.map((ch, idx) => `
-        <button 
-          onclick="closeBookDetailModal(); openBook('${bookId}', ${idx})" 
-          class="flex items-center justify-between p-3 rounded-xl border border-stone-200 hover:border-emerald-500 hover:bg-emerald-50/50 text-left transition group"
-        >
-          <div class="flex items-center gap-2.5 min-w-0">
-            <span class="w-7 h-7 rounded-lg bg-stone-100 group-hover:bg-emerald-700 group-hover:text-white text-slate-600 text-xs font-bold flex items-center justify-center shrink-0 transition">
-              ${toKhmerNum(idx + 1)}
-            </span>
-            <span class="text-sm font-medium text-slate-800 truncate">${escapeHTML(ch.title)}</span>
-          </div>
-          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-emerald-700 shrink-0"></i>
+    // Book Details View
+    function openBookDetail(bookId) {
+      currentSelectedBook = allBooks.find(b => b.id === bookId);
+      if (!currentSelectedBook) return;
+
+      document.getElementById('detail-title').innerText = currentSelectedBook.title;
+      document.getElementById('detail-author').innerText = currentSelectedBook.author;
+      document.getElementById('detail-description').innerText = currentSelectedBook.description || '';
+      document.getElementById('detail-category-badge').innerText = currentSelectedBook.category || 'ទូទៅ';
+      
+      const chaptersList = document.getElementById('detail-chapters-list');
+      chaptersList.innerHTML = (currentSelectedBook.chapters || []).map((ch, idx) => `
+        <button onclick="startReading(${idx})" class="p-3 rounded-xl border border-stone-200 hover:border-emerald-600 hover:bg-emerald-50/50 text-left transition flex items-center justify-between group">
+          <span class="text-sm font-medium text-slate-800 group-hover:text-emerald-900">${ch.title}</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
         </button>
       `).join('');
 
-      setCommentRating(5);
-      renderDetailComments(bookId);
-
-      const modal = document.getElementById('book-detail-modal');
-      modal.classList.remove('hidden');
-      if (window.lucide) {
-        lucide.createIcons();
-      }
-
-      if (scrollToComments) {
-        setTimeout(() => {
-          document.getElementById('comment-form').scrollIntoView({ behavior: 'smooth' });
-        }, 150);
-      }
-    };
-
-    function updateDetailBookmarkButton(bookId) {
-      const isFav = favorites.includes(bookId);
-      const btn = document.getElementById('detail-bookmark-btn');
-      btn.innerHTML = isFav
-        ? `<i data-lucide="bookmark" class="w-4 h-4 fill-amber-500 text-amber-500"></i><span class="text-amber-700 font-semibold">បានរក្សាទុក</span>`
-        : `<i data-lucide="bookmark" class="w-4 h-4"></i><span>រក្សាទុក</span>`;
-      if (window.lucide) {
-        lucide.createIcons();
-      }
+      document.getElementById('detail-start-read-btn').onclick = () => startReading(0);
+      document.getElementById('book-detail-modal').classList.remove('hidden');
+      lucide.createIcons();
     }
 
-    window.closeBookDetailModal = function() {
-      document.getElementById('book-detail-modal').classList.add('hidden');
-      activeDetailBookId = null;
-    };
+    function closeBookDetailModal() { document.getElementById('book-detail-modal').classList.add('hidden'); }
 
-    window.setCommentRating = function(rating) {
-      selectedCommentRating = rating;
-      const buttons = document.querySelectorAll('#star-rating-selector .star-btn');
-      buttons.forEach(btn => {
-        const starVal = Number(btn.getAttribute('data-star'));
-        const icon = btn.querySelector('svg') || btn.querySelector('i');
-        if (starVal <= rating) {
-          btn.classList.add('text-amber-400');
-          btn.classList.remove('text-stone-300');
-          if (icon) icon.classList.add('fill-amber-400');
-        } else {
-          btn.classList.remove('text-amber-400');
-          btn.classList.add('text-stone-300');
-          if (icon) icon.classList.remove('fill-amber-400');
-        }
-      });
-    };
+    // Dedicated Reader View
+    function startReading(chapterIdx) {
+      currentChapterIndex = chapterIdx;
+      closeBookDetailModal();
 
-    window.handlePostComment = async function(e) {
-      e.preventDefault();
-      if (!activeDetailBookId) return;
-
-      const userName = document.getElementById('comment-user-name').value.trim();
-      const text = document.getElementById('comment-text').value.trim();
-      if (!userName || !text) return;
-
-      const btn = document.getElementById('submit-comment-btn');
-      btn.disabled = true;
-
-      const newComment = {
-        id: 'comment_' + Date.now(),
-        bookId: activeDetailBookId,
-        userName: userName,
-        rating: selectedCommentRating,
-        text: text,
-        createdAt: Date.now()
-      };
-
-      try {
-        if (!useLocalFallback && db) {
-          await addDoc(getCommentsCollection(), newComment);
-        } else {
-          allComments.unshift(newComment);
-          localStorage.setItem('khmer_lib_local_comments', JSON.stringify(allComments));
-          renderDetailComments(activeDetailBookId);
-          renderLibrary();
-        }
-        document.getElementById('comment-text').value = '';
-        showToast('អរគុណ! មតិយោបល់របស់អ្នកត្រូវបានបង្ហោះ');
-      } catch (err) {
-        allComments.unshift(newComment);
-        localStorage.setItem('khmer_lib_local_comments', JSON.stringify(allComments));
-        renderDetailComments(activeDetailBookId);
-        renderLibrary();
-        document.getElementById('comment-text').value = '';
-        showToast('មតិយោបល់របស់អ្នកត្រូវបានរក្សាទុក!');
-      } finally {
-        btn.disabled = false;
-      }
-    };
-
-    function renderDetailComments(bookId) {
-      const list = document.getElementById('comments-list');
-      const bookComments = allComments.filter(c => c.bookId === bookId);
-      document.getElementById('detail-comments-count').textContent = toKhmerNum(bookComments.length);
-
-      if (bookComments.length === 0) {
-        list.innerHTML = `
-          <div class="text-center py-8 px-4 bg-stone-50/70 rounded-2xl border border-dashed border-stone-200 text-slate-400 text-sm">
-            មិនទាន់មានមតិយោបល់សម្រាប់សៀវភៅនេះនៅឡើយទេ។ សូមក្លាយជាអ្នកបញ្ចេញមតិដំបូងគេ!
-          </div>
-        `;
-        return;
-      }
-
-      list.innerHTML = bookComments.map(c => {
-        const starsHtml = Array.from({ length: 5 }, (_, i) => {
-          const filled = i < (c.rating || 5);
-          return `<i data-lucide="star" class="w-3.5 h-3.5 ${filled ? 'fill-amber-400 text-amber-400' : 'text-stone-300'}"></i>`;
-        }).join('');
-
-        const dateStr = c.createdAt
-          ? new Date(c.createdAt).toLocaleDateString('km-KH', { year: 'numeric', month: 'short', day: 'numeric' })
-          : 'ថ្មីៗនេះ';
-
-        const deleteBtn = isAdmin
-          ? `<button onclick="deleteComment('${c.id}')" title="លុបមតិយោបល់ (Admin)" class="text-xs text-rose-500 hover:text-rose-700 px-2 py-1 rounded-lg hover:bg-rose-50 transition">លុប</button>`
-          : '';
-
-        return `
-          <div class="p-4 rounded-2xl bg-white border border-stone-200/80 shadow-xs space-y-2">
-            <div class="flex items-center justify-between gap-2">
-              <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0">
-                  ${escapeHTML((c.userName || 'អ').charAt(0).toUpperCase())}
-                </div>
-                <div>
-                  <h5 class="text-sm font-bold text-slate-800 leading-none">${escapeHTML(c.userName)}</h5>
-                  <span class="text-[11px] text-slate-400">${dateStr}</span>
-                </div>
-              </div>
-              <div class="flex items-center gap-2">
-                <div class="flex items-center gap-0.5">${starsHtml}</div>
-                ${deleteBtn}
-              </div>
-            </div>
-            <p class="text-sm text-slate-600 leading-relaxed pl-10">
-              ${escapeHTML(c.text)}
-            </p>
-          </div>
-        `;
-      }).join('');
-
-      if (window.lucide) {
-        lucide.createIcons();
-      }
-    }
-
-    window.deleteComment = async function(commentId) {
-      if (!isAdmin) return;
-      try {
-        if (!useLocalFallback && db) {
-          await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'comments', commentId));
-        } else {
-          allComments = allComments.filter(c => c.id !== commentId);
-          localStorage.setItem('khmer_lib_local_comments', JSON.stringify(allComments));
-          if (activeDetailBookId) renderDetailComments(activeDetailBookId);
-          renderLibrary();
-        }
-        showToast('បានលុបមតិយោបល់');
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    // 8. Admin Book Creator / Editor / Deleter
-    window.openBookEditorModal = function(bookId = null) {
-      if (!isAdmin) {
-        openAdminLoginModal();
-        return;
-      }
-
-      const modal = document.getElementById('book-editor-modal');
-      const titleEl = document.getElementById('editor-modal-title');
-      const container = document.getElementById('chapters-builder-container');
-      container.innerHTML = '';
-
-      if (bookId) {
-        const book = allBooks.find(b => b.id === bookId);
-        if (!book) return;
-        titleEl.textContent = 'កែសម្រួលសៀវភៅ (Admin)';
-        document.getElementById('edit-book-id').value = book.id;
-        document.getElementById('book-title-input').value = book.title || '';
-        document.getElementById('book-author-input').value = book.author || '';
-        document.getElementById('book-category-input').value = book.category || 'រឿងប្រលោមលោក';
-        document.getElementById('book-cover-url-input').value = book.coverUrl || '';
-        document.getElementById('book-desc-input').value = book.description || '';
-
-        (book.chapters || []).forEach(ch => addChapterInputBlock(ch.title, ch.content));
-      } else {
-        titleEl.textContent = 'បង្ហោះសៀវភៅថ្មី (Admin)';
-        document.getElementById('edit-book-id').value = '';
-        document.getElementById('book-editor-form').reset();
-        addChapterInputBlock('ជំពូកទី ១៖ ', '');
-      }
-
-      modal.classList.remove('hidden');
-      if (window.lucide) {
-        lucide.createIcons();
-      }
-    };
-
-    window.closeBookEditorModal = function() {
-      document.getElementById('book-editor-modal').classList.add('hidden');
-    };
-
-    window.addChapterInputBlock = function(chTitle = '', chContent = '') {
-      const container = document.getElementById('chapters-builder-container');
-      const index = container.children.length + 1;
-
-      const block = document.createElement('div');
-      block.className = 'chapter-input-block p-4 rounded-2xl bg-stone-50 border border-stone-200 space-y-3 relative';
-      block.innerHTML = `
-        <div class="flex items-center justify-between">
-          <span class="chapter-number-badge text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-lg">
-            ជំពូកទី ${toKhmerNum(index)}
-          </span>
-          <button type="button" onclick="removeChapterInputBlock(this)" class="text-xs text-rose-500 hover:text-rose-700 font-medium flex items-center gap-1">
-            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            <span>លុបជំពូកនេះ</span>
-          </button>
-        </div>
-        <div>
-          <input type="text" class="chapter-title-field w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm font-medium outline-none" required placeholder="ចំណងជើងជំពូក (ឧទាហរណ៍៖ ជំពូកទី ${toKhmerNum(index)}៖ ការចាប់ផ្តើម)" value="${escapeHTML(chTitle)}" />
-        </div>
-        <div>
-          <textarea rows="5" class="chapter-content-field w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm leading-relaxed outline-none" required placeholder="សរសេរ ឬចម្លងខ្លឹមសារសាច់រឿងនៃជំពូកនេះដាក់ទីនេះ...">${escapeHTML(chContent)}</textarea>
-        </div>
-      `;
-      container.appendChild(block);
-      renumberChapterBlocks();
-      if (window.lucide) {
-        lucide.createIcons();
-      }
-    };
-
-    window.removeChapterInputBlock = function(btn) {
-      const container = document.getElementById('chapters-builder-container');
-      if (container.children.length <= 1) {
-        showToast('សៀវភៅត្រូវមានយ៉ាងហោចណាស់ ១ ជំពូក!');
-        return;
-      }
-      btn.closest('.chapter-input-block').remove();
-      renumberChapterBlocks();
-    };
-
-    function renumberChapterBlocks() {
-      const blocks = document.querySelectorAll('#chapters-builder-container .chapter-input-block');
-      blocks.forEach((blk, i) => {
-        blk.querySelector('.chapter-number-badge').textContent = `ជំពូកទី ${toKhmerNum(i + 1)}`;
-      });
-    }
-
-    const COVER_GRADIENTS = [
-      'from-emerald-800 via-teal-900 to-slate-900',
-      'from-amber-800 via-orange-900 to-stone-900',
-      'from-sky-800 via-blue-900 to-indigo-950',
-      'from-purple-900 via-violet-950 to-slate-900',
-      'from-rose-800 via-red-900 to-stone-900'
-    ];
-
-    window.handleSaveBook = async function(e) {
-      e.preventDefault();
-      if (!isAdmin) return;
-
-      const editId = document.getElementById('edit-book-id').value;
-      const title = document.getElementById('book-title-input').value.trim();
-      const author = document.getElementById('book-author-input').value.trim();
-      const category = document.getElementById('book-category-input').value;
-      const coverUrl = document.getElementById('book-cover-url-input').value.trim();
-      const description = document.getElementById('book-desc-input').value.trim();
-
-      const chapterBlocks = document.querySelectorAll('#chapters-builder-container .chapter-input-block');
-      const chapters = [];
-      chapterBlocks.forEach(blk => {
-        const cTitle = blk.querySelector('.chapter-title-field').value.trim();
-        const cContent = blk.querySelector('.chapter-content-field').value.trim();
-        if (cTitle && cContent) {
-          chapters.push({ title: cTitle, content: cContent });
-        }
-      });
-
-      if (chapters.length === 0) {
-        showToast('សូមបំពេញខ្លឹមសារជំពូកយ៉ាងតិច ១!');
-        return;
-      }
-
-      const saveBtn = document.getElementById('save-book-btn');
-      saveBtn.disabled = true;
-
-      try {
-        if (!useLocalFallback && db) {
-          if (editId) {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'books', editId), {
-              title, author, category, coverUrl, description, chapters, updatedAt: Date.now()
-            });
-            showToast('បានកែសម្រួលសៀវភៅជោគជ័យ!');
-          } else {
-            const randomGrad = COVER_GRADIENTS[Math.floor(Math.random() * COVER_GRADIENTS.length)];
-            await addDoc(getBooksCollection(), {
-              title, author, category, coverUrl, description, chapters,
-              coverGradient: randomGrad,
-              createdAt: Date.now()
-            });
-            showToast('បានផ្សព្វផ្សាយសៀវភៅថ្មីជោគជ័យ!');
-          }
-        } else {
-          // Local Fallback Save
-          if (editId) {
-            const idx = allBooks.findIndex(b => b.id === editId);
-            if (idx !== -1) {
-              allBooks[idx] = { ...allBooks[idx], title, author, category, coverUrl, description, chapters };
-            }
-            showToast('បានកែសម្រួលសៀវភៅជោគជ័យ!');
-          } else {
-            const randomGrad = COVER_GRADIENTS[Math.floor(Math.random() * COVER_GRADIENTS.length)];
-            allBooks.unshift({
-              id: 'local_book_' + Date.now(),
-              title, author, category, coverUrl, description, chapters,
-              coverGradient: randomGrad,
-              createdAt: Date.now()
-            });
-            showToast('បានផ្សព្វផ្សាយសៀវភៅថ្មីជោគជ័យ!');
-          }
-          localStorage.setItem('khmer_lib_local_books', JSON.stringify(allBooks));
-          renderLibrary();
-        }
-        closeBookEditorModal();
-      } catch (err) {
-        console.error(err);
-        showToast('មានបញ្ហាក្នុងការរក្សាទុកសៀវភៅ');
-      } finally {
-        saveBtn.disabled = false;
-      }
-    };
-
-    window.confirmDeleteBook = function(bookId, bookTitle) {
-      if (!isAdmin) return;
-      const modal = document.getElementById('confirm-modal');
-      document.getElementById('confirm-modal-title').textContent = 'លុបសៀវភៅចេញពីបណ្ណាល័យ?';
-      document.getElementById('confirm-modal-msg').textContent = `តើអ្នកពិតជាចង់លុបសៀវភៅ "${bookTitle}" មែនទេ? ទិន្នន័យនេះមិនអាចយកត្រឡប់វិញបានទេ។`;
-
-      const yesBtn = document.getElementById('confirm-modal-yes-btn');
-      yesBtn.onclick = async () => {
-        closeConfirmModal();
-        try {
-          if (!useLocalFallback && db) {
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'books', bookId));
-          } else {
-            allBooks = allBooks.filter(b => b.id !== bookId);
-            localStorage.setItem('khmer_lib_local_books', JSON.stringify(allBooks));
-            renderLibrary();
-          }
-          showToast('បានលុបសៀវភៅរួចរាល់');
-        } catch (err) {
-          console.error(err);
-          showToast('មិនអាចលុបសៀវភៅបានទេ');
-        }
-      };
-
-      modal.classList.remove('hidden');
-    };
-
-    window.closeConfirmModal = function() {
-      document.getElementById('confirm-modal').classList.add('hidden');
-    };
-
-    // 9. Continue Reading Banner
-    function renderContinueReading() {
-      const section = document.getElementById('continue-reading-section');
-      if (!lastRead || !lastRead.bookId) {
-        section.classList.add('hidden');
-        return;
-      }
-      const book = allBooks.find(b => b.id === lastRead.bookId);
-      if (!book) {
-        section.classList.add('hidden');
-        return;
-      }
-
-      const chapterIdx = Math.min(lastRead.chapterIndex || 0, (book.chapters || []).length - 1);
-      const chapter = book.chapters[chapterIdx];
-
-      document.getElementById('continue-book-title').textContent = book.title;
-      document.getElementById('continue-chapter-info').textContent = `${chapter ? chapter.title : 'ជំពូកទី ១'} • ${book.author}`;
-      document.getElementById('continue-read-btn').onclick = () => openBook(book.id, chapterIdx);
-
-      section.classList.remove('hidden');
-    }
-
-    window.dismissContinueReading = function() {
-      localStorage.removeItem('khmer_lib_last_read');
-      lastRead = null;
-      document.getElementById('continue-reading-section').classList.add('hidden');
-    };
-
-    // 10. Dedicated Book Reader Engine
-    window.openBook = function(bookId, chapterIndex = 0) {
-      const book = allBooks.find(b => b.id === bookId);
-      if (!book || !book.chapters || book.chapters.length === 0) return;
-
-      activeReaderBook = book;
-      activeChapterIndex = Math.max(0, Math.min(chapterIndex, book.chapters.length - 1));
-
-      document.getElementById('reader-book-title').textContent = book.title;
-      document.getElementById('reader-book-author').textContent = book.author;
-
-      const selectEl = document.getElementById('chapter-select');
-      selectEl.innerHTML = book.chapters.map((ch, idx) => `
-        <option value="${idx}">${escapeHTML(ch.title)}</option>
-      `).join('');
-
-      renderCurrentChapter();
+      document.getElementById('reader-book-title').innerText = currentSelectedBook.title;
+      document.getElementById('reader-chapter-title').innerText = currentSelectedBook.chapters[chapterIdx].title;
+      document.getElementById('reader-content-body').innerHTML = currentSelectedBook.chapters[chapterIdx].content
+        .split('\n').map(p => `<p>${p}</p>`).join('');
 
       document.getElementById('reader-view').classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-      if (window.lucide) {
-        lucide.createIcons();
-      }
-    };
-
-    window.closeReader = function() {
-      document.getElementById('reader-view').classList.add('hidden');
-      document.getElementById('reader-settings-panel').classList.add('hidden');
-      document.body.style.overflow = '';
-      renderContinueReading();
-    };
-
-    window.openCommentsFromReader = function() {
-      const bookId = activeReaderBook ? activeReaderBook.id : null;
-      closeReader();
-      if (bookId) {
-        openBookDetailModal(bookId, true);
-      }
-    };
-
-    window.selectChapter = function(indexStr) {
-      activeChapterIndex = parseInt(indexStr, 10) || 0;
-      renderCurrentChapter();
-    };
-
-    window.navigateChapter = function(delta) {
-      if (!activeReaderBook) return;
-      const nextIdx = activeChapterIndex + delta;
-      if (nextIdx >= 0 && nextIdx < activeReaderBook.chapters.length) {
-        activeChapterIndex = nextIdx;
-        renderCurrentChapter();
-      }
-    };
-
-    function renderCurrentChapter() {
-      if (!activeReaderBook) return;
-      const totalChapters = activeReaderBook.chapters.length;
-      const chapter = activeReaderBook.chapters[activeChapterIndex];
-
-      document.getElementById('chapter-select').value = activeChapterIndex;
-      document.getElementById('reader-chapter-badge').textContent = `ជំពូកទី ${toKhmerNum(activeChapterIndex + 1)} នៃ ${toKhmerNum(totalChapters)}`;
-      document.getElementById('reader-chapter-title').textContent = chapter.title;
-      document.getElementById('bottom-chapter-indicator').textContent = `${toKhmerNum(activeChapterIndex + 1)} / ${toKhmerNum(totalChapters)}`;
-
-      const paragraphs = (chapter.content || '').split('\n').filter(p => p.trim() !== '');
-      document.getElementById('reader-content-body').innerHTML = paragraphs.map(p => `<p class="indent-8">${escapeHTML(p)}</p>`).join('');
-
-      document.getElementById('prev-chapter-btn').disabled = activeChapterIndex === 0;
-      document.getElementById('next-chapter-btn').disabled = activeChapterIndex === totalChapters - 1;
-
-      const scrollContainer = document.getElementById('reader-scroll-container');
-      scrollContainer.scrollTop = 0;
-      document.getElementById('reading-progress-bar').style.width = '0%';
-
-      lastRead = {
-        bookId: activeReaderBook.id,
-        chapterIndex: activeChapterIndex,
-        updatedAt: Date.now()
-      };
-      localStorage.setItem('khmer_lib_last_read', JSON.stringify(lastRead));
+      document.getElementById('reader-scroll-container').scrollTop = 0;
     }
 
-    window.updateReadingProgress = function() {
-      const el = document.getElementById('reader-scroll-container');
-      const scrollTop = el.scrollTop;
-      const scrollHeight = el.scrollHeight - el.clientHeight;
-      const pct = scrollHeight > 0 ? Math.min(100, Math.round((scrollTop / scrollHeight) * 100)) : 100;
-      document.getElementById('reading-progress-bar').style.width = `${pct}%`;
-    };
-
-    // 11. Reader Typography & Theme Customization
-    window.toggleSettingsPanel = function() {
-      document.getElementById('reader-settings-panel').classList.toggle('hidden');
-    };
-
-    window.setReaderTheme = function(themeName) {
-      readerSettings.theme = themeName;
-      saveReaderSettings();
-      applyReaderSettings();
-    };
-
-    window.changeFontSize = function(delta) {
-      const next = readerSettings.fontSize + delta;
-      if (next >= 15 && next <= 28) {
-        readerSettings.fontSize = next;
-        saveReaderSettings();
-        applyReaderSettings();
-      }
-    };
-
-    window.setLineHeight = function(lh) {
-      readerSettings.lineHeight = lh;
-      saveReaderSettings();
-      applyReaderSettings();
-    };
-
-    function saveReaderSettings() {
-      localStorage.setItem('khmer_lib_reader_settings', JSON.stringify(readerSettings));
-    }
-
-    function applyReaderSettings() {
-      const readerView = document.getElementById('reader-view');
-      const readerHeader = document.getElementById('reader-header');
-      const contentBody = document.getElementById('reader-content-body');
-
-      readerView.classList.remove('bg-white', 'text-slate-800', 'bg-[#f6efe2]', 'text-[#433422]', 'bg-slate-950', 'text-slate-200');
-      readerHeader.classList.remove('border-stone-200/80', 'border-[#dfd3be]', 'border-slate-800');
-
-      if (readerSettings.theme === 'sepia') {
-        readerView.classList.add('bg-[#f6efe2]', 'text-[#433422]');
-        readerHeader.classList.add('border-[#dfd3be]');
-      } else if (readerSettings.theme === 'dark') {
-        readerView.classList.add('bg-slate-950', 'text-slate-200');
-        readerHeader.classList.add('border-slate-800');
-      } else {
-        readerView.classList.add('bg-white', 'text-slate-800');
-        readerHeader.classList.add('border-stone-200/80');
-      }
-
-      document.querySelectorAll('.theme-btn').forEach(btn => {
-        if (btn.getAttribute('data-theme-btn') === readerSettings.theme) {
-          btn.classList.add('ring-2', 'ring-emerald-600');
-        } else {
-          btn.classList.remove('ring-2', 'ring-emerald-600');
-        }
-      });
-
-      contentBody.style.fontSize = `${readerSettings.fontSize}px`;
-      document.getElementById('font-size-display').textContent = `${readerSettings.fontSize}px`;
-
-      contentBody.style.lineHeight = readerSettings.lineHeight;
-      document.querySelectorAll('.lh-btn').forEach(btn => {
-        if (btn.getAttribute('data-lh-btn') === readerSettings.lineHeight) {
-          btn.classList.add('bg-emerald-700', 'text-white');
-        } else {
-          btn.classList.remove('bg-emerald-700', 'text-white');
-        }
-      });
-    }
-
-    document.addEventListener('keydown', (e) => {
-      // ផ្លូវកាត់សម្ងាត់៖ ចុច Ctrl + M ដើម្បីបើកផ្ទាំង Admin Login
-      if (e.ctrlKey && e.key.toLowerCase() === 'm') {
-        e.preventDefault();
-        openAdminLoginModal();
-        return;
-      }
-
-      if (document.getElementById('reader-view').classList.contains('hidden')) return;
-      if (e.key === 'ArrowRight') navigateChapter(1);
-      if (e.key === 'ArrowLeft') navigateChapter(-1);
-      if (e.key === 'Escape') closeReader();
-    });
-
-    // Start Application
-    bootApplication();
+    function closeReader() { document.getElementById('reader-view').classList.add('hidden'); }
   </script>
 </body>
 </html>
