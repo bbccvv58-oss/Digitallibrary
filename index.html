@@ -15,6 +15,7 @@
   
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
@@ -33,6 +34,21 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .reader-transition { transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease; }
+    .selectable-text {
+      user-select: text;
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+    }
+    
+    #category-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+      margin-bottom: 24px;
+      scroll-behavior: smooth;
+    }
   </style>
 
   <!-- Firebase SDKs (CDN Compat Version) -->
@@ -81,24 +97,7 @@
                 <i data-lucide="x-circle" class="w-4 h-4"></i>
               </button>
             </div>
-
-            <!-- Favorites Filter Toggle -->
-            <button 
-              id="fav-filter-btn" 
-              onclick="toggleFavoritesFilter()" 
-              title="សៀវភៅដែលបានរក្សាទុក"
-              class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-slate-700 text-sm font-medium transition shrink-0"
-            >
-              <i data-lucide="bookmark" class="w-4 h-4 text-amber-500"></i>
-              <span class="hidden lg:inline">រក្សាទុក</span>
-              <span id="fav-count-badge" class="bg-stone-100 text-slate-600 text-xs px-1.5 py-0.5 rounded-full font-semibold">០</span>
-            </button>
           </div>
-        </div>
-
-        <!-- Category Filter Pills -->
-        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-3 pt-1" id="category-pills">
-          <!-- Populated dynamically via JS -->
         </div>
       </div>
     </header>
@@ -107,7 +106,7 @@
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       
       <!-- Hero Welcome Banner -->
-      <section class="mb-8 rounded-2xl bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 text-white p-6 sm:p-8 shadow-lg relative overflow-hidden">
+      <section class="rounded-2xl bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 text-white p-6 sm:p-8 shadow-lg relative overflow-hidden">
         <div class="absolute -right-12 -top-12 w-64 h-64 rounded-full bg-amber-400/10 blur-2xl pointer-events-none"></div>
         <div class="absolute right-10 bottom-0 text-8xl opacity-10 select-none pointer-events-none">📚</div>
         <div class="relative z-10 max-w-2xl">
@@ -119,10 +118,13 @@
             បើកទំព័រសៀវភៅ បើកទ្វារទៅកាន់ពិភពចំណេះដឹង
           </h2>
           <p class="text-sm sm:text-base text-emerald-100/90 leading-relaxed">
-            ស្វាគមន៍មកកាន់បណ្ណាល័យឌីជីថលខ្មែរ។ រាល់សៀវភៅដែលបានបន្ថែមនឹងរក្សាទុកលើ  ដែលអាចមើលឃើញទូទាំងគ្រប់ឧបករណ៍ទាំងអស់។
+            ស្វាគមន៍មកកាន់បណ្ណាល័យឌីជីថលខ្មែរ អានសៀវភៅប្រលោមលោក អប់រំ និងចំណេះដឹងដោយឥតគិតថ្លៃ ចុចលើសៀវភៅដើម្បីមើលមាតិកា អានសាច់រឿង និងបញ្ចេញមតិយោបល់។
           </p>
         </div>
       </section>
+
+      <!-- Category Filter Pills -->
+      <div id="category-pills"></div>
 
       <!-- Section Heading & Count -->
       <div class="flex items-center justify-between mb-5">
@@ -148,9 +150,7 @@
       </div>
 
       <!-- Book Grid -->
-      <div id="books-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Book cards injected dynamically -->
-      </div>
+      <div id="books-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
       <!-- Empty State -->
       <div id="empty-state" class="hidden text-center py-16 px-4 bg-white rounded-2xl border border-stone-200">
@@ -179,12 +179,41 @@
   </div>
 
   <!-- ==========================================
+        ADMIN DASHBOARD MODAL (គ្រប់គ្រង បន្ថែម កែសម្រួលសៀវភៅ)
+  =========================================== -->
+  <div id="admin-dashboard-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+      <div class="px-6 py-4 border-b border-stone-100 flex items-center justify-between bg-slate-900 text-white">
+        <div class="flex items-center gap-2">
+          <i data-lucide="shield-cog" class="w-5 h-5 text-emerald-400"></i>
+          <h3 class="text-base font-bold">ផ្ទាំងគ្រប់គ្រងរដ្ឋបាល (Admin Panel)</h3>
+        </div>
+        <button onclick="closeAdminDashboard()" class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6 overflow-y-auto space-y-6 flex-1">
+        <div class="flex items-center justify-between">
+          <p class="text-sm text-slate-600">បញ្ជីសៀវភៅទាំងអស់នៅក្នុងប្រព័ន្ធ ដែលអ្នកអាចកែសម្រួល ឬបន្ថែមថ្មី។</p>
+          <button onclick="openBookEditorModal()" class="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-sm transition">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>បន្ថែមសៀវភៅថ្មី</span>
+          </button>
+        </div>
+        <div id="admin-books-list" class="divide-y divide-stone-100 border border-stone-200 rounded-xl overflow-hidden bg-white">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
         BOOK EDITOR MODAL (ADMIN ADD BOOK)
   =========================================== -->
   <div id="book-editor-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/65 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden">
       <div class="px-6 py-4 border-b border-stone-100 flex items-center justify-between bg-emerald-950 text-white">
-        <h3 class="text-base font-bold">បន្ថែមសៀវភៅថ្មីទៅកាន់ Cloud (Admin Panel)</h3>
+        <h3 class="text-base font-bold">បន្ថែមសៀវភៅថ្មីទៅកាន់ Cloud</h3>
         <button onclick="closeBookEditorModal()" class="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-white/10 transition">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
@@ -201,7 +230,6 @@
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">ប្រភេទសៀវភៅ <span class="text-rose-500">*</span></label>
-            <!-- ផ្លាស់ប្តូរមកជា Dropdown Select ជាមួយប្រភេទសៀវភៅស្រាប់ -->
             <select id="edit-category" required class="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm bg-white focus:border-emerald-600 outline-none">
               <option value="">-- ជ្រើសរើសប្រភេទសៀវភៅ --</option>
               <option value="ប្រលោមលោក">ប្រលោមលោក</option>
@@ -210,6 +238,7 @@
               <option value="អប់រំ និងចំណេះដឹង">អប់រំ និងចំណេះដឹង</option>
               <option value="ទស្សនវិជ្ជា">ទស្សនវិជ្ជា</option>
               <option value="កម្រងរឿងខ្លីៗ">កម្រងរឿងខ្លីៗ</option>
+              <option value="ភាសា">ភាសា</option>
             </select>
           </div>
         </div>
@@ -229,6 +258,56 @@
         <div class="flex justify-end gap-3 pt-4 border-t border-stone-100">
           <button type="button" onclick="closeBookEditorModal()" class="px-4 py-2.5 rounded-xl border border-stone-200 text-slate-600 text-sm font-medium">បោះបង់</button>
           <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold shadow-sm">រក្សាទុកទៅ Cloud</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+        EDIT BOOK MODAL (ADMIN EDIT BOOK)
+  =========================================== -->
+  <div id="book-edit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/65 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+      <div class="px-6 py-4 border-b border-stone-100 flex items-center justify-between bg-emerald-950 text-white">
+        <h3 class="text-base font-bold">កែសម្រួលព័ត៌មានសៀវភៅ</h3>
+        <button onclick="closeBookEditModal()" class="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-white/10 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <form onsubmit="handleUpdateBook(event)" class="p-6 overflow-y-auto space-y-4">
+        <input type="hidden" id="up-book-id" />
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">ចំណងជើងសៀវភៅ <span class="text-rose-500">*</span></label>
+          <input type="text" id="up-title" required class="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:border-emerald-600 outline-none" />
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">អ្នកនិពន្ធ <span class="text-rose-500">*</span></label>
+            <input type="text" id="up-author" required class="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:border-emerald-600 outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">ប្រភេទសៀវភៅ <span class="text-rose-500">*</span></label>
+            <select id="up-category" required class="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm bg-white focus:border-emerald-600 outline-none">
+              <option value="ប្រលោមលោក">ប្រលោមលោក</option>
+              <option value="អភិវឌ្ឍខ្លួន">អភិវឌ្ឍខ្លួន</option>
+              <option value="ប្រវត្តិសាស្ត្រ">ប្រវត្តិសាស្ត្រ</option>
+              <option value="អប់រំ និងចំណេះដឹង">អប់រំ និងចំណេះដឹង</option>
+              <option value="ទស្សនវិជ្ជា">ទស្សនវិជ្ជា</option>
+              <option value="កម្រងរឿងខ្លីៗ">កម្រងរឿងខ្លីៗ</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">តំណភ្ជាប់រូបភាពគម្រប (Cover Image URL)</label>
+          <input type="url" id="up-cover" class="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:border-emerald-600 outline-none" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">សេចក្តីសង្ខេបសៀវភៅ</label>
+          <textarea id="up-desc" rows="2" class="w-full px-3.5 py-2 rounded-xl border border-stone-200 text-sm focus:border-emerald-600 outline-none"></textarea>
+        </div>
+        <div class="flex justify-end gap-3 pt-4 border-t border-stone-100">
+          <button type="button" onclick="closeBookEditModal()" class="px-4 py-2.5 rounded-xl border border-stone-200 text-slate-600 text-sm font-medium">បោះបង់</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold shadow-sm">រក្សាទុកការកែប្រែ</button>
         </div>
       </form>
     </div>
@@ -267,32 +346,60 @@
           <h3 class="text-base font-bold text-slate-900 mb-3">មាតិកាជំពូក</h3>
           <div id="detail-chapters-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
         </div>
+
+        <!-- Comments Section -->
+        <div class="mt-8 pt-6 border-t border-stone-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <i data-lucide="message-square" class="w-5 h-5 text-emerald-700"></i>
+            មតិយោបល់របស់អ្នកអាន
+          </h3>
+          
+          <form onsubmit="handlePostComment(event)" class="mb-6 space-y-3 bg-stone-50 p-4 rounded-xl border border-stone-200">
+            <div>
+              <input type="text" id="comment-author" required placeholder="ឈ្មោះរបស់អ្នក..." class="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm bg-white outline-none focus:border-emerald-600" />
+            </div>
+            <div>
+              <textarea id="comment-text" rows="2" required placeholder="សរសេរមតិយោបល់របស់អ្នក..." class="w-full px-3 py-2 rounded-lg border border-stone-200 text-sm bg-white outline-none focus:border-emerald-600"></textarea>
+            </div>
+            <div class="flex justify-end">
+              <button type="submit" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold rounded-lg shadow-sm transition">
+                បញ្ជូនមតិយោបល់
+              </button>
+            </div>
+          </form>
+
+          <div id="comments-list" class="space-y-3"></div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- ==========================================
-        READER VIEW (ទំព័រអានសៀវភៅ)
+        READER VIEW
   =========================================== -->
-  <div id="reader-view" class="hidden fixed inset-0 z-50 flex flex-col bg-white text-slate-800 reader-transition">
-    <header class="border-b border-stone-200/80 px-4 py-3 flex items-center justify-between gap-2 shrink-0">
+  <div id="reader-view" class="hidden fixed inset-0 z-50 flex flex-col bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 reader-transition">
+    <header class="border-b border-stone-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between gap-2 shrink-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur">
       <div class="flex items-center gap-2">
-        <button onclick="closeReader()" class="px-3 py-2 rounded-xl hover:bg-black/5 text-sm font-medium">ត្រឡប់ក្រោយ</button>
+        <button onclick="closeReader()" class="px-3 py-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 text-sm font-medium">ត្រឡប់ក្រោយ</button>
         <h2 id="reader-book-title" class="text-sm sm:text-base font-bold truncate">ចំណងជើង</h2>
       </div>
-      <button onclick="closeReader()" class="p-2 rounded-xl hover:bg-black/5"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <div class="flex items-center gap-2">
+        <button onclick="toggleNightMode()" id="night-mode-btn" class="p-2.5 rounded-xl border border-stone-200 dark:border-slate-700 bg-stone-50 dark:bg-slate-800 hover:bg-stone-100 dark:hover:bg-slate-700 transition" title="Night Mode">
+          <i data-lucide="moon" class="w-4 h-4" id="night-mode-icon"></i>
+        </button>
+        <button onclick="closeReader()" class="p-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/10"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
     </header>
-    <div id="reader-scroll-container" class="flex-1 overflow-y-auto px-4 sm:px-8 py-8">
+    <div id="reader-scroll-container" class="flex-1 overflow-y-auto px-4 sm:px-8 py-8 selectable-text">
       <article class="max-w-3xl mx-auto">
         <h1 id="reader-chapter-title" class="text-2xl font-bold mb-6 font-serif">ជំពូក</h1>
-        <div id="reader-content-body" class="font-serif space-y-4 text-justify text-lg leading-relaxed"></div>
+        <div id="reader-content-body" class="font-serif space-y-4 text-justify text-lg leading-relaxed selectable-text"></div>
       </article>
     </div>
   </div>
 
-  <!-- JavaScript Application Logic with Firebase Cloud Database -->
+  <!-- JavaScript Application Logic -->
   <script>
-    // Firebase Configuration from your Project Settings[cite: 5]
     const firebaseConfig = {
       apiKey: "AIzaSyDSBIRnMEaRLCUdg2aOYLRHJPh9fcgRm54",
       authDomain: "ebooklibrarykh.firebaseapp.com",
@@ -303,7 +410,6 @@
       measurementId: "G-G7JHL0W38E"
     };
 
-    // Initialize Firebase & Firestore
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
@@ -313,31 +419,36 @@
     let currentChapterIndex = 0;
     let isAdminLoggedIn = localStorage.getItem('library_admin_logged') === 'true';
 
-    // On page load
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       loadBooksFromDatabase();
+      
+      if (localStorage.getItem('reader_night_mode') === 'true') {
+        document.documentElement.classList.add('dark');
+        updateNightModeIcon(true);
+      }
     });
 
-    // Keyboard shortcut (Ctrl + M) with Password Prompt
+    // ប៊ូតុងកាត់ត (Ctrl + ម) ដើម្បីបើក Admin Dashboard
     document.addEventListener('keydown', function(event) {
       if (event.ctrlKey && event.key.toLowerCase() === 'm') {
-        event.preventDefault(); // Prevent default browser behavior
-
-        // Prompt for Admin Password
-        let password = prompt("សូមបញ្ចូលលេខសម្ងាត់ Admin:");
-
-        if (password === "adminmuoy2") { // អ្នកអាចប្តូរពាក្យសម្ងាត់តាមចិត្តចង់ទីនេះ
-          isAdminLoggedIn = true;
-          localStorage.setItem('library_admin_logged', 'true');
-          openBookEditorModal();
-        } else if (password !== null) {
-          alert('លេខសម្ងាត់មិនត្រឹមត្រូវទេ!');
+        event.preventDefault();
+        
+        if (isAdminLoggedIn) {
+          openAdminDashboard();
+        } else {
+          let password = prompt("សូមបញ្ចូលលេខសម្ងាត់ Admin:");
+          if (password === "adminmuoy2") {
+            isAdminLoggedIn = true;
+            localStorage.setItem('library_admin_logged', 'true');
+            openAdminDashboard();
+          } else if (password !== null) {
+            alert('លេខសម្ងាត់មិនត្រឹមត្រូវទេ!');
+          }
         }
       }
     });
 
-    // Load Books from Firestore Cloud Database
     function loadBooksFromDatabase() {
       const loadingState = document.getElementById('loading-state');
       const booksGrid = document.getElementById('books-grid');
@@ -361,11 +472,10 @@
         })
         .catch((error) => {
           console.error("Error loading books: ", error);
-          loadingState.innerHTML = `<p class="text-rose-500 text-center col-span-3">មានបញ្ហាក្នុងការទាញយកទិន្នន័យពី Cloud.</p>`;
+          loadingState.innerHTML = `<p class="text-rose-500 text-center col-span-3">មានបញ្ហាក្នុងการទាញយកទិន្នន័យពី Cloud.</p>`;
         });
     }
 
-    // Render Books to Grid
     function renderBooks(books) {
       const grid = document.getElementById('books-grid');
       const emptyState = document.getElementById('empty-state');
@@ -402,19 +512,33 @@
       lucide.createIcons();
     }
 
-    // Render Categories
     function renderCategories() {
       const container = document.getElementById('category-pills');
-      const categories = ['ទាំងអស់', ...new Set(allBooks.map(b => b.category).filter(Boolean))];
+      const rawCategories = allBooks.map(b => {
+        if (!b.category) return null;
+        return b.category.replace(/\[.*?\]/g, '').trim();
+      }).filter(Boolean);
+
+      const categories = ['ទាំងអស់', ...new Set(rawCategories)];
       
-      container.innerHTML = categories.map((cat, idx) => `
-        <button onclick="filterByCategory('${cat}')" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition ${idx === 0 ? 'bg-emerald-700 text-white shadow-sm' : 'bg-white border border-stone-200 text-slate-600 hover:bg-stone-50'}">
-          ${cat}
-        </button>
-      `).join('');
+      container.innerHTML = categories.map((cat, idx) => {
+        const isDefaultActive = idx === 0;
+        return `
+          <button onclick="filterByCategory('${cat}', this)" class="category-pill inline-flex items-center px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition shadow-sm ${isDefaultActive ? 'bg-emerald-700 text-white shadow-emerald-700/20' : 'bg-white border border-stone-200 text-slate-600 hover:bg-stone-50'}">
+            <span>${cat}</span>
+          </button>
+        `;
+      }).join('');
     }
 
-    function filterByCategory(cat) {
+    function filterByCategory(cat, btnElement) {
+      document.querySelectorAll('.category-pill').forEach(btn => {
+        btn.className = "category-pill inline-flex items-center px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition bg-white border border-stone-200 text-slate-600 hover:bg-stone-50";
+      });
+      if(btnElement) {
+        btnElement.className = "category-pill inline-flex items-center px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition bg-emerald-700 text-white shadow-sm shadow-emerald-700/20";
+      }
+
       if (cat === 'ទាំងអស់') {
         currentFilteredBooks = [...allBooks];
       } else {
@@ -423,7 +547,14 @@
       renderBooks(currentFilteredBooks);
     }
 
-    // Search Input
+    function resetFilters(e) {
+      if(e) e.preventDefault();
+      currentFilteredBooks = [...allBooks];
+      renderBooks(currentFilteredBooks);
+      const firstPill = document.querySelector('.category-pill');
+      if(firstPill) filterByCategory('ទាំងអស់', firstPill);
+    }
+
     function handleSearchInput(keyword) {
       const query = keyword.toLowerCase().trim();
       currentFilteredBooks = allBooks.filter(b => 
@@ -438,13 +569,49 @@
       renderBooks(currentFilteredBooks);
     }
 
-    // Book Editor Modal (Add Book)
+    // Admin Dashboard Functions
+    function openAdminDashboard() {
+      renderAdminBooksList();
+      document.getElementById('admin-dashboard-modal').classList.remove('hidden');
+    }
+    function closeAdminDashboard() {
+      document.getElementById('admin-dashboard-modal').classList.add('hidden');
+    }
+
+    function renderAdminBooksList() {
+      const container = document.getElementById('admin-books-list');
+      if (allBooks.length === 0) {
+        container.innerHTML = `<p class="p-4 text-xs text-slate-400 text-center">មិនមានសៀវភៅក្នុងប្រព័ន្ធឡើយ។</p>`;
+        return;
+      }
+
+      container.innerHTML = allBooks.map(book => `
+        <div class="p-4 flex items-center justify-between gap-4 hover:bg-stone-50 transition">
+          <div class="flex items-center gap-3 overflow-hidden">
+            <div class="w-10 h-12 bg-emerald-800 rounded-lg shrink-0 flex items-center justify-center text-white text-xs overflow-hidden">
+              ${book.cover ? `<img src="${book.cover}" class="w-full h-full object-cover">` : '📖'}
+            </div>
+            <div class="truncate">
+              <h4 class="text-sm font-bold text-slate-800 truncate">${book.title}</h4>
+              <p class="text-xs text-slate-500">${book.author} — <span class="text-emerald-700 font-semibold">${book.category || 'ទូទៅ'}</span></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="openEditBookModalFromAdmin('${book.id}')" class="px-3 py-1.5 rounded-lg border border-emerald-600 text-emerald-700 hover:bg-emerald-50 text-xs font-semibold transition inline-flex items-center gap-1">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+              <span>កែសម្រួល</span>
+            </button>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
     function openBookEditorModal() {
       document.getElementById('book-editor-modal').classList.remove('hidden');
     }
     function closeBookEditorModal() { document.getElementById('book-editor-modal').classList.add('hidden'); }
 
-    // Save New Book to Firestore Cloud
     function handleSaveNewBook(e) {
       e.preventDefault();
       const title = document.getElementById('edit-title').value;
@@ -462,6 +629,7 @@
         cover,
         description,
         chapters: [{ title: chTitle, content: chContent }],
+        comments: [],
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
@@ -469,12 +637,58 @@
         .then(() => {
           alert('បានបន្ថែមសៀវភៅទៅកាន់ Cloud Database ជោគជ័យ!');
           closeBookEditorModal();
+          closeAdminDashboard();
           loadBooksFromDatabase();
         })
         .catch(error => {
           console.error("Error adding book: ", error);
-          alert('មានបញ្ហាក្នុងการបន្ថែមសៀវភៅ។');
+          alert('មានបញ្ហាក្នុងការបន្ថែមសៀវភៅ។');
         });
+    }
+
+    function openEditBookModalFromAdmin(bookId) {
+      currentSelectedBook = allBooks.find(b => b.id === bookId);
+      if (!currentSelectedBook) return;
+      
+      document.getElementById('up-book-id').value = currentSelectedBook.id;
+      document.getElementById('up-title').value = currentSelectedBook.title || '';
+      document.getElementById('up-author').value = currentSelectedBook.author || '';
+      document.getElementById('up-category').value = currentSelectedBook.category || '';
+      document.getElementById('up-cover').value = currentSelectedBook.cover || '';
+      document.getElementById('up-desc').value = currentSelectedBook.description || '';
+
+      closeAdminDashboard();
+      document.getElementById('book-edit-modal').classList.remove('hidden');
+    }
+
+    function closeBookEditModal() {
+      document.getElementById('book-edit-modal').classList.add('hidden');
+      if (isAdminLoggedIn) openAdminDashboard();
+    }
+
+    function handleUpdateBook(e) {
+      e.preventDefault();
+      const bookId = document.getElementById('up-book-id').value;
+      const title = document.getElementById('up-title').value;
+      const author = document.getElementById('up-author').value;
+      const category = document.getElementById('up-category').value;
+      const cover = document.getElementById('up-cover').value;
+      const description = document.getElementById('up-desc').value;
+
+      db.collection("books").doc(bookId).update({
+        title,
+        author,
+        category,
+        cover,
+        description
+      }).then(() => {
+        alert('បានកែសម្រួលព័ត៌មានសៀវភៅជោគជ័យ!');
+        closeBookEditModal();
+        loadBooksFromDatabase();
+      }).catch(error => {
+        console.error("Error updating book: ", error);
+        alert('មានបញ្ហាក្នុងការកែសម្រួលសៀវភៅ។');
+      });
     }
 
     // Book Details View
@@ -496,13 +710,57 @@
       `).join('');
 
       document.getElementById('detail-start-read-btn').onclick = () => startReading(0);
+      renderComments();
       document.getElementById('book-detail-modal').classList.remove('hidden');
       lucide.createIcons();
     }
 
     function closeBookDetailModal() { document.getElementById('book-detail-modal').classList.add('hidden'); }
 
-    // Dedicated Reader View
+    function renderComments() {
+      const container = document.getElementById('comments-list');
+      const comments = currentSelectedBook.comments || [];
+      
+      if (comments.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-400 italic">មិនទាន់មានមតិយោបល់នៅឡើយទេ។</p>`;
+        return;
+      }
+
+      container.innerHTML = comments.map(c => `
+        <div class="bg-white p-3 rounded-xl border border-stone-200 text-sm">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-bold text-slate-800 text-xs">${c.author}</span>
+            <span class="text-[10px] text-slate-400">${c.date || ''}</span>
+          </div>
+          <p class="text-slate-600 text-xs leading-relaxed">${c.text}</p>
+        </div>
+      `).join('');
+    }
+
+    function handlePostComment(e) {
+      e.preventDefault();
+      if (!currentSelectedBook) return;
+
+      const author = document.getElementById('comment-author').value.trim();
+      const text = document.getElementById('comment-text').value.trim();
+      const date = new Date().toLocaleDateString('km-KH');
+
+      const newComment = { author, text, date };
+      const updatedComments = [...(currentSelectedBook.comments || []), newComment];
+
+      db.collection("books").doc(currentSelectedBook.id).update({
+        comments: updatedComments
+      }).then(() => {
+        currentSelectedBook.comments = updatedComments;
+        renderComments();
+        document.getElementById('comment-author').value = '';
+        document.getElementById('comment-text').value = '';
+      }).catch(err => {
+        console.error("Error managing comment: ", err);
+        alert("មានបញ្ហាក្នុងការបញ្ជូនមតិយោបល់។");
+      });
+    }
+
     function startReading(chapterIdx) {
       currentChapterIndex = chapterIdx;
       closeBookDetailModal();
@@ -517,6 +775,21 @@
     }
 
     function closeReader() { document.getElementById('reader-view').classList.add('hidden'); }
+
+    function toggleNightMode() {
+      const html = document.documentElement;
+      const isDark = html.classList.toggle('dark');
+      localStorage.setItem('reader_night_mode', isDark);
+      updateNightModeIcon(isDark);
+    }
+
+    function updateNightModeIcon(isDark) {
+      const icon = document.getElementById('night-mode-icon');
+      if (icon) {
+        icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+        lucide.createIcons();
+      }
+    }
   </script>
 </body>
 </html>
