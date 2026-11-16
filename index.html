@@ -743,12 +743,16 @@
   <!-- ==========================================
         FIREBASE & APPLICATION LOGIC (សម្រាប់ VS Code & Web Hosting)
   =========================================== -->
-  <script type="module">
+
+    // 1. ការកំណត់ Firebase ថ្មីរបស់អ្នក (digitallibrary-4a135)
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // 1. ការកំណត់ Firebase ថ្មីរបស់អ្នក (digitallibrary-4a135)
+    // កំណត់ appId ឱ្យបានច្បាស់លាស់នៅទីនេះ
+    const appId = "digitallibrary-4a135";
+
     const firebaseConfig = {
       apiKey: "AIzaSyBpz9hf_DMQ--JzP6ry1spNXyZ8zjiPhWE",
       authDomain: "digitallibrary-4a135.firebaseapp.com",
