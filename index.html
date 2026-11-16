@@ -38,7 +38,7 @@
 <body class="bg-stone-50 text-slate-800 font-sans antialiased selection:bg-emerald-100 selection:text-emerald-900">
 
   <!-- ==========================================
-       MAIN LIBRARY VIEW (ទំព័រដើមបណ្ណាល័យ)
+        MAIN LIBRARY VIEW (ទំព័រដើមបណ្ណាល័យ)
   =========================================== -->
   <div id="library-view" class="min-h-screen flex flex-col">
     
@@ -246,7 +246,6 @@
         <div class="flex items-center gap-4 text-xs text-slate-400">
           <span>អ្នកអានទូទៅអាចអាន និងបញ្ចេញមតិដោយសេរី</span>
           <span>•</span>
-          
         </div>
       </div>
     </footer>
@@ -254,7 +253,7 @@
 
 
   <!-- ==========================================
-       BOOK DETAILS & LIVE COMMENTS MODAL
+        BOOK DETAILS & LIVE COMMENTS MODAL
   =========================================== -->
   <div id="book-detail-modal" class="hidden fixed inset-0 z-40 flex items-center justify-center p-3 sm:p-5 bg-slate-900/65 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden">
@@ -392,7 +391,7 @@
 
 
   <!-- ==========================================
-       DEDICATED READER VIEW (ទំព័រអានសៀវភៅ)
+        DEDICATED READER VIEW (ទំព័រអានសៀវភៅ)
   =========================================== -->
   <div id="reader-view" class="hidden fixed inset-0 z-50 flex flex-col bg-white text-slate-800 reader-transition">
     
@@ -535,7 +534,7 @@
 
 
   <!-- ==========================================
-       ADMIN LOGIN MODAL (ចូលជា Admin)
+        ADMIN LOGIN MODAL (ចូលជា Admin)
   =========================================== -->
   <div id="admin-login-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/65 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
@@ -564,7 +563,6 @@
             placeholder="••••••••" 
             class="w-full px-4 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition"
           />
-          
         </div>
 
         <div id="admin-login-error" class="hidden text-xs font-medium text-rose-600 bg-rose-50 border border-rose-200 px-3.5 py-2.5 rounded-xl">
@@ -584,7 +582,7 @@
 
 
   <!-- ==========================================
-       ADMIN SETTINGS MODAL (ផ្លាស់ប្តូរលេខសម្ងាត់)
+        ADMIN SETTINGS MODAL (ផ្លាស់ប្តូរលេខសម្ងាត់)
   =========================================== -->
   <div id="admin-settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/65 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
@@ -625,7 +623,7 @@
 
 
   <!-- ==========================================
-       ADMIN BOOK EDITOR MODAL (បន្ថែម / កែសម្រួលសៀវភៅ)
+        ADMIN BOOK EDITOR MODAL (បន្ថែម / កែសម្រួលសៀវភៅ)
   =========================================== -->
   <div id="book-editor-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/65 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden">
@@ -716,7 +714,7 @@
 
 
   <!-- ==========================================
-       CUSTOM CONFIRMATION MODAL (ជំនួស confirm())
+        CUSTOM CONFIRMATION MODAL (ជំនួស confirm())
   =========================================== -->
   <div id="confirm-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/65 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4">
@@ -743,23 +741,23 @@
 
 
   <!-- ==========================================
-       FIREBASE & APPLICATION LOGIC (សម្រាប់ VS Code & Web Hosting)
+        FIREBASE & APPLICATION LOGIC (សម្រាប់ VS Code & Web Hosting)
   =========================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // 1. ការកំណត់ Firebase សម្រាប់គម្រោង E-library (e-library-d144a)
-  const firebaseConfig = {
-    apiKey: "AIzaSyDSBIRNmEARLcUdg2aOYlRHJPh9fcgRm54",
-    authDomain: "ebooklibrarykh.firebaseapp.com",
-    projectId: "ebooklibrarykh",
-    storageBucket: "ebooklibrarykh.firebasestorage.app",
-    messagingSenderId: "819610849220",
-    appId: "1:819610849220:web:3f5eab7483c0a2de6cde91",
-    measurementId: "G-G7JHL0W38E"
-  };
+    // 1. ការកំណត់ Firebase ថ្មីរបស់អ្នក (digitallibrary-4a135)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBpz9hf_DMQ--JzP6ry1spNXyZ8zjiPhWE",
+      authDomain: "digitallibrary-4a135.firebaseapp.com",
+      projectId: "digitallibrary-4a135",
+      storageBucket: "digitallibrary-4a135.firebasestorage.app",
+      messagingSenderId: "106175598079",
+      appId: "1:106175598079:web:6045530124b4949eff2bca",
+      measurementId: "G-BTYP00H9JZ"
+    };
 
     let app = null;
     let auth = null;
@@ -785,7 +783,7 @@
         chapters: [
           {
             title: "ជំពូកទី ១៖ ការជ្រើសរើសទីតាំង និងគ្រឹះប្រាសាទ",
-            content: "ប្រាសាទអង្គរវត្តត្រូវបានកសាងឡើងនៅដើមសតវត្សរ៍ទី១២ ក្នុងរជ្ជកាលព្រះបាទសូរ្យវរ្ម័នទី២។ ភាពអស្ចារ្យដំបូងបំផុតនៃស្ថាបត្យកម្មខ្មែរបុរាណ គឺការរៀបចំគ្រឹះដ៏រឹងមាំដោយប្រើប្រាស់ដីខ្សាច់បង្ហាប់ និងថ្មបាយក្រៀម ដើម្បីទ្រទ្រង់ទម្ងន់ថ្មភក់រាប់លានតោនឱ្យឈរយ៉ាងរឹងមាំឆ្លងកាត់រាប់សតវត្សរ៍។\n\nនៅជុំវិញបរិវេណប្រាសាទ មានគូទឹកដ៏ធំល្វឹងល្វើយដែលមិនត្រឹមតែជានិមិត្តរូបនៃមហាសមុទ្រព័ទ្ធជុំវិញភ្នំព្រះសុមេរុប៉ុណ្ណោះទេ ប៉ុន្តែថែមទាំងដើរតួនាទីយ៉ាងសំខាន់ក្នុងការរក្សាសំណើមដីខ្សាច់នៅក្រោមគ្រឹះប្រាសាទ កុំឱ្យស្រុតឬប្រេះស្រាំនៅរដូវប្រាំងទៀតផង។"
+            content: "ប្រាសាទអង្គរវត្តត្រូវបានកសាងឡើងនៅដើមសតវត្សរ៍ទី១២ ក្នុងរជ្ជកាលព្រះបាទសូរ្យវរ្ម័នទី២។ ភាពអស្ចារ្យដំបូងបំផុតនៃស្ថាបត្យកម្មខ្មែរបុរាណ គឺការរៀបចំគ្រឹះដ៏រឹងមាំដោយប្រើប្រាស់ដីខ្សាច់បង្ហាប់ និងថ្មបាយក្រៀម ដើម្បីទ្រទ្រង់ទម្ងន់ថ្មភក់រាប់លានតោនឱ្យឈរយ៉ាងរឹងមាំឆ្លងកាត់រាប់សតវត្សរ៍។\n\nនៅជុំវិញបរិវេណប្រាសាទ មានគូទឹកដ៏ធំល្វឹងល្វើយដែលមិនត្រឹមតែជានិមិត្តរូបនៃមហាសមុទ្រព័ទ្ធជុំវិញភ្នំព្រះសុមេរុប៉ុណ្ណោះទេ ប៉ុន្តែថែមទាំងដើរតួនាទីយ៉ាងសំខាន់ក្នុងការរក្សាសើមដីខ្សាច់នៅក្រោមគ្រឹះប្រាសាទ កុំឱ្យស្រុតឬប្រេះស្រាំនៅរដូវប្រាំងទៀតផង。"
           },
           {
             title: "ជំពូកទី ២៖ ការដឹកជញ្ជូនថ្មភក់ពីភ្នំគូលែន",
@@ -1081,11 +1079,9 @@
       const newPass = document.getElementById('new-admin-password-input').value.trim();
       if (newPass.length < 4) return;
 
-      // រក្សាទុកក្នុង Browser ភ្លាមៗជានិច្ច
       adminPasscode = newPass;
       localStorage.setItem('khmer_lib_admin_pass', newPass);
 
-      // ព្យាយាមរក្សាទុកទៅ Firestore ផងដែរ
       if (!useLocalFallback && db) {
         try {
           await setDoc(getConfigDocRef(), { passcode: newPass }, { merge: true });
@@ -1393,7 +1389,6 @@
       bookmarkBtn.onclick = (e) => toggleFavorite(e, bookId);
       updateDetailBookmarkButton(bookId);
 
-      // Chapters list
       const chapters = book.chapters || [];
       document.getElementById('detail-chapters-count').textContent = toKhmerNum(chapters.length);
       document.getElementById('detail-chapters-list').innerHTML = chapters.map((ch, idx) => `
@@ -1720,7 +1715,6 @@
             showToast('បានផ្សព្វផ្សាយសៀវភៅថ្មីជោគជ័យ!');
           }
         } else {
-          // Local Fallback Save
           if (editId) {
             const idx = allBooks.findIndex(b => b.id === editId);
             if (idx !== -1) {
@@ -1970,7 +1964,6 @@
     }
 
     document.addEventListener('keydown', (e) => {
-      // ផ្លូវកាត់សម្ងាត់៖ ចុច Ctrl + M ដើម្បីបើកផ្ទាំង Admin Login
       if (e.ctrlKey && e.key.toLowerCase() === 'm') {
         e.preventDefault();
         openAdminLoginModal();
