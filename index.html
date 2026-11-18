@@ -637,7 +637,7 @@
           </div>
           <div>
             <h3 id="editor-modal-title" class="text-base sm:text-lg font-bold">បង្ហោះសៀវភៅថ្មី (Admin)</h3>
-            <p class="text-xs text-emerald-300/80">បំពេញព័ត៌មានសៀវភៅ និងបន្ថែមជំពូកម្តងមួយៗ</p>
+            <p class="text-xs text-emerald-300/80">បំពេញព័ត៌មានសៀវភៅ និងបន្ថែមជំពូកវែងៗ (រក្សាទុកលើ Storage ដោយសុវត្ថិភាព)</p>
           </div>
         </div>
         <button onclick="closeBookEditorModal()" class="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-white/10 transition">
@@ -652,11 +652,11 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-semibold text-slate-700 mb-1.5">ចំណងជើងសៀវភៅ <span class="text-rose-500">*</span></label>
-            <input type="text" id="book-title-input" required placeholder="ឧទាហរណ៍៖ ផ្កាស្រពោន" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition" />
+            <input type="text" id="book-title-input" required placeholder="ឧទាហរណ៍៖ គុជ ប្រឆាំងមានស្នូក" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition" />
           </div>
           <div>
             <label class="block text-sm font-semibold text-slate-700 mb-1.5">ឈ្មោះអ្នកនិពន្ធ <span class="text-rose-500">*</span></label>
-            <input type="text" id="book-author-input" required placeholder="ឧទាហរណ៍៖ នូ ហាច" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition" />
+            <input type="text" id="book-author-input" required placeholder="ឧទាហរណ៍៖ Er Gen" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition" />
           </div>
         </div>
 
@@ -685,8 +685,8 @@
         <div class="pt-3 border-t border-stone-200">
           <div class="flex items-center justify-between mb-3">
             <div>
-              <h4 class="text-sm font-bold text-slate-800">ជំពូកសៀវភៅ (Chapters)</h4>
-              <p class="text-xs text-slate-500">អ្នកអាចបន្ថែមជំពូកទី ១, ទី ២, ទី ៣... បានតាមតម្រូវការ</p>
+              <h4 class="text-sm font-bold text-slate-800">ជំពូកសៀវភៅ (Chapters) - ផុសបានវែងៗដោយសុវត្ថិភាព</h4>
+              <p class="text-xs text-slate-500">អត្ថបទវែងៗនឹងត្រូវបានរក្សាទុកជាហ្វាលដោយស្វ័យប្រវត្តិក្នុង Firebase Storage</p>
             </div>
             <button type="button" onclick="addChapterInputBlock()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold border border-emerald-200 transition">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
@@ -742,15 +742,14 @@
 
 
   <!-- ==========================================
-        FIREBASE & APPLICATION LOGIC (សម្រាប់ VS Code & Web Hosting)
+        FIREBASE & APPLICATION LOGIC
   =========================================== -->
-
-<script type="module">
+  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getStorage, ref, uploadString, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
-    // កំណត់ appId ឱ្យបានច្បាស់លាស់នៅទីនេះ
     const appId = "digitallibrary-4a135";
 
     const firebaseConfig = {
@@ -766,15 +765,14 @@
     let app = null;
     let auth = null;
     let db = null;
+    let storage = null;
     let currentUser = null;
     let useLocalFallback = false;
 
-    // Collection References ក្នុង Cloud Firestore
     const getBooksCollection = () => collection(db, 'artifacts', appId, 'public', 'data', 'books');
     const getCommentsCollection = () => collection(db, 'artifacts', appId, 'public', 'data', 'comments');
     const getConfigDocRef = () => doc(db, 'artifacts', appId, 'public', 'data', 'library_config', 'admin_settings');
 
-    // 2. Sample Rich Khmer Books for Initial Seeding
     const INITIAL_SAMPLE_BOOKS = [
       {
         title: "អាថ៌កំបាំងស្ថាបត្យកម្មប្រាសាទអង្គរ",
@@ -791,66 +789,12 @@
           },
           {
             title: "ជំពូកទី ២៖ ការដឹកជញ្ជូនថ្មភក់ពីភ្នំគូលែន",
-            content: "ថ្មភក់ដែលយកមកសាងសង់ប្រាសាទអង្គរវត្ត ត្រូវបានកាត់ចេញពីជើងភ្នំគូលែន ដែលមានចម្ងាយប្រមាណជាង ៣០ គីឡូម៉ែត្រពីទីតាំងប្រាសាទ។ បុព្វបុរសខ្មែរបានជីកព្រែកជីកបុរាណតភ្ជាប់ពីភ្នំគូលែនមកកាន់តំបន់អង្គរ ដើម្បីប្រើប្រាស់ក្បូនឬស្សីដឹកជញ្ជូនថ្មធំៗតាមផ្លូវទឹកនៅរដូវវស្សា។\n\nការរៀបចំថ្មនីមួយៗឱ្យជាប់គ្នាដោយមិនប្រើកំបោរ ឬស៊ីម៉ង់ត៍ គឺជាសិល្បៈនៃការដុសខាត់ផ្ទៃថ្មឱ្យរាបស្មើឥតខ្ចោះ និងការចោះរន្ធពន្លួញថ្មដើម្បីតភ្ជាប់គ្នាឱ្យណែនដូចជាសាច់មួយ។"
-          }
-        ]
-      },
-      {
-        title: "មេរៀនភាសាកូរ៉េកម្រិតដំបូង (한글)",
-        author: "បណ្ឌិត គឹម សុខា",
-        category: "អប់រំ និងភាសា",
-        coverGradient: "from-sky-800 via-blue-900 to-indigo-950",
-        coverUrl: "",
-        description: "សៀវភៅសម្រាប់ការយល់ដឹងពីអក្ខរក្រមកូរ៉េ (ហាន់ហ្គឹល) ការបញ្ចេញសំឡេង និងឃ្លាសន្ទនាគួរសមប្រចាំថ្ងៃសម្រាប់អ្នកចាប់ផ្តើមដំបូង។",
-        createdAt: Date.now() - 30000,
-        chapters: [
-          {
-            title: "ជំពូកទី ១៖ ព្យញ្ជនៈ និងស្រៈមូលដ្ឋានក្នុងភាសាកូរ៉េ",
-            content: "អក្សរកូរ៉េ ឬហៅថា ហាន់ហ្គឹល (한글) ត្រូវបានបង្កើតឡើងដោយព្រះបាទសេជុងមហារាជ នៅក្នុងឆ្នាំ ១៤៤៣ ដើម្បីឱ្យប្រជាជនកូរ៉េគ្រប់រូបអាចរៀនអាន និងសរសេរបានយ៉ាងងាយស្រួល។\n\nនៅក្នុងភាសាកូរ៉េ ព្យញ្ជនៈមូលដ្ឋានមានចំនួន ១៤ តួ ដូចជា ㄱ (គ/ខ), ㄴ (ន), ㄷ (ដ/ថ), ㄹ (រ/ល), ㅁ (ម), ㅂ (ប/ផ), ㅅ (ស), ㅇ (អ/ង) ជាដើម។ ការផ្សំព្យញ្ជនៈ និងស្រៈត្រូវរៀបជាប្លុកព្យាង្គ ដោយត្រូវមានព្យញ្ជនៈនាំមុខជានិច្ច។"
-          },
-          {
-            title: "ជំពូកទី ២៖ ឃ្លាសួរសុខទុក្ខ និងការណែនាំខ្លួន",
-            content: "ការនិយាយស្តីប្រកបដោយភាពគួរសមគឺជាវប្បធម៌ដ៏សំខាន់បំផុតនៅក្នុងប្រទេសកូរ៉េ។ ខាងក្រោមនេះជាឃ្លាសន្ទនាមូលដ្ឋានដែលអ្នកត្រូវចេះ៖\n\n១. 안녕하세요? (អាន់យ៉ង់ហាសេយ៉ូ?) — សួស្តី! (ប្រើបានគ្រប់ពេលវេលា)\n២. 감사합니다. (ខាំសាហាំនីដា) — សូមអរគុណ។\n៣. 만나서 반갑습니다. (ម៉ាន់ណាស ផាន់កាប់ស៊ឹមនីដា) — រីករាយដែលបានស្គាល់អ្នក។"
-          }
-        ]
-      },
-      {
-        title: "យុទ្ធសិល្ប៍ដាវទេពភ្នំដងរែក",
-        author: "សុវណ្ណ វិសាល",
-        category: "រឿងប្រលោមលោក",
-        coverGradient: "from-purple-900 via-violet-950 to-slate-900",
-        coverUrl: "",
-        description: "ប្រលោមលោកបែបយុទ្ធសិល្ប៍បុរាណ និយាយអំពីយុវជនម្នាក់ដែលបានរកឃើញគម្ពីរដាវបុរាណនៅលើកំពូលភ្នំដងរែក ហើយហ្វឹកហាត់ដើម្បីការពារយុត្តិធម៌។",
-        createdAt: Date.now() - 20000,
-        chapters: [
-          {
-            title: "ជំពូកទី ១៖ ព្យុះភ្លៀងនៅជើងភ្នំដងរែក",
-            content: "រាត្រីនោះ ផ្ទៃមេឃនៅលើជួរភ្នំដងរែកងងឹតសូន្យឈឹង ផ្លេកបន្ទោរបាញ់ឆ្វេចឆ្វាចបំភ្លឺព្រៃព្រឹក្សាដែលកំពុងបោកបក់ដោយខ្យល់ព្យុះ។ នៅក្នុងខ្ទមឈើតូចមួយក្បែរជ្រោះទឹកធ្លាក់ យុវជន តារា កំពុងអង្គុយសំលៀងដាវដែកចាស់របស់ឪពុកខ្លួនដោយទឹកមុខម៉ឺងម៉ាត់។\n\nរំពេចនោះ សំឡេងសម្រឹបជើងស្រាលៗបានលាន់ឮឡើងពីខាងក្រៅខ្ទម។ បុរសចំណាស់សក់សក្បុសម្នាក់ក្នុងឈុតអាវផាយពណ៌ប្រផេះបានដើរចូលមក ដោយក្នុងដៃមានកាន់គម្ពីរស្បែកសត្វបុរាណមួយក្បាល។"
-          },
-          {
-            title: "ជំពូកទី ២៖ អាថ៌កំបាំងក្បាច់ដាវទាំងប្រាំបួន",
-            content: "តារាបានបើកគម្ពីរស្បែកសត្វនោះឡើងដោយការគោរព។ នៅលើទំព័រទីមួយ មានគំនូរមនុស្សកាន់ដាវឈរលើផ្ទាំងថ្ម ជាមួយនឹងអក្សរចារឹកថា៖ «ដាវកើតចេញពីចិត្ត ប្រសិនបើចិត្តស្ងប់ ដាវនឹងមានកម្លាំងដូចភ្នំ»។\n\nចាប់ពីថ្ងៃនោះមក តារាបានចំណាយពេលរៀងរាល់ព្រឹកព្រលឹមហាត់ប្រាណ និងដកដង្ហើមតាមក្បួនក្នុងគម្ពីរ រហូតដល់រាងកាយរបស់គេស្រាលដូចស្លាបបក្សី។"
-          }
-        ]
-      },
-      {
-        title: "ទម្លាប់តូចៗ បង្កើតភាពជោគជ័យធំ",
-        author: "ចាន់ ដារ៉ាវុធ",
-        category: "អភិវឌ្ឍន៍ខ្លួន",
-        coverGradient: "from-emerald-800 via-teal-900 to-cyan-950",
-        coverUrl: "",
-        description: "វិធីសាស្ត្រកែប្រែទម្លាប់ប្រចាំថ្ងៃបន្តិចម្តងៗ ការគ្រប់គ្រងពេលវេលា និងការកសាងផ្នត់គំនិតវិជ្ជមានដើម្បីសម្រេចគោលដៅជីវិត។",
-        createdAt: Date.now() - 10000,
-        chapters: [
-          {
-            title: "ជំពូកទី ១៖ អានុភាពនៃការរីកចម្រើន ១% រៀងរាល់ថ្ងៃ",
-            content: "មនុស្សភាគច្រើនតែងតែរំពឹងចង់ឃើញការផ្លាស់ប្តូរដ៏ធំធេងភ្លាមៗ ប៉ុន្តែការពិតភាពជោគជ័យដ៏រឹងមាំគឺកើតចេញពីទម្លាប់តូចៗដែលយើងធ្វើជាប្រចាំរៀងរាល់ថ្ងៃ។ ប្រសិនបើអ្នកអាចអភិវឌ្ឍខ្លួនឯងឱ្យប្រសើរជាងម្សិលមិញត្រឹមតែ ១% រៀងរាល់ថ្ងៃ ក្នុងរយៈពេលមួយឆ្នាំ អ្នកនឹងរីកចម្រើនរហូតដល់ ៣៧ ដង។\n\nចូរចាប់ផ្តើមពីរឿងងាយៗ ដូចជាការអានសៀវភៅឱ្យបាន ១៥ នាទីមុនពេលចូលគេង ឬការកត់ត្រាផែនការការងារប្រចាំថ្ងៃ។"
+            content: "ថ្មភក់ដែលយកមកសាងសង់ប្រាសាទអង្គរវត្ត ត្រូវបានកាត់ចេញពីជើងភ្នំគូលែន ដែលមានចម្ងាយប្រមាណជាង ៣០ គីឡូម៉ែត្រពីទីតាំងប្រាសាទ។ បុព្វបុរសខ្មែរបានជីកព្រែកជីកបុរាណតភ្ជាប់ពីភ្នំគូលែនមកកាន់តំបន់អង្គរ ដើម្បីប្រើប្រាស់ក្បូនឬស្សីដឹកជញ្ជូនថ្មធំៗតាមផ្លូវទឹកនៅរដូវវស្សា។\n\nការរៀបចំថ្មនីមួយៗឱ្យជាប់គ្នាដោយមិនប្រើកំបោរ ឬស៊ីម៉ង់ត៍ គឺជាសិល្បៈនៃការដុសខាត់ផ្ទៃថ្មឱ្យរាបស្មើឥតខ្ចោះ និងការចោះរន្ធពន្លួញថ្មដើម្បីតភ្ជាប់គ្នាឱ្យណែនដូចជាសាច់មួយ。"
           }
         ]
       }
     ];
 
-    // 3. Application State
     let allBooks = [];
     let allComments = [];
     let activeCategory = 'ទាំងអស់';
@@ -859,11 +803,9 @@
     let favorites = JSON.parse(localStorage.getItem('khmer_lib_favorites') || '[]');
     let lastRead = JSON.parse(localStorage.getItem('khmer_lib_last_read') || 'null');
 
-    // Admin State
     let isAdmin = sessionStorage.getItem('khmer_lib_is_admin') === 'true';
     let adminPasscode = localStorage.getItem('khmer_lib_admin_pass') || 'adminmuoy2';
 
-    // Active Book / Reader State
     let activeDetailBookId = null;
     let selectedCommentRating = 5;
     let activeReaderBook = null;
@@ -875,7 +817,6 @@
       lineHeight: '2.05'
     }));
 
-    // Helper: Convert Western numerals to Khmer numerals
     const KHMER_DIGITS = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
     function toKhmerNum(num) {
       return String(num).replace(/\d/g, d => KHMER_DIGITS[d]);
@@ -900,7 +841,6 @@
       }, 3000);
     }
 
-    // 4. Initialize Firebase & App (ដំណើរការស្វ័យប្រវត្តិលើ VS Code)
     async function bootApplication() {
       renderCategories();
       updateFavBadge();
@@ -914,8 +854,8 @@
         app = initializeApp(firebaseConfig);
         auth = getAuth(app);
         db = getFirestore(app);
+        storage = getStorage(app);
 
-        // ចូលប្រើប្រាស់ដោយស្វ័យប្រវត្តិ (Anonymous Auth)
         await signInAnonymously(auth);
         currentUser = auth.currentUser;
 
@@ -929,7 +869,6 @@
       }
     }
 
-    // ប្រព័ន្ធដំណើរការបម្រុង (Local Storage) ដើម្បីឱ្យដំណើរការជានិច្ចលើ VS Code ទោះគ្មានអ៊ីនធឺណិត
     function activateLocalFallbackMode() {
       useLocalFallback = true;
       const savedBooks = JSON.parse(localStorage.getItem('khmer_lib_local_books') || 'null');
@@ -985,7 +924,7 @@
         renderLibrary();
         renderContinueReading();
       }, (error) => {
-        console.warn("ប្តូរទៅប្រើ Local Fallback ដោយសារ Firestore Rules ឬ Auth:", error);
+        console.warn("ប្តូរទៅប្រើ Local Fallback ដោយសារ Firestore Rules:", error);
         activateLocalFallbackMode();
       });
     }
@@ -1004,11 +943,10 @@
           renderDetailComments(activeDetailBookId);
         }
       }, (error) => {
-        console.warn("មិនអាចទាញយកមតិយោបល់ពី Cloud:", error);
+        console.warn("មិនអាចទាញយកមតិយោបល់:", error);
       });
     }
 
-    // 5. Admin Authentication & UI Controls
     function updateAdminUI() {
       const headerBadge = document.getElementById('admin-badge-header');
       const desktopControls = document.getElementById('desktop-admin-controls');
@@ -1090,7 +1028,7 @@
         try {
           await setDoc(getConfigDocRef(), { passcode: newPass }, { merge: true });
         } catch (err) {
-          console.warn("រក្សាទុកលេខសម្ងាត់ក្នុង Browser រួចរាល់ (Firebase sync skipped):", err);
+          console.warn("រក្សាទុកលេខសម្ងាត់:", err);
         }
       }
 
@@ -1098,7 +1036,6 @@
       showToast('បានផ្លាស់ប្តូរលេខសម្ងាត់ Admin ថ្មីជោគជ័យ!');
     };
 
-    // 6. Categories & Library Rendering
     const CATEGORIES = ['ទាំងអស់', 'រឿងប្រលោមលោក', 'ប្រវត្តិសាស្ត្រ', 'អប់រំ និងភាសា', 'អភិវឌ្ឍន៍ខ្លួន'];
 
     function renderCategories() {
@@ -1282,7 +1219,6 @@
               ${coverVisual}
               ${book.coverUrl ? `<span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-black/55 backdrop-blur-sm text-white text-xs font-medium">${escapeHTML(book.category)}</span>` : ''}
               
-              <!-- Rating Pill -->
               ${stats.count > 0 ? `
                 <div class="absolute bottom-3 left-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-black/60 backdrop-blur-sm text-amber-300 text-xs font-bold">
                   <i data-lucide="star" class="w-3 h-3 fill-amber-400 text-amber-400"></i>
@@ -1290,7 +1226,6 @@
                 </div>
               ` : ''}
 
-              <!-- Bookmark Button -->
               <button 
                 onclick="toggleFavorite(event, '${book.id}')" 
                 title="${isFav ? 'ដកចេញពីបញ្ជីរក្សាទុក' : 'រក្សាទុកសៀវភៅ'}"
@@ -1353,7 +1288,6 @@
       }
     }
 
-    // 7. Book Details Modal & Live Reader Comments
     window.openBookDetailModal = function(bookId, scrollToComments = false) {
       const book = allBooks.find(b => b.id === bookId);
       if (!book) return;
@@ -1490,14 +1424,14 @@
           renderLibrary();
         }
         document.getElementById('comment-text').value = '';
-        showToast('អរគុណ! មតិយោបល់របស់អ្នកត្រូវបានបង្ហោះ');
+        showToast('អរគុណ! មតិយោបល់ត្រូវបានបង្ហោះ');
       } catch (err) {
         allComments.unshift(newComment);
         localStorage.setItem('khmer_lib_local_comments', JSON.stringify(allComments));
         renderDetailComments(activeDetailBookId);
         renderLibrary();
         document.getElementById('comment-text').value = '';
-        showToast('មតិយោបល់របស់អ្នកត្រូវបានរក្សាទុក!');
+        showToast('មតិយោបល់ត្រូវបានរក្សាទុក!');
       } finally {
         btn.disabled = false;
       }
@@ -1511,7 +1445,7 @@
       if (bookComments.length === 0) {
         list.innerHTML = `
           <div class="text-center py-8 px-4 bg-stone-50/70 rounded-2xl border border-dashed border-stone-200 text-slate-400 text-sm">
-            មិនទាន់មានមតិយោបល់សម្រាប់សៀវភៅនេះនៅឡើយទេ។ សូមក្លាយជាអ្នកបញ្ចេញមតិដំបូងគេ!
+            មិនទាន់មានមតិយោបល់នៅឡើយទេ។
           </div>
         `;
         return;
@@ -1528,7 +1462,7 @@
           : 'ថ្មីៗនេះ';
 
         const deleteBtn = isAdmin
-          ? `<button onclick="deleteComment('${c.id}')" title="លុបមតិយោបល់ (Admin)" class="text-xs text-rose-500 hover:text-rose-700 px-2 py-1 rounded-lg hover:bg-rose-50 transition">លុប</button>`
+          ? `<button onclick="deleteComment('${c.id}')" title="លុបមតិយោបល់" class="text-xs text-rose-500 hover:text-rose-700 px-2 py-1 rounded-lg hover:bg-rose-50 transition">លុប</button>`
           : '';
 
         return `
@@ -1577,7 +1511,6 @@
       }
     };
 
-    // 8. Admin Book Creator / Editor / Deleter
     window.openBookEditorModal = function(bookId = null) {
       if (!isAdmin) {
         openAdminLoginModal();
@@ -1600,7 +1533,21 @@
         document.getElementById('book-cover-url-input').value = book.coverUrl || '';
         document.getElementById('book-desc-input').value = book.description || '';
 
-        (book.chapters || []).forEach(ch => addChapterInputBlock(ch.title, ch.content));
+        // Load chapters (support both direct content or contentUrl storage)
+        if (book.chapters && book.chapters.length > 0) {
+          book.chapters.forEach(async ch => {
+            let text = ch.content || '';
+            if (!text && ch.contentUrl) {
+              try {
+                const res = await fetch(ch.contentUrl);
+                text = await res.text();
+              } catch (e) {
+                text = '[មិនអាចទាញយកអត្ថបទពី Storage បាន]';
+              }
+            }
+            addChapterInputBlock(ch.title, text);
+          });
+        }
       } else {
         titleEl.textContent = 'បង្ហោះសៀវភៅថ្មី (Admin)';
         document.getElementById('edit-book-id').value = '';
@@ -1635,10 +1582,10 @@
           </button>
         </div>
         <div>
-          <input type="text" class="chapter-title-field w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm font-medium outline-none" required placeholder="ចំណងជើងជំពូក (ឧទាហរណ៍៖ ជំពូកទី ${toKhmerNum(index)}៖ ការចាប់ផ្តើម)" value="${escapeHTML(chTitle)}" />
+          <input type="text" class="chapter-title-field w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm font-medium outline-none" required placeholder="ចំណងជើងជំពូក..." value="${escapeHTML(chTitle)}" />
         </div>
         <div>
-          <textarea rows="5" class="chapter-content-field w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm leading-relaxed outline-none" required placeholder="សរសេរ ឬចម្លងខ្លឹមសារសាច់រឿងនៃជំពូកនេះដាក់ទីនេះ...">${escapeHTML(chContent)}</textarea>
+          <textarea rows="6" class="chapter-content-field w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm leading-relaxed outline-none" required placeholder="សរសេរ ឬចម្លងខ្លឹមសារសាច់រឿងវែងៗដាក់ទីនេះ...">${escapeHTML(chContent)}</textarea>
         </div>
       `;
       container.appendChild(block);
@@ -1673,6 +1620,9 @@
       'from-rose-800 via-red-900 to-stone-900'
     ];
 
+    // ==========================================
+    // មុខងារ Upload អត្ថបទជំពូកវែងៗចូល Firebase Storage
+    // ==========================================
     window.handleSaveBook = async function(e) {
       e.preventDefault();
       if (!isAdmin) return;
@@ -1685,65 +1635,87 @@
       const description = document.getElementById('book-desc-input').value.trim();
 
       const chapterBlocks = document.querySelectorAll('#chapters-builder-container .chapter-input-block');
-      const chapters = [];
-      chapterBlocks.forEach(blk => {
-        const cTitle = blk.querySelector('.chapter-title-field').value.trim();
-        const cContent = blk.querySelector('.chapter-content-field').value.trim();
-        if (cTitle && cContent) {
-          chapters.push({ title: cTitle, content: cContent });
-        }
-      });
-
-      if (chapters.length === 0) {
+      if (chapterBlocks.length === 0) {
         showToast('សូមបំពេញខ្លឹមសារជំពូកយ៉ាងតិច ១!');
         return;
       }
 
       const saveBtn = document.getElementById('save-book-btn');
       saveBtn.disabled = true;
+      saveBtn.innerHTML = `<span>កំពុង Upload រឿងទៅ Storage...</span>`;
 
       try {
+        const uniqueNovelFolder = 'novel_' + Date.now();
+        const processedChapters = [];
+
+        // Loop ឆ្លងកាត់ជំពូកនីមួយៗ ដើម្បី Upload ចូល Firebase Storage
+        for (let i = 0; i < chapterBlocks.length; i++) {
+          const blk = chapterBlocks[i];
+          const cTitle = blk.querySelector('.chapter-title-field').value.trim();
+          const cContent = blk.querySelector('.chapter-content-field').value.trim();
+
+          if (cTitle && cContent) {
+            let downloadURL = '';
+
+            if (!useLocalFallback && storage) {
+              // បង្កើតហ្វាលអត្ថបទ (.txt) និង Upload ចូល Firebase Storage (ការពារដាច់ខាតមិនឱ្យហួស 1MB លើ Firestore)
+              const storageRef = ref(storage, `novels/${uniqueNovelFolder}/chapter_${i + 1}.txt`);
+              const snapshot = await uploadString(storageRef, cContent, 'raw', { contentType: 'text/plain;charset=utf-8' });
+              downloadURL = await getDownloadURL(snapshot.ref);
+            }
+
+            processedChapters.push({
+              title: cTitle,
+              contentUrl: downloadURL, // រក្សាទុកត្រឹម Link ហ្វាលអត្ថបទលើ Storage
+              content: useLocalFallback ? cContent : '' // រក្សាទុកក្នុង local mode
+            });
+          }
+        }
+
         if (!useLocalFallback && db) {
           if (editId) {
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'books', editId), {
-              title, author, category, coverUrl, description, chapters, updatedAt: Date.now()
+              title, author, category, coverUrl, description, chapters: processedChapters, updatedAt: Date.now()
             });
-            showToast('បានកែសម្រួលសៀវភៅជោគជ័យ!');
+            showToast('បានកែសម្រួលសៀវភៅ និង Upload ជំពូកជោគជ័យ!');
           } else {
             const randomGrad = COVER_GRADIENTS[Math.floor(Math.random() * COVER_GRADIENTS.length)];
             await addDoc(getBooksCollection(), {
-              title, author, category, coverUrl, description, chapters,
+              title, author, category, coverUrl, description, chapters: processedChapters,
               coverGradient: randomGrad,
               createdAt: Date.now()
             });
-            showToast('បានផ្សព្វផ្សាយសៀវភៅថ្មីជោគជ័យ!');
+            showToast('បានផុសសៀវភៅវែងៗបានជោគជ័យដោយសុវត្ថិភាព!');
           }
         } else {
           if (editId) {
             const idx = allBooks.findIndex(b => b.id === editId);
             if (idx !== -1) {
-              allBooks[idx] = { ...allBooks[idx], title, author, category, coverUrl, description, chapters };
+              allBooks[idx] = { ...allBooks[idx], title, author, category, coverUrl, description, chapters: processedChapters };
             }
             showToast('បានកែសម្រួលសៀវភៅជោគជ័យ!');
           } else {
             const randomGrad = COVER_GRADIENTS[Math.floor(Math.random() * COVER_GRADIENTS.length)];
             allBooks.unshift({
               id: 'local_book_' + Date.now(),
-              title, author, category, coverUrl, description, chapters,
+              title, author, category, coverUrl, description, chapters: processedChapters,
               coverGradient: randomGrad,
               createdAt: Date.now()
             });
-            showToast('បានផ្សព្វផ្សាយសៀវភៅថ្មីជោគជ័យ!');
+            showToast('បានផុសសៀវភៅថ្មីជោគជ័យ!');
           }
           localStorage.setItem('khmer_lib_local_books', JSON.stringify(allBooks));
           renderLibrary();
         }
+
         closeBookEditorModal();
       } catch (err) {
-        console.error(err);
-        showToast('មានបញ្ហាក្នុងការរក្សាទុកសៀវភៅ');
+        console.error("Error saving book:", err);
+        showToast('មានបញ្ហាក្នុងការរក្សាទុក៖ ' + err.message);
       } finally {
         saveBtn.disabled = false;
+        saveBtn.innerHTML = `<i data-lucide="upload-cloud" class="w-4 h-4"></i><span>ផ្សព្វផ្សាយសៀវភៅ</span>`;
+        if (window.lucide) lucide.createIcons();
       }
     };
 
@@ -1751,7 +1723,7 @@
       if (!isAdmin) return;
       const modal = document.getElementById('confirm-modal');
       document.getElementById('confirm-modal-title').textContent = 'លុបសៀវភៅចេញពីបណ្ណាល័យ?';
-      document.getElementById('confirm-modal-msg').textContent = `តើអ្នកពិតជាចង់លុបសៀវភៅ "${bookTitle}" មែនទេ? ទិន្នន័យនេះមិនអាចយកត្រឡប់វិញបានទេ។`;
+      document.getElementById('confirm-modal-msg').textContent = `តើអ្នកពិតជាចង់លុបសៀវភៅ "${bookTitle}" មែនទេ?`;
 
       const yesBtn = document.getElementById('confirm-modal-yes-btn');
       yesBtn.onclick = async () => {
@@ -1778,7 +1750,6 @@
       document.getElementById('confirm-modal').classList.add('hidden');
     };
 
-    // 9. Continue Reading Banner
     function renderContinueReading() {
       const section = document.getElementById('continue-reading-section');
       if (!lastRead || !lastRead.bookId) {
@@ -1807,8 +1778,10 @@
       document.getElementById('continue-reading-section').classList.add('hidden');
     };
 
-    // 10. Dedicated Book Reader Engine
-    window.openBook = function(bookId, chapterIndex = 0) {
+    // ==========================================
+    // មុខងារបើកអាន និង Fetch អត្ថបទពី Storage URL មកបង្ហាញ
+    // ==========================================
+    window.openBook = async function(bookId, chapterIndex = 0) {
       const book = allBooks.find(b => b.id === bookId);
       if (!book || !book.chapters || book.chapters.length === 0) return;
 
@@ -1823,7 +1796,7 @@
         <option value="${idx}">${escapeHTML(ch.title)}</option>
       `).join('');
 
-      renderCurrentChapter();
+      await renderCurrentChapterContent();
 
       document.getElementById('reader-view').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
@@ -1847,21 +1820,21 @@
       }
     };
 
-    window.selectChapter = function(indexStr) {
+    window.selectChapter = async function(indexStr) {
       activeChapterIndex = parseInt(indexStr, 10) || 0;
-      renderCurrentChapter();
+      await renderCurrentChapterContent();
     };
 
-    window.navigateChapter = function(delta) {
+    window.navigateChapter = async function(delta) {
       if (!activeReaderBook) return;
       const nextIdx = activeChapterIndex + delta;
       if (nextIdx >= 0 && nextIdx < activeReaderBook.chapters.length) {
         activeChapterIndex = nextIdx;
-        renderCurrentChapter();
+        await renderCurrentChapterContent();
       }
     };
 
-    function renderCurrentChapter() {
+    async function renderCurrentChapterContent() {
       if (!activeReaderBook) return;
       const totalChapters = activeReaderBook.chapters.length;
       const chapter = activeReaderBook.chapters[activeChapterIndex];
@@ -1871,8 +1844,28 @@
       document.getElementById('reader-chapter-title').textContent = chapter.title;
       document.getElementById('bottom-chapter-indicator').textContent = `${toKhmerNum(activeChapterIndex + 1)} / ${toKhmerNum(totalChapters)}`;
 
-      const paragraphs = (chapter.content || '').split('\n').filter(p => p.trim() !== '');
-      document.getElementById('reader-content-body').innerHTML = paragraphs.map(p => `<p class="indent-8">${escapeHTML(p)}</p>`).join('');
+      const contentBody = document.getElementById('reader-content-body');
+      contentBody.innerHTML = `<p class="text-center py-10 text-slate-400">កំពុងទាញយកអត្ថបទរឿង...</p>`;
+
+      let fullText = chapter.content || '';
+
+      // ប្រសិនបើមាន contentUrl គឺទាញយកអត្ថបទចេញពី Firebase Storage ផ្ទាល់ (ជួយឱ្យផុសបានវែងៗ)
+      if (!fullText && chapter.contentUrl) {
+        try {
+          const response = await fetch(chapter.contentUrl);
+          if (response.ok) {
+            fullText = await response.text();
+          } else {
+            fullText = 'មានបញ្ហាក្នុងការទាញយកខ្លឹមសារជំពូកនេះ។';
+          }
+        } catch (err) {
+          console.error("Error fetching chapter text:", err);
+          fullText = 'មិនអាចភ្ជាប់ទៅកាន់ប្រព័ន្ធទាញយកអត្ថបទបានទេ។';
+        }
+      }
+
+      const paragraphs = fullText.split('\n').filter(p => p.trim() !== '');
+      contentBody.innerHTML = paragraphs.map(p => `<p class="indent-8">${escapeHTML(p)}</p>`).join('');
 
       document.getElementById('prev-chapter-btn').disabled = activeChapterIndex === 0;
       document.getElementById('next-chapter-btn').disabled = activeChapterIndex === totalChapters - 1;
@@ -1897,7 +1890,6 @@
       document.getElementById('reading-progress-bar').style.width = `${pct}%`;
     };
 
-    // 11. Reader Typography & Theme Customization
     window.toggleSettingsPanel = function() {
       document.getElementById('reader-settings-panel').classList.toggle('hidden');
     };
@@ -1980,7 +1972,6 @@
       if (e.key === 'Escape') closeReader();
     });
 
-    // Start Application
     bootApplication();
   </script>
 </body>
