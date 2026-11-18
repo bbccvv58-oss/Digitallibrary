@@ -624,7 +624,7 @@
 
 
   <!-- ==========================================
-        ADMIN BOOK EDITOR MODAL (បន្ថែម / កែសម្រួលសៀវភៅ)
+        ADMIN BOOK EDITOR MODAL (បន្ថែម / កែសម្រួលសៀវភៅ - GitHub Raw URL)
   =========================================== -->
   <div id="book-editor-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/65 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden">
@@ -636,8 +636,8 @@
             <i data-lucide="book-plus" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 id="editor-modal-title" class="text-base sm:text-lg font-bold">បង្ហោះសៀវភៅថ្មី (Admin)</h3>
-            <p class="text-xs text-emerald-300/80">បំពេញព័ត៌មានសៀវភៅ និងបន្ថែមជំពូកវែងៗ (រក្សាទុកលើ Storage ដោយសុវត្ថិភាព)</p>
+            <h3 id="editor-modal-title" class="text-base sm:text-lg font-bold">បង្ហោះសៀវភៅថ្មី (ប្រើ GitHub Raw URL)</h3>
+            <p class="text-xs text-emerald-300/80">ដាក់តំណភ្ជាប់ GitHub Raw URL របស់ជំពូកនីមួយៗ (ឥតគិតថ្លៃ ១០០%)</p>
           </div>
         </div>
         <button onclick="closeBookEditorModal()" class="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-white/10 transition">
@@ -652,7 +652,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-semibold text-slate-700 mb-1.5">ចំណងជើងសៀវភៅ <span class="text-rose-500">*</span></label>
-            <input type="text" id="book-title-input" required placeholder="ឧទាហរណ៍៖ គុជ ប្រឆាំងមានស្នូក" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition" />
+            <input type="text" id="book-title-input" required placeholder="ឧទាហរណ៍៖ ស៊ីនី (仙逆)" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition" />
           </div>
           <div>
             <label class="block text-sm font-semibold text-slate-700 mb-1.5">ឈ្មោះអ្នកនិពន្ធ <span class="text-rose-500">*</span></label>
@@ -671,7 +671,7 @@
             </select>
           </div>
           <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-1.5">តំណភ្ជាប់រូបភាពគម្រប (Cover URL - ជាជម្រើស)</label>
+            <label class="block text-sm font-semibold text-slate-700 mb-1.5">តំណភ្ជាប់រូបភាពគម្រប (Cover URL)</label>
             <input type="url" id="book-cover-url-input" placeholder="https://example.com/cover.jpg" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition" />
           </div>
         </div>
@@ -681,12 +681,12 @@
           <textarea id="book-desc-input" rows="2" required placeholder="សរសេរសេចក្តីសង្ខេបខ្លីអំពីខ្លឹមសារសៀវភៅ..." class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition"></textarea>
         </div>
 
-        <!-- Chapters Builder -->
+        <!-- Chapters Builder (Using GitHub Raw URL) -->
         <div class="pt-3 border-t border-stone-200">
           <div class="flex items-center justify-between mb-3">
             <div>
-              <h4 class="text-sm font-bold text-slate-800">ជំពូកសៀវភៅ (Chapters) - ផុសបានវែងៗដោយសុវត្ថិភាព</h4>
-              <p class="text-xs text-slate-500">អត្ថបទវែងៗនឹងត្រូវបានរក្សាទុកជាហ្វាលដោយស្វ័យប្រវត្តិក្នុង Firebase Storage</p>
+              <h4 class="text-sm font-bold text-slate-800">ជំពូកសៀវភៅ (Chapters & GitHub Raw Links)</h4>
+              <p class="text-xs text-slate-500">បញ្ចូលតំណភ្ជាប់ GitHub Raw URL របស់ហ្វាលអត្ថបទ `.txt` នីមួយៗ</p>
             </div>
             <button type="button" onclick="addChapterInputBlock()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold border border-emerald-200 transition">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
@@ -742,13 +742,12 @@
 
 
   <!-- ==========================================
-        FIREBASE & APPLICATION LOGIC
+        FIREBASE & APPLICATION LOGIC (GitHub Raw URL)
   =========================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-    import { getStorage, ref, uploadString, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
     const appId = "digitallibrary-4a135";
 
@@ -765,7 +764,6 @@
     let app = null;
     let auth = null;
     let db = null;
-    let storage = null;
     let currentUser = null;
     let useLocalFallback = false;
 
@@ -785,11 +783,7 @@
         chapters: [
           {
             title: "ជំពូកទី ១៖ ការជ្រើសរើសទីតាំង និងគ្រឹះប្រាសាទ",
-            content: "ប្រាសាទអង្គរវត្តត្រូវបានកសាងឡើងនៅដើមសតវត្សរ៍ទី១២ ក្នុងរជ្ជកាលព្រះបាទសូរ្យវរ្ម័នទី២។ ភាពអស្ចារ្យដំបូងបំផុតនៃស្ថាបត្យកម្មខ្មែរបុរាណ គឺការរៀបចំគ្រឹះដ៏រឹងមាំដោយប្រើប្រាស់ដីខ្សាច់បង្ហាប់ និងថ្មបាយក្រៀម ដើម្បីទ្រទ្រង់ទម្ងន់ថ្មភក់រាប់លានតោនឱ្យឈរយ៉ាងរឹងមាំឆ្លងកាត់រាប់សតវត្សរ៍។\n\nនៅជុំវិញបរិវេណប្រាសាទ មានគូទឹកដ៏ធំល្វឹងល្វើយដែលមិនត្រឹមតែជានិមិត្តរូបនៃមហាសមុទ្រព័ទ្ធជុំវិញភ្នំព្រះសុមេរុប៉ុណ្ណោះទេ ប៉ុន្តែថែមទាំងដើរតួនាទីយ៉ាងសំខាន់ក្នុងការរក្សាសើមដីខ្សាច់នៅក្រោមគ្រឹះប្រាសាទ កុំឱ្យស្រុតឬប្រេះស្រាំនៅរដូវប្រាំងទៀតផង。"
-          },
-          {
-            title: "ជំពូកទី ២៖ ការដឹកជញ្ជូនថ្មភក់ពីភ្នំគូលែន",
-            content: "ថ្មភក់ដែលយកមកសាងសង់ប្រាសាទអង្គរវត្ត ត្រូវបានកាត់ចេញពីជើងភ្នំគូលែន ដែលមានចម្ងាយប្រមាណជាង ៣០ គីឡូម៉ែត្រពីទីតាំងប្រាសាទ។ បុព្វបុរសខ្មែរបានជីកព្រែកជីកបុរាណតភ្ជាប់ពីភ្នំគូលែនមកកាន់តំបន់អង្គរ ដើម្បីប្រើប្រាស់ក្បូនឬស្សីដឹកជញ្ជូនថ្មធំៗតាមផ្លូវទឹកនៅរដូវវស្សា។\n\nការរៀបចំថ្មនីមួយៗឱ្យជាប់គ្នាដោយមិនប្រើកំបោរ ឬស៊ីម៉ង់ត៍ គឺជាសិល្បៈនៃការដុសខាត់ផ្ទៃថ្មឱ្យរាបស្មើឥតខ្ចោះ និងការចោះរន្ធពន្លួញថ្មដើម្បីតភ្ជាប់គ្នាឱ្យណែនដូចជាសាច់មួយ。"
+            contentUrl: "https://raw.githubusercontent.com/username/repo/main/novels/sample_ch1.txt"
           }
         ]
       }
@@ -854,7 +848,6 @@
         app = initializeApp(firebaseConfig);
         auth = getAuth(app);
         db = getFirestore(app);
-        storage = getStorage(app);
 
         await signInAnonymously(auth);
         currentUser = auth.currentUser;
@@ -1533,23 +1526,13 @@
         document.getElementById('book-cover-url-input').value = book.coverUrl || '';
         document.getElementById('book-desc-input').value = book.description || '';
 
-        // Load chapters (support both direct content or contentUrl storage)
         if (book.chapters && book.chapters.length > 0) {
-          book.chapters.forEach(async ch => {
-            let text = ch.content || '';
-            if (!text && ch.contentUrl) {
-              try {
-                const res = await fetch(ch.contentUrl);
-                text = await res.text();
-              } catch (e) {
-                text = '[មិនអាចទាញយកអត្ថបទពី Storage បាន]';
-              }
-            }
-            addChapterInputBlock(ch.title, text);
+          book.chapters.forEach(ch => {
+            addChapterInputBlock(ch.title, ch.contentUrl || '');
           });
         }
       } else {
-        titleEl.textContent = 'បង្ហោះសៀវភៅថ្មី (Admin)';
+        titleEl.textContent = 'បង្ហោះសៀវភៅថ្មី (ប្រើ GitHub Raw URL)';
         document.getElementById('edit-book-id').value = '';
         document.getElementById('book-editor-form').reset();
         addChapterInputBlock('ជំពូកទី ១៖ ', '');
@@ -1565,7 +1548,7 @@
       document.getElementById('book-editor-modal').classList.add('hidden');
     };
 
-    window.addChapterInputBlock = function(chTitle = '', chContent = '') {
+    window.addChapterInputBlock = function(chTitle = '', chUrl = '') {
       const container = document.getElementById('chapters-builder-container');
       const index = container.children.length + 1;
 
@@ -1582,10 +1565,10 @@
           </button>
         </div>
         <div>
-          <input type="text" class="chapter-title-field w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm font-medium outline-none" required placeholder="ចំណងជើងជំពូក..." value="${escapeHTML(chTitle)}" />
+          <input type="text" class="chapter-title-field w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm font-medium outline-none" required placeholder="ចំណងជើងជំពូក (ឧទាហរណ៍៖ ជំពូកទី ១៖ ការចាប់ផ្តើម)" value="${escapeHTML(chTitle)}" />
         </div>
         <div>
-          <textarea rows="6" class="chapter-content-field w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm leading-relaxed outline-none" required placeholder="សរសេរ ឬចម្លងខ្លឹមសារសាច់រឿងវែងៗដាក់ទីនេះ...">${escapeHTML(chContent)}</textarea>
+          <input type="url" class="chapter-url-field w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm outline-none" required placeholder="ដាក់ GitHub Raw URL (ឧទាហរណ៍៖ https://raw.githubusercontent.com/.../ch1.txt)" value="${escapeHTML(chUrl)}" />
         </div>
       `;
       container.appendChild(block);
@@ -1621,7 +1604,7 @@
     ];
 
     // ==========================================
-    // មុខងារ Upload អត្ថបទជំពូកវែងៗចូល Firebase Storage
+    // មុខងារ Save Book ជាមួយ GitHub Raw URL (ស្រាល និងឥតគិតថ្លៃ)
     // ==========================================
     window.handleSaveBook = async function(e) {
       e.preventDefault();
@@ -1635,70 +1618,52 @@
       const description = document.getElementById('book-desc-input').value.trim();
 
       const chapterBlocks = document.querySelectorAll('#chapters-builder-container .chapter-input-block');
-      if (chapterBlocks.length === 0) {
-        showToast('សូមបំពេញខ្លឹមសារជំពូកយ៉ាងតិច ១!');
+      const chapters = [];
+      
+      chapterBlocks.forEach(blk => {
+        const cTitle = blk.querySelector('.chapter-title-field').value.trim();
+        const cUrl = blk.querySelector('.chapter-url-field').value.trim();
+        if (cTitle && cUrl) {
+          chapters.push({ title: cTitle, contentUrl: cUrl });
+        }
+      });
+
+      if (chapters.length === 0) {
+        showToast('សូមបំពេញចំណងជើង និង GitHub Raw URL យ៉ាងតិច ១!');
         return;
       }
 
       const saveBtn = document.getElementById('save-book-btn');
       saveBtn.disabled = true;
-      saveBtn.innerHTML = `<span>កំពុង Upload រឿងទៅ Storage...</span>`;
 
       try {
-        const uniqueNovelFolder = 'novel_' + Date.now();
-        const processedChapters = [];
-
-        // Loop ឆ្លងកាត់ជំពូកនីមួយៗ ដើម្បី Upload ចូល Firebase Storage
-        for (let i = 0; i < chapterBlocks.length; i++) {
-          const blk = chapterBlocks[i];
-          const cTitle = blk.querySelector('.chapter-title-field').value.trim();
-          const cContent = blk.querySelector('.chapter-content-field').value.trim();
-
-          if (cTitle && cContent) {
-            let downloadURL = '';
-
-            if (!useLocalFallback && storage) {
-              // បង្កើតហ្វាលអត្ថបទ (.txt) និង Upload ចូល Firebase Storage (ការពារដាច់ខាតមិនឱ្យហួស 1MB លើ Firestore)
-              const storageRef = ref(storage, `novels/${uniqueNovelFolder}/chapter_${i + 1}.txt`);
-              const snapshot = await uploadString(storageRef, cContent, 'raw', { contentType: 'text/plain;charset=utf-8' });
-              downloadURL = await getDownloadURL(snapshot.ref);
-            }
-
-            processedChapters.push({
-              title: cTitle,
-              contentUrl: downloadURL, // រក្សាទុកត្រឹម Link ហ្វាលអត្ថបទលើ Storage
-              content: useLocalFallback ? cContent : '' // រក្សាទុកក្នុង local mode
-            });
-          }
-        }
-
         if (!useLocalFallback && db) {
           if (editId) {
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'books', editId), {
-              title, author, category, coverUrl, description, chapters: processedChapters, updatedAt: Date.now()
+              title, author, category, coverUrl, description, chapters, updatedAt: Date.now()
             });
-            showToast('បានកែសម្រួលសៀវភៅ និង Upload ជំពូកជោគជ័យ!');
+            showToast('បានកែសម្រួលសៀវភៅជោគជ័យ!');
           } else {
             const randomGrad = COVER_GRADIENTS[Math.floor(Math.random() * COVER_GRADIENTS.length)];
             await addDoc(getBooksCollection(), {
-              title, author, category, coverUrl, description, chapters: processedChapters,
+              title, author, category, coverUrl, description, chapters,
               coverGradient: randomGrad,
               createdAt: Date.now()
             });
-            showToast('បានផុសសៀវភៅវែងៗបានជោគជ័យដោយសុវត្ថិភាព!');
+            showToast('បានផុសសៀវភៅថ្មីជោគជ័យដោយប្រើប្រាស់ GitHub Raw URL!');
           }
         } else {
           if (editId) {
             const idx = allBooks.findIndex(b => b.id === editId);
             if (idx !== -1) {
-              allBooks[idx] = { ...allBooks[idx], title, author, category, coverUrl, description, chapters: processedChapters };
+              allBooks[idx] = { ...allBooks[idx], title, author, category, coverUrl, description, chapters };
             }
             showToast('បានកែសម្រួលសៀវភៅជោគជ័យ!');
           } else {
             const randomGrad = COVER_GRADIENTS[Math.floor(Math.random() * COVER_GRADIENTS.length)];
             allBooks.unshift({
               id: 'local_book_' + Date.now(),
-              title, author, category, coverUrl, description, chapters: processedChapters,
+              title, author, category, coverUrl, description, chapters,
               coverGradient: randomGrad,
               createdAt: Date.now()
             });
@@ -1711,11 +1676,9 @@
         closeBookEditorModal();
       } catch (err) {
         console.error("Error saving book:", err);
-        showToast('មានបញ្ហាក្នុងការរក្សាទុក៖ ' + err.message);
+        showToast('មានបញ្ហាក្នុងការរក្សាទុកសៀវភៅ');
       } finally {
         saveBtn.disabled = false;
-        saveBtn.innerHTML = `<i data-lucide="upload-cloud" class="w-4 h-4"></i><span>ផ្សព្វផ្សាយសៀវភៅ</span>`;
-        if (window.lucide) lucide.createIcons();
       }
     };
 
@@ -1779,7 +1742,7 @@
     };
 
     // ==========================================
-    // មុខងារបើកអាន និង Fetch អត្ថបទពី Storage URL មកបង្ហាញ
+    // មុខងារបើកអាន និង Fetch អត្ថបទពី GitHub Raw URL មកបង្ហាញ
     // ==========================================
     window.openBook = async function(bookId, chapterIndex = 0) {
       const book = allBooks.find(b => b.id === bookId);
@@ -1845,23 +1808,24 @@
       document.getElementById('bottom-chapter-indicator').textContent = `${toKhmerNum(activeChapterIndex + 1)} / ${toKhmerNum(totalChapters)}`;
 
       const contentBody = document.getElementById('reader-content-body');
-      contentBody.innerHTML = `<p class="text-center py-10 text-slate-400">កំពុងទាញយកអត្ថបទរឿង...</p>`;
+      contentBody.innerHTML = `<p class="text-center py-10 text-slate-400">កំពុងទាញយកអត្ថបទរឿងពី GitHub...</p>`;
 
-      let fullText = chapter.content || '';
+      let fullText = '';
 
-      // ប្រសិនបើមាន contentUrl គឺទាញយកអត្ថបទចេញពី Firebase Storage ផ្ទាល់ (ជួយឱ្យផុសបានវែងៗ)
-      if (!fullText && chapter.contentUrl) {
+      if (chapter.contentUrl) {
         try {
           const response = await fetch(chapter.contentUrl);
           if (response.ok) {
             fullText = await response.text();
           } else {
-            fullText = 'មានបញ្ហាក្នុងការទាញយកខ្លឹមសារជំពូកនេះ។';
+            fullText = 'មានបញ្ហាក្នុងការទាញយកខ្លឹមសារជំពូកនេះ (ពិនិត្យមើល GitHub Raw URL ម្តងទៀត)';
           }
         } catch (err) {
           console.error("Error fetching chapter text:", err);
-          fullText = 'មិនអាចភ្ជាប់ទៅកាន់ប្រព័ន្ធទាញយកអត្ថបទបានទេ។';
+          fullText = 'មិនអាចភ្ជាប់ទៅកាន់ GitHub បានទេ។';
         }
+      } else {
+        fullText = chapter.content || 'គ្មានអត្ថបទ។';
       }
 
       const paragraphs = fullText.split('\n').filter(p => p.trim() !== '');
