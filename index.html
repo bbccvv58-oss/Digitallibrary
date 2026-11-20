@@ -34,6 +34,30 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .reader-transition { transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease; }
+
+    /* Legal Modal Themes (Light / Sepia / Dark Night Mode) */
+    #copyright-modal-box {
+      background-color: #ffffff;
+      color: #1e293b;
+      border: 1px solid #e7e5e4;
+    }
+    #copyright-modal-box.theme-sepia {
+      background-color: #f6efe2;
+      color: #433422;
+      border: 1px solid #dcd0ba;
+    }
+    #copyright-modal-box.theme-dark {
+      background-color: #0f172a;
+      color: #e2e8f0;
+      border: 1px solid #1e293b;
+    }
+    #copyright-modal-box.theme-dark h3 {
+      color: #34d399;
+    }
+    #copyright-modal-box.theme-dark code {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #6ee7b7;
+    }
   </style>
 </head>
 <body class="bg-stone-50 text-slate-800 font-sans antialiased selection:bg-emerald-100 selection:text-emerald-900">
@@ -236,20 +260,89 @@
       </div>
     </main>
 
-    <!-- Footer -->
+    <!-- Footer (Wuxiaworld-style clean layout) -->
     <footer class="bg-white border-t border-stone-200 mt-12">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500">
-        <div class="flex items-center gap-2">
-          <i data-lucide="book-open" class="w-4 h-4 text-emerald-700"></i>
-          <span class="font-bold text-slate-700">បណ្ណាល័យឌីជីថលខ្មែរ</span>
-          <span>— លើកកម្ពស់វប្បធម៌អាន</span>
-        </div>
-        <div class="flex items-center gap-4 text-xs text-slate-400">
-          <span>អ្នកអានទូទៅអាចអាន និងបញ្ចេញមតិដោយសេរី</span>
-          <span>•</span>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center space-y-2 text-sm text-slate-600">
+        <p class="font-medium text-slate-800">
+          Copyright &copy; Digitallibrarykh 2026
+        </p>
+        <div class="flex items-center justify-center flex-wrap gap-x-2 gap-y-1 text-xs sm:text-sm text-slate-500">
+          <button type="button" onclick="openLegalModal('terms')" class="hover:text-emerald-700 hover:underline cursor-pointer transition">
+            Terms of Service
+          </button>
+          <span aria-hidden="true">&middot;</span>
+          <button type="button" onclick="openLegalModal('privacy')" class="hover:text-emerald-700 hover:underline cursor-pointer transition">
+            Privacy Policy
+          </button>
+          <span aria-hidden="true">&middot;</span>
+          <button type="button" onclick="openLegalModal('dmca')" class="hover:text-emerald-700 hover:underline cursor-pointer transition">
+            DMCA
+          </button>
         </div>
       </div>
     </footer>
+  </div>
+
+
+  <!-- ==========================================
+        LEGAL MODAL (Terms of Service · Privacy Policy · DMCA)
+  =========================================== -->
+  <div id="copyright-modal" onclick="if (event.target === this) closeCopyrightModal()" class="hidden fixed inset-0 z-[55] flex items-center justify-center p-4 bg-slate-900/65 backdrop-blur-sm">
+    <div id="copyright-modal-box" class="rounded-2xl shadow-2xl max-w-2xl w-full max-h-[88vh] flex flex-col overflow-hidden reader-transition">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-current/10 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-emerald-600/15 text-emerald-600 flex items-center justify-center">
+            <i data-lucide="scale" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h2 id="legal-modal-title" class="text-base sm:text-lg font-bold leading-tight">Copyright, Terms of Service, Privacy Policy &amp; DMCA</h2>
+            <p class="text-xs opacity-65">Copyright &copy; Digitallibrarykh 2026</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeCopyrightModal()" aria-label="បិទ" class="p-2 rounded-xl opacity-70 hover:opacity-100 hover:bg-black/5 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Scrollable Content -->
+      <div class="p-6 overflow-y-auto space-y-5 text-sm leading-relaxed">
+        <div id="legal-section-terms" class="space-y-1.5">
+          <h3 class="text-base font-bold text-emerald-700">Terms of Service (លក្ខខណ្ឌប្រើប្រាស់)</h3>
+          <p class="opacity-90">
+            សូមស្វាគមន៍មកកាន់ <strong>Digitallibrarykh</strong>។ ខ្លឹមសារទាំងអស់ត្រូវបានផ្តល់ជូនសម្រាប់ការអាន និងសិក្សាផ្ទាល់ខ្លួនប៉ុណ្ណោះ។ ហាមចម្លង ផ្សព្វផ្សាយបន្ត ឬកេងប្រវ័ញ្ចពាណិជ្ជកម្មដោយគ្មានការអនុញ្ញាតត្រឹមត្រូវ ហើយអ្នកប្រើប្រាស់ទទួលខុសត្រូវលើមតិយោបល់ (Comments) ដែលបានបង្ហោះដោយខ្លួនឯង។
+          </p>
+        </div>
+
+        <div id="legal-section-privacy" class="space-y-1.5 pt-3 border-t border-current/10">
+          <h3 class="text-base font-bold text-emerald-700">Privacy Policy (គោលការណ៍ឯកជនភាព)</h3>
+          <p class="opacity-90">
+            វេបសាយរក្សាទុកចំណូលចិត្តការអាន (ដូចជា សៀវភៅដែលបានរក្សាទុក ទំហំអក្សរ និងពណ៌ផ្ទៃអាន) នៅក្នុង Browser របស់អ្នក (Local Storage) និងរក្សាមតិយោបល់/ទិន្នន័យសៀវភៅតាមរយៈ Firebase។ សូមកុំបញ្ចូលព័ត៌មានសម្ងាត់ផ្ទាល់ខ្លួន (ដូចជា លេខសម្ងាត់ ឬលេខគណនីធនាគារ) នៅក្នុងមតិយោបល់សាធារណៈ។
+          </p>
+        </div>
+
+        <div id="legal-section-dmca" class="space-y-1.5 pt-3 border-t border-current/10">
+          <h3 class="text-base font-bold text-emerald-700">DMCA &amp; Copyright Notice (ការជូនដំណឹងរក្សាសិទ្ធិ)</h3>
+          <p class="opacity-90">
+            ប្រសិនបើអ្នកជាម្ចាស់សិទ្ធិរក្សាសិទ្ធិ (ឬតំណាងស្របច្បាប់) ហើយយល់ឃើញថាស្នាដៃ ឬខ្លឹមសារណាមួយនៅលើវេបសាយនេះរំលោភសិទ្ធិរក្សាសិទ្ធិរបស់អ្នក សូមផ្ញើដំណឹងមកកាន់យើងខ្ញុំដោយភ្ជាប់ឈ្មោះ អ៊ីមែល តំណភ្ជាប់ (URL) ឬចំណងជើងជំពូកដែលមានបញ្ហា ដើម្បីពិនិត្យ និងលុបចេញឱ្យបានទាន់ពេលវេលា៖
+          </p>
+          <div class="p-3.5 rounded-xl bg-emerald-600/10 border border-emerald-600/20 mt-2">
+            <p class="text-xs sm:text-sm">
+              <strong>អ៊ីមែលទំនាក់ទំនង (DMCA / Support):</strong>
+              <code class="px-2 py-0.5 rounded bg-black/5 font-mono text-xs sm:text-sm">bbccvv58@gmail.com</code>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-3.5 border-t border-current/10 flex justify-end shrink-0">
+        <button type="button" onclick="closeCopyrightModal()" class="px-5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold transition">
+          បិទផ្ទាំងនេះ
+        </button>
+      </div>
+    </div>
   </div>
 
 
@@ -834,6 +927,51 @@
         toast.classList.add('translate-y-20', 'opacity-0');
       }, 3000);
     }
+
+    // ==========================================
+    // LEGAL MODAL (Terms of Service · Privacy Policy · DMCA)
+    // ==========================================
+    window.openCopyrightModal = function() {
+      const modal = document.getElementById('copyright-modal');
+      const box = document.getElementById('copyright-modal-box');
+      if (box) {
+        box.classList.remove('theme-sepia', 'theme-dark');
+        if (readerSettings.theme === 'dark') {
+          box.classList.add('theme-dark');
+        } else if (readerSettings.theme === 'sepia') {
+          box.classList.add('theme-sepia');
+        }
+      }
+      if (modal) {
+        modal.classList.remove('hidden');
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+      }
+    };
+
+    window.closeCopyrightModal = function() {
+      const modal = document.getElementById('copyright-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+      }
+    };
+
+    window.openLegalModal = function(section = 'terms') {
+      openCopyrightModal();
+      const targetId =
+        section === 'privacy'
+          ? 'legal-section-privacy'
+          : section === 'dmca'
+          ? 'legal-section-dmca'
+          : 'legal-section-terms';
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) {
+        setTimeout(() => {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 80);
+      }
+    };
 
     async function bootApplication() {
       renderCategories();
@@ -1928,6 +2066,14 @@
         e.preventDefault();
         openAdminLoginModal();
         return;
+      }
+
+      if (e.key === 'Escape') {
+        const copyrightModal = document.getElementById('copyright-modal');
+        if (copyrightModal && !copyrightModal.classList.contains('hidden')) {
+          closeCopyrightModal();
+          return;
+        }
       }
 
       if (document.getElementById('reader-view').classList.contains('hidden')) return;
