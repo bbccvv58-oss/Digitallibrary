@@ -215,43 +215,35 @@
       </div>
 
       <!-- Loading Skeleton State -->
-      <div id="loading-state" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <div class="bg-white rounded-xl border border-stone-200 h-64 animate-pulse p-3.5 flex flex-col justify-between">
-          <div class="h-32 bg-stone-200 rounded-lg"></div>
-          <div class="space-y-2">
-            <div class="h-3.5 bg-stone-200 rounded w-3/4"></div>
+      <div id="loading-state" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="bg-white rounded-2xl border border-stone-200 h-80 animate-pulse p-5 flex flex-col justify-between">
+          <div class="h-40 bg-stone-200 rounded-xl"></div>
+          <div class="space-y-2.5">
+            <div class="h-4 bg-stone-200 rounded w-3/4"></div>
             <div class="h-3 bg-stone-100 rounded w-full"></div>
-            <div class="h-8 bg-stone-200 rounded-lg mt-2"></div>
+            <div class="h-9 bg-stone-200 rounded-xl mt-3"></div>
           </div>
         </div>
-        <div class="bg-white rounded-xl border border-stone-200 h-64 animate-pulse p-3.5 hidden sm:flex flex-col justify-between">
-          <div class="h-32 bg-stone-200 rounded-lg"></div>
-          <div class="space-y-2">
-            <div class="h-3.5 bg-stone-200 rounded w-3/4"></div>
+        <div class="bg-white rounded-2xl border border-stone-200 h-80 animate-pulse p-5 hidden sm:flex flex-col justify-between">
+          <div class="h-40 bg-stone-200 rounded-xl"></div>
+          <div class="space-y-2.5">
+            <div class="h-4 bg-stone-200 rounded w-3/4"></div>
             <div class="h-3 bg-stone-100 rounded w-full"></div>
-            <div class="h-8 bg-stone-200 rounded-lg mt-2"></div>
+            <div class="h-9 bg-stone-200 rounded-xl mt-3"></div>
           </div>
         </div>
-        <div class="bg-white rounded-xl border border-stone-200 h-64 animate-pulse p-3.5 hidden md:flex flex-col justify-between">
-          <div class="h-32 bg-stone-200 rounded-lg"></div>
-          <div class="space-y-2">
-            <div class="h-3.5 bg-stone-200 rounded w-3/4"></div>
+        <div class="bg-white rounded-2xl border border-stone-200 h-80 animate-pulse p-5 hidden lg:flex flex-col justify-between">
+          <div class="h-40 bg-stone-200 rounded-xl"></div>
+          <div class="space-y-2.5">
+            <div class="h-4 bg-stone-200 rounded w-3/4"></div>
             <div class="h-3 bg-stone-100 rounded w-full"></div>
-            <div class="h-8 bg-stone-200 rounded-lg mt-2"></div>
-          </div>
-        </div>
-        <div class="bg-white rounded-xl border border-stone-200 h-64 animate-pulse p-3.5 hidden lg:flex flex-col justify-between">
-          <div class="h-32 bg-stone-200 rounded-lg"></div>
-          <div class="space-y-2">
-            <div class="h-3.5 bg-stone-200 rounded w-3/4"></div>
-            <div class="h-3 bg-stone-100 rounded w-full"></div>
-            <div class="h-8 bg-stone-200 rounded-lg mt-2"></div>
+            <div class="h-9 bg-stone-200 rounded-xl mt-3"></div>
           </div>
         </div>
       </div>
 
-      <!-- Book Grid (បង្រួម Book Card ឱ្យតូចល្មម៖ ៤ កាតក្នុង ១ ជួរលើកុំព្យូទ័រ) -->
-      <div id="books-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <!-- Book Grid -->
+      <div id="books-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Book cards injected dynamically -->
       </div>
 
@@ -356,61 +348,6 @@
 
 
   <!-- ==========================================
-        PDF VIEWER MODAL (បើកអាន PDF ក្នុងវេបសាយ + Button Back | លាក់ Download & Tab ថ្មី)
-  =========================================== -->
-  <div id="pdf-viewer-modal" class="hidden fixed inset-0 z-[58] flex flex-col bg-slate-900/90 backdrop-blur-sm">
-    <div class="bg-white border-b border-stone-200 px-3 sm:px-6 py-3 flex items-center justify-between gap-3 shrink-0 shadow-sm">
-      <div class="flex items-center gap-2.5 min-w-0">
-        <button
-          type="button"
-          onclick="closePdfViewerModal()"
-          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 active:scale-95 text-slate-800 text-xs sm:text-sm font-semibold transition shrink-0"
-        >
-          <i data-lucide="arrow-left" class="w-4 h-4"></i>
-          <span>ត្រឡប់ក្រោយ (Back)</span>
-        </button>
-        <div class="h-5 w-px bg-stone-200 shrink-0"></div>
-        <h3 id="pdf-viewer-title" class="text-sm sm:text-base font-bold text-slate-900 truncate">
-          ឯកសារ PDF
-        </h3>
-      </div>
-
-      <!-- លាក់ប៊ូតុង Download និង Tab ថ្មី ដោយប្រើ class hidden (រក្សាកូដទុកដដែល) -->
-      <div class="hidden items-center gap-2 shrink-0">
-        <a
-          id="pdf-download-link"
-          href="#"
-          download
-          class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs sm:text-sm font-semibold transition"
-        >
-          <i data-lucide="download" class="w-4 h-4"></i>
-          <span class="hidden sm:inline"></span>
-        </a>
-        <a
-          id="pdf-external-link"
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs sm:text-sm font-semibold transition"
-        >
-          <i data-lucide="external-link" class="w-4 h-4"></i>
-          <span class="hidden sm:inline"></span>
-        </a>
-      </div>
-    </div>
-
-    <div class="flex-1 bg-stone-800 p-2 sm:p-4 overflow-hidden">
-      <iframe
-        id="pdf-viewer-frame"
-        src=""
-        class="w-full h-full rounded-xl bg-white shadow-inner"
-        title="PDF Viewer"
-      ></iframe>
-    </div>
-  </div>
-
-
-  <!-- ==========================================
         BOOK DETAILS & LIVE COMMENTS MODAL
   =========================================== -->
   <div id="book-detail-modal" class="hidden fixed inset-0 z-40 flex items-center justify-center p-3 sm:p-5 bg-slate-900/65 backdrop-blur-sm">
@@ -460,10 +397,10 @@
                 <i data-lucide="book-open" class="w-4 h-4"></i>
                 <span>ចាប់ផ្តើមអានពីជំពូកទី ១</span>
               </button>
-              <button type="button" id="detail-pdf-btn" class="hidden inline-flex items-center gap-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-semibold text-sm px-4 py-3 rounded-xl transition">
+              <a id="detail-pdf-btn" href="#" target="_blank" rel="noopener noreferrer" class="hidden inline-flex items-center gap-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-semibold text-sm px-4 py-3 rounded-xl transition">
                 <i data-lucide="file-text" class="w-4 h-4"></i>
-                <span>អាន /​PDF</span>
-              </button>
+                <span>បើក / ទាញយក PDF</span>
+              </a>
               <button id="detail-bookmark-btn" class="inline-flex items-center gap-2 border border-stone-200 hover:bg-stone-50 text-slate-700 font-medium text-sm px-4 py-3 rounded-xl transition">
                 <i data-lucide="bookmark" class="w-4 h-4"></i>
                 <span>រក្សាទុក</span>
@@ -658,10 +595,10 @@
             <span id="reader-chapter-badge" class="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-emerald-600/15 text-emerald-700">
               ជំពូកទី ១
             </span>
-            <button type="button" id="reader-pdf-btn" class="hidden inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition">
+            <a id="reader-pdf-btn" href="#" target="_blank" rel="noopener noreferrer" class="hidden inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition">
               <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-              <span>អាន PDF</span>
-            </button>
+              <span>បើក PDF</span>
+            </a>
           </div>
           <h1 id="reader-chapter-title" class="text-2xl sm:text-3xl font-bold font-serif leading-snug">
             ចំណងជើងជំពូក
@@ -881,7 +818,7 @@
           <div class="flex items-center justify-between mb-3">
             <div>
               <h4 class="text-sm font-bold text-slate-800">ជំពូកសៀវភៅ (Chapters &amp; GitHub Raw Links)</h4>
-              <p class="text-xs text-slate-500">បញ្ចូលតំណភ្ជាប់ GitHub Raw URL របស់ហ្វាលអត្ថបទ `.txt` (ស្រេចចិត្តបើមានតែ PDF)</p>
+              <p class="text-xs text-slate-500">បញ្ចូលតំណភ្ជាប់ GitHub Raw URL របស់ហ្វាលអត្ថបទ `.txt` នីមួយៗ</p>
             </div>
             <button type="button" onclick="addChapterInputBlock()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold border border-emerald-200 transition">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
@@ -937,7 +874,7 @@
 
 
   <!-- ==========================================
-        FIREBASE & APPLICATION LOGIC (GitHub Raw URL + PDF Viewer)
+        FIREBASE & APPLICATION LOGIC (GitHub Raw URL + PDF)
   =========================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -1030,43 +967,6 @@
         toast.classList.add('translate-y-20', 'opacity-0');
       }, 3000);
     }
-
-    // ==========================================
-    // PDF VIEWER MODAL (មាន Button Back)
-    // ==========================================
-    window.openPdfViewerModal = function(pdfUrl, title = 'ឯកសារ PDF') {
-      if (!pdfUrl) return;
-      const modal = document.getElementById('pdf-viewer-modal');
-      const frame = document.getElementById('pdf-viewer-frame');
-      const titleEl = document.getElementById('pdf-viewer-title');
-      const extLink = document.getElementById('pdf-external-link');
-      const dlLink = document.getElementById('pdf-download-link');
-
-      if (titleEl) titleEl.textContent = title;
-      if (extLink) extLink.href = pdfUrl;
-      if (dlLink) dlLink.href = pdfUrl;
-      if (frame) frame.src = pdfUrl;
-
-      if (modal) {
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        if (window.lucide) {
-          lucide.createIcons();
-        }
-      }
-    };
-
-    window.closePdfViewerModal = function() {
-      const modal = document.getElementById('pdf-viewer-modal');
-      const frame = document.getElementById('pdf-viewer-frame');
-      if (frame) frame.src = '';
-      if (modal) modal.classList.add('hidden');
-      const readerHidden = document.getElementById('reader-view')?.classList.contains('hidden');
-      const detailHidden = document.getElementById('book-detail-modal')?.classList.contains('hidden');
-      if (readerHidden && detailHidden) {
-        document.body.style.overflow = '';
-      }
-    };
 
     // ==========================================
     // PDF FILE AUTO-FILL HELPER
@@ -1485,81 +1385,54 @@
 
         const coverVisual = book.coverUrl
           ? `<img src="${escapeHTML(book.coverUrl)}" alt="${escapeHTML(book.title)}" onerror="this.style.display='none'" class="w-full h-full object-contain bg-stone-900 group-hover:scale-105 transition-transform duration-500" />`
-          : `<div class="w-full h-full bg-gradient-to-br ${gradient} p-3.5 flex flex-col justify-between relative overflow-hidden">
-               <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-white/10"></div>
+          : `<div class="w-full h-full bg-gradient-to-br ${gradient} p-5 flex flex-col justify-between relative overflow-hidden">
+               <div class="absolute -right-6 -bottom-6 w-28 h-28 rounded-full bg-white/10"></div>
                <div class="flex items-center justify-between relative z-10">
-                 <span class="px-2 py-0.5 rounded-md bg-black/25 backdrop-blur-sm text-white/95 text-[11px] font-medium">
+                 <span class="px-2.5 py-1 rounded-lg bg-black/25 backdrop-blur-sm text-white/95 text-xs font-medium">
                    ${escapeHTML(book.category || 'ទូទៅ')}
                  </span>
                </div>
-               <div class="relative z-10 my-auto pt-2">
-                 <h3 class="text-white font-serif font-bold text-base leading-snug line-clamp-2 drop-shadow-sm">
+               <div class="relative z-10 my-auto pt-3">
+                 <h3 class="text-white font-serif font-bold text-lg sm:text-xl leading-snug line-clamp-2 drop-shadow-sm">
                    ${escapeHTML(book.title)}
                  </h3>
                </div>
              </div>`;
 
-        const hasChapters = chaptersCount > 0;
-        const cardClickAction = (!hasChapters && book.pdfUrl)
-          ? `openPdfViewerModal('${escapeHTML(book.pdfUrl)}', '${escapeHTML(book.title)}')`
-          : `openBookDetailModal('${book.id}')`;
-
-        const primaryActionBtn = hasChapters
-          ? `<button 
-               onclick="event.stopPropagation(); openBook('${book.id}', 0)" 
-               class="flex-1 inline-flex items-center justify-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white font-semibold text-xs py-2 px-2.5 rounded-lg transition"
+        const pdfActionBtn = book.pdfUrl
+          ? `<a 
+               href="${escapeHTML(book.pdfUrl)}" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               onclick="event.stopPropagation()" 
+               title="បើក / ទាញយក PDF"
+               class="inline-flex items-center justify-center gap-1 px-2.5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold transition"
              >
-               <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
-               <span>អានឥឡូវនេះ</span>
-             </button>`
-          : (book.pdfUrl
-              ? `<button 
-                   onclick="event.stopPropagation(); openPdfViewerModal('${escapeHTML(book.pdfUrl)}', '${escapeHTML(book.title)}')" 
-                   class="flex-1 inline-flex items-center justify-center gap-1.5 bg-rose-600 hover:bg-rose-700 active:scale-[0.98] text-white font-semibold text-xs py-2 px-2.5 rounded-lg transition"
-                 >
-                   <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-                   <span>អាន PDF</span>
-                 </button>`
-              : `<button 
-                   onclick="event.stopPropagation(); openBookDetailModal('${book.id}')" 
-                   class="flex-1 inline-flex items-center justify-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white font-semibold text-xs py-2 px-2.5 rounded-lg transition"
-                 >
-                   <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
-                   <span>មើលលម្អិត</span>
-                 </button>`);
-
-        const pdfActionBtn = (hasChapters && book.pdfUrl)
-          ? `<button 
-               type="button"
-               onclick="event.stopPropagation(); openPdfViewerModal('${escapeHTML(book.pdfUrl)}', '${escapeHTML(book.title)}')" 
-               title="អាន PDF"
-               class="inline-flex items-center justify-center gap-1 px-2 py-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold transition"
-             >
-               <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+               <i data-lucide="file-text" class="w-4 h-4"></i>
                <span>PDF</span>
-             </button>`
+             </a>`
           : '';
 
         const adminActions = isAdmin
-          ? `<div class="flex items-center gap-1.5 pt-2.5 mt-2.5 border-t border-stone-100" onclick="event.stopPropagation()">
-               <button onclick="openBookEditorModal('${book.id}')" class="flex-1 inline-flex items-center justify-center gap-1 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-semibold transition">
-                 <i data-lucide="edit-3" class="w-3 h-3"></i>
+          ? `<div class="flex items-center gap-1.5 pt-3 mt-3 border-t border-stone-100" onclick="event.stopPropagation()">
+               <button onclick="openBookEditorModal('${book.id}')" class="flex-1 inline-flex items-center justify-center gap-1 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-semibold transition">
+                 <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                  <span>កែសម្រួល</span>
                </button>
-               <button onclick="confirmDeleteBook('${book.id}', '${escapeHTML(book.title)}')" class="inline-flex items-center justify-center p-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition" title="លុបសៀវភៅ">
-                 <i data-lucide="trash-2" class="w-3 h-3"></i>
+               <button onclick="confirmDeleteBook('${book.id}', '${escapeHTML(book.title)}')" class="inline-flex items-center justify-center p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition" title="លុបសៀវភៅ">
+                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                </button>
              </div>`
           : '';
 
         return `
-          <div onclick="${cardClickAction}" class="group cursor-pointer bg-white rounded-xl border border-stone-200/90 hover:border-emerald-300 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden">
+          <div onclick="openBookDetailModal('${book.id}')" class="group cursor-pointer bg-white rounded-2xl border border-stone-200/90 hover:border-emerald-300 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden">
             <div class="aspect-[16/10] w-full relative overflow-hidden bg-stone-100">
               ${coverVisual}
-              ${book.coverUrl ? `<span class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/55 backdrop-blur-sm text-white text-[11px] font-medium">${escapeHTML(book.category)}</span>` : ''}
+              ${book.coverUrl ? `<span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-black/55 backdrop-blur-sm text-white text-xs font-medium">${escapeHTML(book.category)}</span>` : ''}
               
               ${stats.count > 0 ? `
-                <div class="absolute bottom-2 left-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-amber-300 text-[11px] font-bold">
+                <div class="absolute bottom-3 left-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-black/60 backdrop-blur-sm text-amber-300 text-xs font-bold">
                   <i data-lucide="star" class="w-3 h-3 fill-amber-400 text-amber-400"></i>
                   <span>${toKhmerNum(stats.avg)}</span>
                 </div>
@@ -1568,45 +1441,51 @@
               <button 
                 onclick="toggleFavorite(event, '${book.id}')" 
                 title="${isFav ? 'ដកចេញពីបញ្ជីរក្សាទុក' : 'រក្សាទុកសៀវភៅ'}"
-                class="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-sm text-white flex items-center justify-center transition"
+                class="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-sm text-white flex items-center justify-center transition"
               >
-                <i data-lucide="bookmark" class="w-3.5 h-3.5 ${isFav ? 'fill-amber-400 text-amber-400' : ''}"></i>
+                <i data-lucide="bookmark" class="w-4 h-4 ${isFav ? 'fill-amber-400 text-amber-400' : ''}"></i>
               </button>
             </div>
 
-            <div class="p-3.5 flex-1 flex flex-col justify-between">
+            <div class="p-5 flex-1 flex flex-col justify-between">
               <div>
-                <div class="flex items-center gap-1.5 text-[11px] text-slate-500 mb-1 flex-wrap">
-                  <span class="font-medium text-emerald-800 flex items-center gap-1 truncate max-w-[110px]">
-                    <i data-lucide="pen-tool" class="w-3 h-3 shrink-0"></i>
+                <div class="flex items-center gap-2 text-xs text-slate-500 mb-1.5 flex-wrap">
+                  <span class="font-medium text-emerald-800 flex items-center gap-1">
+                    <i data-lucide="pen-tool" class="w-3 h-3"></i>
                     ${escapeHTML(book.author)}
                   </span>
                   <span>•</span>
-                  <span>${chaptersCount > 0 ? `${toKhmerNum(chaptersCount)} ជំពូក` : (book.pdfUrl ? 'ឯកសារ PDF' : '០ ជំពូក')}</span>
+                  <span>${toKhmerNum(chaptersCount)} ជំពូក</span>
                   <span>•</span>
-                  <span class="inline-flex items-center gap-0.5 text-slate-500">
+                  <span class="inline-flex items-center gap-1 text-slate-500">
                     <i data-lucide="message-square" class="w-3 h-3"></i>
                     ${toKhmerNum(stats.count)} មតិ
                   </span>
                 </div>
-                <h4 class="font-bold text-slate-900 text-sm mb-1 line-clamp-1 group-hover:text-emerald-800 transition-colors">
+                <h4 class="font-bold text-slate-900 text-base mb-1.5 line-clamp-1 group-hover:text-emerald-800 transition-colors">
                   ${escapeHTML(book.title)}
                 </h4>
-                <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                <p class="text-xs sm:text-sm text-slate-500 line-clamp-2 leading-relaxed">
                   ${escapeHTML(book.description || '')}
                 </p>
               </div>
 
-              <div class="mt-3 pt-2.5 border-t border-stone-100">
-                <div class="flex items-center gap-1.5">
-                  ${primaryActionBtn}
+              <div class="mt-4 pt-3 border-t border-stone-100">
+                <div class="flex items-center gap-2">
+                  <button 
+                    onclick="event.stopPropagation(); openBook('${book.id}', 0)" 
+                    class="flex-1 inline-flex items-center justify-center gap-2 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white font-semibold text-xs sm:text-sm py-2.5 px-3 rounded-xl transition"
+                  >
+                    <i data-lucide="book-open" class="w-4 h-4"></i>
+                    <span>អានឥឡូវនេះ</span>
+                  </button>
                   ${pdfActionBtn}
                   <button 
                     onclick="event.stopPropagation(); openBookDetailModal('${book.id}', true)" 
                     title="មើលមតិយោបល់"
-                    class="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-lg border border-stone-200 hover:bg-stone-50 text-slate-600 text-xs font-medium transition"
+                    class="inline-flex items-center justify-center gap-1 px-3 py-2.5 rounded-xl border border-stone-200 hover:bg-stone-50 text-slate-600 text-xs font-medium transition"
                   >
-                    <i data-lucide="message-square" class="w-3.5 h-3.5 text-emerald-700"></i>
+                    <i data-lucide="message-square" class="w-4 h-4 text-emerald-700"></i>
                     <span>មតិ</span>
                   </button>
                 </div>
@@ -1651,22 +1530,16 @@
           </div>`;
       }
 
-      const chapters = book.chapters || [];
       const startBtn = document.getElementById('detail-start-read-btn');
-      if (chapters.length > 0) {
-        startBtn.classList.remove('hidden');
-        startBtn.onclick = () => {
-          closeBookDetailModal();
-          openBook(bookId, 0);
-        };
-      } else {
-        startBtn.classList.add('hidden');
-      }
+      startBtn.onclick = () => {
+        closeBookDetailModal();
+        openBook(bookId, 0);
+      };
 
       const detailPdfBtn = document.getElementById('detail-pdf-btn');
       if (book.pdfUrl) {
+        detailPdfBtn.href = book.pdfUrl;
         detailPdfBtn.classList.remove('hidden');
-        detailPdfBtn.onclick = () => openPdfViewerModal(book.pdfUrl, book.title);
       } else {
         detailPdfBtn.classList.add('hidden');
       }
@@ -1675,23 +1548,22 @@
       bookmarkBtn.onclick = (e) => toggleFavorite(e, bookId);
       updateDetailBookmarkButton(bookId);
 
+      const chapters = book.chapters || [];
       document.getElementById('detail-chapters-count').textContent = toKhmerNum(chapters.length);
-      document.getElementById('detail-chapters-list').innerHTML = chapters.length > 0
-        ? chapters.map((ch, idx) => `
-            <button 
-              onclick="closeBookDetailModal(); openBook('${bookId}', ${idx})" 
-              class="flex items-center justify-between p-3 rounded-xl border border-stone-200 hover:border-emerald-500 hover:bg-emerald-50/50 text-left transition group"
-            >
-              <div class="flex items-center gap-2.5 min-w-0">
-                <span class="w-7 h-7 rounded-lg bg-stone-100 group-hover:bg-emerald-700 group-hover:text-white text-slate-600 text-xs font-bold flex items-center justify-center shrink-0 transition">
-                  ${toKhmerNum(idx + 1)}
-                </span>
-                <span class="text-sm font-medium text-slate-800 truncate">${escapeHTML(ch.title)}</span>
-              </div>
-              <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-emerald-700 shrink-0"></i>
-            </button>
-          `).join('')
-        : `<p class="text-xs text-slate-500 col-span-2">ឯកសារនេះជាប្រភេទ PDF (ចុចប៊ូតុង «អាន / PDF» ខាងលើ)។</p>`;
+      document.getElementById('detail-chapters-list').innerHTML = chapters.map((ch, idx) => `
+        <button 
+          onclick="closeBookDetailModal(); openBook('${bookId}', ${idx})" 
+          class="flex items-center justify-between p-3 rounded-xl border border-stone-200 hover:border-emerald-500 hover:bg-emerald-50/50 text-left transition group"
+        >
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="w-7 h-7 rounded-lg bg-stone-100 group-hover:bg-emerald-700 group-hover:text-white text-slate-600 text-xs font-bold flex items-center justify-center shrink-0 transition">
+              ${toKhmerNum(idx + 1)}
+            </span>
+            <span class="text-sm font-medium text-slate-800 truncate">${escapeHTML(ch.title)}</span>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-emerald-700 shrink-0"></i>
+        </button>
+      `).join('');
 
       setCommentRating(5);
       renderDetailComments(bookId);
@@ -1888,8 +1760,6 @@
           book.chapters.forEach(ch => {
             addChapterInputBlock(ch.title, ch.contentUrl || '');
           });
-        } else {
-          addChapterInputBlock('ជំពូកទី ១៖ ', '');
         }
       } else {
         titleEl.textContent = 'បង្ហោះសៀវភៅថ្មី (ប្រើ GitHub Raw URL & PDF)';
@@ -1925,10 +1795,10 @@
           </button>
         </div>
         <div>
-          <input type="text" class="chapter-title-field w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm font-medium outline-none" placeholder="ចំណងជើងជំពូក (ឧទាហរណ៍៖ ជំពូកទី ១៖ ការចាប់ផ្តើម)" value="${escapeHTML(chTitle)}" />
+          <input type="text" class="chapter-title-field w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm font-medium outline-none" required placeholder="ចំណងជើងជំពូក (ឧទាហរណ៍៖ ជំពូកទី ១៖ ការចាប់ផ្តើម)" value="${escapeHTML(chTitle)}" />
         </div>
         <div>
-          <input type="url" class="chapter-url-field w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm outline-none" placeholder="ដាក់ GitHub Raw URL (ស្រេចចិត្ត បើមានតែ PDF)" value="${escapeHTML(chUrl)}" />
+          <input type="url" class="chapter-url-field w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm outline-none" required placeholder="ដាក់ GitHub Raw URL (ឧទាហរណ៍៖ https://raw.githubusercontent.com/.../ch1.txt)" value="${escapeHTML(chUrl)}" />
         </div>
       `;
       container.appendChild(block);
@@ -1989,8 +1859,8 @@
         }
       });
 
-      if (chapters.length === 0 && !pdfUrl) {
-        showToast('សូមបំពេញ GitHub Raw URL ជំពូក ឬជ្រើសរើស file PDF យ៉ាងតិច ១!');
+      if (chapters.length === 0) {
+        showToast('សូមបំពេញចំណងជើង និង GitHub Raw URL យ៉ាងតិច ១!');
         return;
       }
 
@@ -2081,12 +1951,12 @@
         return;
       }
       const book = allBooks.find(b => b.id === lastRead.bookId);
-      if (!book || !book.chapters || book.chapters.length === 0) {
+      if (!book) {
         section.classList.add('hidden');
         return;
       }
 
-      const chapterIdx = Math.min(lastRead.chapterIndex || 0, book.chapters.length - 1);
+      const chapterIdx = Math.min(lastRead.chapterIndex || 0, (book.chapters || []).length - 1);
       const chapter = book.chapters[chapterIdx];
 
       document.getElementById('continue-book-title').textContent = book.title;
@@ -2107,14 +1977,7 @@
     // ==========================================
     window.openBook = async function(bookId, chapterIndex = 0) {
       const book = allBooks.find(b => b.id === bookId);
-      if (!book) return;
-
-      if (!book.chapters || book.chapters.length === 0) {
-        if (book.pdfUrl) {
-          openPdfViewerModal(book.pdfUrl, book.title);
-        }
-        return;
-      }
+      if (!book || !book.chapters || book.chapters.length === 0) return;
 
       activeReaderBook = book;
       activeChapterIndex = Math.max(0, Math.min(chapterIndex, book.chapters.length - 1));
@@ -2125,8 +1988,8 @@
       const readerPdfBtn = document.getElementById('reader-pdf-btn');
       if (readerPdfBtn) {
         if (book.pdfUrl) {
+          readerPdfBtn.href = book.pdfUrl;
           readerPdfBtn.classList.remove('hidden');
-          readerPdfBtn.onclick = () => openPdfViewerModal(book.pdfUrl, book.title);
         } else {
           readerPdfBtn.classList.add('hidden');
         }
@@ -2309,11 +2172,6 @@
       }
 
       if (e.key === 'Escape') {
-        const pdfModal = document.getElementById('pdf-viewer-modal');
-        if (pdfModal && !pdfModal.classList.contains('hidden')) {
-          closePdfViewerModal();
-          return;
-        }
         const copyrightModal = document.getElementById('copyright-modal');
         if (copyrightModal && !copyrightModal.classList.contains('hidden')) {
           closeCopyrightModal();
