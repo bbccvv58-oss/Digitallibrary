@@ -2,7 +2,7 @@
 <html lang="km">
 <head>
   <link rel="icon" type="image/png" sizes="512x512" href="favicon.png?v=2">
-<link rel="apple-touch-icon" href="favicon.png?v=2">
+  <link rel="apple-touch-icon" href="favicon.png?v=2">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>បណ្ណាល័យឌីជីថលខ្មែរ - អានសៀវភៅ និងចែករំលែកចំណេះដឹង</title>
@@ -163,7 +163,7 @@
         <div class="relative z-10 max-w-2xl">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-amber-300 text-xs font-semibold mb-3 border border-white/10">
             <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-            <span>បណ្ណាល័យសាធារណៈឥតគិតថ្លៃ</span>
+            <span>បណ្ណាល័យសាធារណៈឥតគិតថ្លៃ រយៈពេល 2ឆ្នាំ</span>
           </div>
           <h2 class="text-2xl sm:text-3xl font-bold leading-snug mb-2">
             បើកទំព័រសៀវភៅ បើកទ្វារទៅកាន់ពិភពចំណេះដឹង
@@ -397,6 +397,10 @@
                 <i data-lucide="book-open" class="w-4 h-4"></i>
                 <span>ចាប់ផ្តើមអានពីជំពូកទី ១</span>
               </button>
+              <a id="detail-pdf-btn" href="#" target="_blank" rel="noopener noreferrer" class="hidden inline-flex items-center gap-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-semibold text-sm px-4 py-3 rounded-xl transition">
+                <i data-lucide="file-text" class="w-4 h-4"></i>
+                <span>បើក / ទាញយក PDF</span>
+              </a>
               <button id="detail-bookmark-btn" class="inline-flex items-center gap-2 border border-stone-200 hover:bg-stone-50 text-slate-700 font-medium text-sm px-4 py-3 rounded-xl transition">
                 <i data-lucide="bookmark" class="w-4 h-4"></i>
                 <span>រក្សាទុក</span>
@@ -587,9 +591,15 @@
     <div id="reader-scroll-container" onscroll="updateReadingProgress()" class="flex-1 overflow-y-auto px-4 sm:px-8 py-8 sm:py-12 scroll-smooth">
       <article class="max-w-6xl mx-auto">
         <div class="mb-8 pb-6 border-b border-current/10">
-          <span id="reader-chapter-badge" class="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-emerald-600/15 text-emerald-700 mb-3">
-            ជំពូកទី ១
-          </span>
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <span id="reader-chapter-badge" class="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-emerald-600/15 text-emerald-700">
+              ជំពូកទី ១
+            </span>
+            <a id="reader-pdf-btn" href="#" target="_blank" rel="noopener noreferrer" class="hidden inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition">
+              <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+              <span>បើក PDF</span>
+            </a>
+          </div>
           <h1 id="reader-chapter-title" class="text-2xl sm:text-3xl font-bold font-serif leading-snug">
             ចំណងជើងជំពូក
           </h1>
@@ -718,7 +728,7 @@
 
 
   <!-- ==========================================
-        ADMIN BOOK EDITOR MODAL (បន្ថែម / កែសម្រួលសៀវភៅ - GitHub Raw URL)
+        ADMIN BOOK EDITOR MODAL (បន្ថែម / កែសម្រួលសៀវភៅ - GitHub Raw URL & PDF)
   =========================================== -->
   <div id="book-editor-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/65 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden">
@@ -730,8 +740,8 @@
             <i data-lucide="book-plus" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 id="editor-modal-title" class="text-base sm:text-lg font-bold">បង្ហោះសៀវភៅថ្មី (ប្រើ GitHub Raw URL)</h3>
-            <p class="text-xs text-emerald-300/80">ដាក់តំណភ្ជាប់ GitHub Raw URL របស់ជំពូកនីមួយៗ (ឥតគិតថ្លៃ ១០០%)</p>
+            <h3 id="editor-modal-title" class="text-base sm:text-lg font-bold">បង្ហោះសៀវភៅថ្មី (ប្រើ GitHub Raw URL &amp; PDF)</h3>
+            <p class="text-xs text-emerald-300/80">ដាក់តំណភ្ជាប់ GitHub Raw URL របស់ជំពូកនីមួយៗ និង file PDF (ឥតគិតថ្លៃ ១០០%)</p>
           </div>
         </div>
         <button onclick="closeBookEditorModal()" class="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-white/10 transition">
@@ -770,6 +780,34 @@
           </div>
         </div>
 
+        <!-- PDF Upload / Path Section (Auto-fill path pdf/...) -->
+        <div class="p-4 rounded-2xl bg-rose-50/60 border border-rose-200/80 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <label for="book-pdf-url-input" class="text-sm font-semibold text-slate-800 flex items-center gap-1.5">
+              <i data-lucide="file-text" class="w-4 h-4 text-rose-600"></i>
+              <span>ឯកសារ PDF ភ្ជាប់ជាមួយសៀវភៅ (ស្រេចចិត្ត)</span>
+            </label>
+            <span class="text-[11px] font-medium text-rose-700 bg-rose-100 px-2 py-0.5 rounded-full">Folder: pdf/</span>
+          </div>
+          <input
+            type="text"
+            id="book-pdf-url-input"
+            placeholder="pdf/book-file.pdf ឬ https://..."
+            class="w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition"
+          />
+          <div>
+            <label for="pdf-file-input" class="block text-xs font-medium text-slate-600 mb-1">
+              ជ្រើសរើស File PDF ពីឧបករណ៍ (បំពេញ path <code class="text-rose-700 font-mono">pdf/...</code> ដោយស្វ័យប្រវត្តិ)
+            </label>
+            <input
+              id="pdf-file-input"
+              type="file"
+              accept="application/pdf,.pdf"
+              class="block w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-rose-100 file:text-rose-700 hover:file:bg-rose-200 cursor-pointer"
+            />
+          </div>
+        </div>
+
         <div>
           <label class="block text-sm font-semibold text-slate-700 mb-1.5">សេចក្តីសង្ខេបសៀវភៅ <span class="text-rose-500">*</span></label>
           <textarea id="book-desc-input" rows="2" required placeholder="សរសេរសេចក្តីសង្ខេបខ្លីអំពីខ្លឹមសារសៀវភៅ..." class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition"></textarea>
@@ -779,7 +817,7 @@
         <div class="pt-3 border-t border-stone-200">
           <div class="flex items-center justify-between mb-3">
             <div>
-              <h4 class="text-sm font-bold text-slate-800">ជំពូកសៀវភៅ (Chapters & GitHub Raw Links)</h4>
+              <h4 class="text-sm font-bold text-slate-800">ជំពូកសៀវភៅ (Chapters &amp; GitHub Raw Links)</h4>
               <p class="text-xs text-slate-500">បញ្ចូលតំណភ្ជាប់ GitHub Raw URL របស់ហ្វាលអត្ថបទ `.txt` នីមួយៗ</p>
             </div>
             <button type="button" onclick="addChapterInputBlock()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold border border-emerald-200 transition">
@@ -836,7 +874,7 @@
 
 
   <!-- ==========================================
-        FIREBASE & APPLICATION LOGIC (GitHub Raw URL)
+        FIREBASE & APPLICATION LOGIC (GitHub Raw URL + PDF)
   =========================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -872,6 +910,7 @@
         category: "ប្រវត្តិសាស្ត្រ",
         coverGradient: "from-amber-800 via-orange-900 to-stone-900",
         coverUrl: "",
+        pdfUrl: "",
         description: "ស្វែងយល់ពីបច្ចេកទេសសាងសង់ ប្រព័ន្ធធារាសាស្ត្រដ៏អស្ចារ្យ និងសិល្បៈចម្លាក់ក្បាច់រចនានៃប្រាសាទអង្គរវត្តក្នុងសម័យមហានគរ។",
         createdAt: Date.now() - 40000,
         chapters: [
@@ -927,6 +966,33 @@
       setTimeout(() => {
         toast.classList.add('translate-y-20', 'opacity-0');
       }, 3000);
+    }
+
+    // ==========================================
+    // PDF FILE AUTO-FILL HELPER
+    // ==========================================
+    function sanitizePdfFileName(name) {
+      return name
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9._-]/g, '');
+    }
+
+    const pdfFileInput = document.getElementById('pdf-file-input');
+    const bookPdfUrlInput = document.getElementById('book-pdf-url-input');
+
+    if (pdfFileInput && bookPdfUrlInput) {
+      pdfFileInput.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        const cleanName = sanitizePdfFileName(file.name) || 'document.pdf';
+        const finalName = cleanName.endsWith('.pdf') ? cleanName : `${cleanName}.pdf`;
+        bookPdfUrlInput.value = `pdf/${finalName}`;
+        bookPdfUrlInput.dispatchEvent(new Event('input', { bubbles: true }));
+        showToast(`បានកំណត់ path: pdf/${finalName}`);
+      });
     }
 
     // ==========================================
@@ -1318,7 +1384,7 @@
         const stats = getBookStats(book.id);
 
         const coverVisual = book.coverUrl
-          ? `<img src="${escapeHTML(book.coverUrl)}" alt="${escapeHTML(book.title)}" onerror="this.style.display='none'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />`
+          ? `<img src="${escapeHTML(book.coverUrl)}" alt="${escapeHTML(book.title)}" onerror="this.style.display='none'" class="w-full h-full object-contain bg-stone-900 group-hover:scale-105 transition-transform duration-500" />`
           : `<div class="w-full h-full bg-gradient-to-br ${gradient} p-5 flex flex-col justify-between relative overflow-hidden">
                <div class="absolute -right-6 -bottom-6 w-28 h-28 rounded-full bg-white/10"></div>
                <div class="flex items-center justify-between relative z-10">
@@ -1332,6 +1398,20 @@
                  </h3>
                </div>
              </div>`;
+
+        const pdfActionBtn = book.pdfUrl
+          ? `<a 
+               href="${escapeHTML(book.pdfUrl)}" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               onclick="event.stopPropagation()" 
+               title="បើក / ទាញយក PDF"
+               class="inline-flex items-center justify-center gap-1 px-2.5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold transition"
+             >
+               <i data-lucide="file-text" class="w-4 h-4"></i>
+               <span>PDF</span>
+             </a>`
+          : '';
 
         const adminActions = isAdmin
           ? `<div class="flex items-center gap-1.5 pt-3 mt-3 border-t border-stone-100" onclick="event.stopPropagation()">
@@ -1347,7 +1427,7 @@
 
         return `
           <div onclick="openBookDetailModal('${book.id}')" class="group cursor-pointer bg-white rounded-2xl border border-stone-200/90 hover:border-emerald-300 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden">
-            <div class="h-44 relative overflow-hidden bg-stone-100">
+            <div class="aspect-[16/10] w-full relative overflow-hidden bg-stone-100">
               ${coverVisual}
               ${book.coverUrl ? `<span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-black/55 backdrop-blur-sm text-white text-xs font-medium">${escapeHTML(book.category)}</span>` : ''}
               
@@ -1399,6 +1479,7 @@
                     <i data-lucide="book-open" class="w-4 h-4"></i>
                     <span>អានឥឡូវនេះ</span>
                   </button>
+                  ${pdfActionBtn}
                   <button 
                     onclick="event.stopPropagation(); openBookDetailModal('${book.id}', true)" 
                     title="មើលមតិយោបល់"
@@ -1440,7 +1521,7 @@
       const gradient = book.coverGradient || 'from-emerald-700 to-teal-900';
       const coverBox = document.getElementById('detail-cover-box');
       if (book.coverUrl) {
-        coverBox.innerHTML = `<img src="${escapeHTML(book.coverUrl)}" alt="${escapeHTML(book.title)}" class="w-full h-full object-cover" />`;
+        coverBox.innerHTML = `<img src="${escapeHTML(book.coverUrl)}" alt="${escapeHTML(book.title)}" class="w-full h-full object-contain bg-stone-900" />`;
       } else {
         coverBox.innerHTML = `
           <div class="w-full h-full bg-gradient-to-br ${gradient} p-5 flex flex-col justify-between text-white">
@@ -1454,6 +1535,14 @@
         closeBookDetailModal();
         openBook(bookId, 0);
       };
+
+      const detailPdfBtn = document.getElementById('detail-pdf-btn');
+      if (book.pdfUrl) {
+        detailPdfBtn.href = book.pdfUrl;
+        detailPdfBtn.classList.remove('hidden');
+      } else {
+        detailPdfBtn.classList.add('hidden');
+      }
 
       const bookmarkBtn = document.getElementById('detail-bookmark-btn');
       bookmarkBtn.onclick = (e) => toggleFavorite(e, bookId);
@@ -1653,6 +1742,7 @@
       const titleEl = document.getElementById('editor-modal-title');
       const container = document.getElementById('chapters-builder-container');
       container.innerHTML = '';
+      if (pdfFileInput) pdfFileInput.value = '';
 
       if (bookId) {
         const book = allBooks.find(b => b.id === bookId);
@@ -1663,6 +1753,7 @@
         document.getElementById('book-author-input').value = book.author || '';
         document.getElementById('book-category-input').value = book.category || 'រឿងប្រលោមលោក';
         document.getElementById('book-cover-url-input').value = book.coverUrl || '';
+        document.getElementById('book-pdf-url-input').value = book.pdfUrl || '';
         document.getElementById('book-desc-input').value = book.description || '';
 
         if (book.chapters && book.chapters.length > 0) {
@@ -1671,7 +1762,7 @@
           });
         }
       } else {
-        titleEl.textContent = 'បង្ហោះសៀវភៅថ្មី (ប្រើ GitHub Raw URL)';
+        titleEl.textContent = 'បង្ហោះសៀវភៅថ្មី (ប្រើ GitHub Raw URL & PDF)';
         document.getElementById('edit-book-id').value = '';
         document.getElementById('book-editor-form').reset();
         addChapterInputBlock('ជំពូកទី ១៖ ', '');
@@ -1743,7 +1834,7 @@
     ];
 
     // ==========================================
-    // មុខងារ Save Book ជាមួយ GitHub Raw URL (ស្រាល និងឥតគិតថ្លៃ)
+    // មុខងារ Save Book ជាមួយ GitHub Raw URL & PDF Path
     // ==========================================
     window.handleSaveBook = async function(e) {
       e.preventDefault();
@@ -1754,6 +1845,7 @@
       const author = document.getElementById('book-author-input').value.trim();
       const category = document.getElementById('book-category-input').value;
       const coverUrl = document.getElementById('book-cover-url-input').value.trim();
+      const pdfUrl = document.getElementById('book-pdf-url-input').value.trim();
       const description = document.getElementById('book-desc-input').value.trim();
 
       const chapterBlocks = document.querySelectorAll('#chapters-builder-container .chapter-input-block');
@@ -1779,30 +1871,30 @@
         if (!useLocalFallback && db) {
           if (editId) {
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'books', editId), {
-              title, author, category, coverUrl, description, chapters, updatedAt: Date.now()
+              title, author, category, coverUrl, pdfUrl, description, chapters, updatedAt: Date.now()
             });
             showToast('បានកែសម្រួលសៀវភៅជោគជ័យ!');
           } else {
             const randomGrad = COVER_GRADIENTS[Math.floor(Math.random() * COVER_GRADIENTS.length)];
             await addDoc(getBooksCollection(), {
-              title, author, category, coverUrl, description, chapters,
+              title, author, category, coverUrl, pdfUrl, description, chapters,
               coverGradient: randomGrad,
               createdAt: Date.now()
             });
-            showToast('បានផុសសៀវភៅថ្មីជោគជ័យដោយប្រើប្រាស់ GitHub Raw URL!');
+            showToast('បានផុសសៀវភៅថ្មីជោគជ័យ!');
           }
         } else {
           if (editId) {
             const idx = allBooks.findIndex(b => b.id === editId);
             if (idx !== -1) {
-              allBooks[idx] = { ...allBooks[idx], title, author, category, coverUrl, description, chapters };
+              allBooks[idx] = { ...allBooks[idx], title, author, category, coverUrl, pdfUrl, description, chapters };
             }
             showToast('បានកែសម្រួលសៀវភៅជោគជ័យ!');
           } else {
             const randomGrad = COVER_GRADIENTS[Math.floor(Math.random() * COVER_GRADIENTS.length)];
             allBooks.unshift({
               id: 'local_book_' + Date.now(),
-              title, author, category, coverUrl, description, chapters,
+              title, author, category, coverUrl, pdfUrl, description, chapters,
               coverGradient: randomGrad,
               createdAt: Date.now()
             });
@@ -1892,6 +1984,16 @@
 
       document.getElementById('reader-book-title').textContent = book.title;
       document.getElementById('reader-book-author').textContent = book.author;
+
+      const readerPdfBtn = document.getElementById('reader-pdf-btn');
+      if (readerPdfBtn) {
+        if (book.pdfUrl) {
+          readerPdfBtn.href = book.pdfUrl;
+          readerPdfBtn.classList.remove('hidden');
+        } else {
+          readerPdfBtn.classList.add('hidden');
+        }
+      }
 
       const selectEl = document.getElementById('chapter-select');
       selectEl.innerHTML = book.chapters.map((ch, idx) => `
