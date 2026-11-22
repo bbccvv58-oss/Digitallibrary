@@ -722,7 +722,7 @@
 
 
   <!-- ==========================================
-        ADMIN BOOK EDITOR MODAL (បន្ថែម / កែសម្រួលសៀវភៅ - GitHub Raw URL & PDF)
+        ADMIN BOOK EDITOR MODAL (បន្ថែម / កែសម្រួលសៀវភៅ - GitHub Raw URL, PDF & Audio)
   =========================================== -->
   <div id="book-editor-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/65 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden">
@@ -794,6 +794,26 @@
           </div>
         </div>
 
+        <!-- Multiple Audio Upload / Path Section (For Book Card Audio Button) -->
+        <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-3">
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <div>
+              <span class="text-sm font-semibold text-slate-800 flex items-center gap-1.5">
+                <i data-lucide="headphones" class="w-4 h-4 text-amber-700"></i>
+                <span>ឯកសារ Audio ភ្ជាប់ជាមួយសៀវភៅ (អាចដាក់បានច្រើន File)</span>
+              </span>
+              <p class="text-xs text-slate-500 mt-0.5">ជ្រើសរើស File Audio ពីឧបករណ៍ (បំពេញ path <code class="text-amber-800 font-mono">audio/...</code> ស្វ័យប្រវត្តិ) ឬដាក់ Link URL</p>
+            </div>
+            <button type="button" onclick="addAudioInputBlock()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-semibold border border-amber-200 transition">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>បន្ថែម Audio</span>
+            </button>
+          </div>
+          <div id="audios-builder-container" class="space-y-2.5">
+            <!-- Audio input blocks injected dynamically -->
+          </div>
+        </div>
+
         <div>
           <label class="block text-sm font-semibold text-slate-700 mb-1.5">សេចក្តីសង្ខេបសៀវភៅ <span class="text-rose-500">*</span></label>
           <textarea id="book-desc-input" rows="2" required placeholder="សរសេរសេចក្តីសង្ខេបខ្លីអំពីខ្លឹមសារសៀវភៅ..." class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition"></textarea>
@@ -860,7 +880,7 @@
 
 
   <!-- ==========================================
-        FIREBASE & APPLICATION LOGIC (GitHub Raw URL + Multiple PDFs)
+        FIREBASE & APPLICATION LOGIC (GitHub Raw URL + Multiple PDFs + Audio)
   =========================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -898,6 +918,8 @@
         coverUrl: "",
         pdfUrl: "",
         pdfFiles: [],
+        audioUrl: "",
+        audioFiles: [],
         description: "ស្វែងយល់ពីបច្ចេកទេសសាងសង់ ប្រព័ន្ធធារាសាស្ត្រដ៏អស្ចារ្យ និងសិល្បៈចម្លាក់ក្បាច់រចនានៃប្រាសាទអង្គរវត្តក្នុងសម័យមហានគរ។",
         createdAt: Date.now() - 40000,
         chapters: [
@@ -924,6 +946,10 @@
     let selectedCommentRating = 5;
     let activeReaderBook = null;
     let activeChapterIndex = 0;
+
+    // Book Card Audio Player State
+    const cardAudioPlayer = new Audio();
+    let playingCardAudioKey = null;
 
     let readerSettings = JSON.parse(localStorage.getItem('khmer_lib_reader_settings') || JSON.stringify({
       theme: 'light',
@@ -992,6 +1018,73 @@
         targetMenu.classList.remove('hidden');
       }
     };
+
+    // ==========================================
+    // BOOK CARD AUDIO HELPER FUNCTIONS
+    // ==========================================
+    function getBookAudioList(book) {
+      if (!book) return [];
+      if (Array.isArray(book.audioFiles) && book.audioFiles.length > 0) {
+        return book.audioFiles
+          .filter(item => item && item.url)
+          .map((item, idx) => ({
+            title: (item.title || '').trim() || `Audio ទី ${toKhmerNum(idx + 1)}`,
+            url: item.url.trim()
+          }));
+      }
+      if (book.audioUrl && book.audioUrl.trim()) {
+        return [{ title: 'Audio', url: book.audioUrl.trim() }];
+      }
+      return [];
+    }
+
+    window.toggleCardAudioMenu = function(event, bookId) {
+      event.stopPropagation();
+      const targetMenu = document.getElementById(`card-audio-menu-${bookId}`);
+      if (!targetMenu) return;
+      const isHidden = targetMenu.classList.contains('hidden');
+      document.querySelectorAll('.card-pdf-dropdown').forEach(menu => menu.classList.add('hidden'));
+      if (isHidden) {
+        targetMenu.classList.remove('hidden');
+      }
+    };
+
+    window.toggleCardAudioPlay = function(event, bookId, audioIdx = 0) {
+      event.stopPropagation();
+      const book = allBooks.find(b => b.id === bookId);
+      const audioList = getBookAudioList(book);
+      const item = audioList[audioIdx];
+      if (!item || !item.url) return;
+
+      const trackKey = `${bookId}::${audioIdx}`;
+      if (playingCardAudioKey === trackKey && !cardAudioPlayer.paused) {
+        cardAudioPlayer.pause();
+        playingCardAudioKey = null;
+        renderLibrary();
+        return;
+      }
+
+      cardAudioPlayer.src = item.url;
+      cardAudioPlayer.play().then(() => {
+        playingCardAudioKey = trackKey;
+        renderLibrary();
+      }).catch((err) => {
+        console.error("Error playing audio:", err);
+        showToast('មិនអាចចាក់សំឡេង Audio នេះបានទេ');
+      });
+    };
+
+    cardAudioPlayer.addEventListener('ended', () => {
+      playingCardAudioKey = null;
+      renderLibrary();
+    });
+
+    cardAudioPlayer.addEventListener('pause', () => {
+      if (cardAudioPlayer.paused) {
+        playingCardAudioKey = null;
+        renderLibrary();
+      }
+    });
 
     document.addEventListener('click', () => {
       document.querySelectorAll('.card-pdf-dropdown').forEach(menu => menu.classList.add('hidden'));
@@ -1075,6 +1168,87 @@
         const badge = blk.querySelector('.pdf-number-badge');
         if (badge) {
           badge.textContent = `PDF ទី ${toKhmerNum(i + 1)}`;
+        }
+      });
+    }
+
+    window.addAudioInputBlock = function(audioTitle = '', audioUrl = '') {
+      const container = document.getElementById('audios-builder-container');
+      if (!container) return;
+      const index = container.children.length + 1;
+
+      const block = document.createElement('div');
+      block.className = 'audio-input-block p-3 rounded-xl bg-white border border-amber-200/80 space-y-2';
+      block.innerHTML = `
+        <div class="flex items-center justify-between gap-2">
+          <span class="audio-number-badge text-[11px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md">
+            Audio ទី ${toKhmerNum(index)}
+          </span>
+          <button type="button" onclick="removeAudioInputBlock(this)" class="text-xs text-rose-500 hover:text-rose-700 font-medium flex items-center gap-1">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            <span>លុប</span>
+          </button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <input
+            type="text"
+            class="audio-title-field w-full px-3 py-1.5 rounded-lg border border-stone-200 bg-white focus:border-emerald-600 text-xs font-medium outline-none"
+            placeholder="ឈ្មោះបង្ហាញ (ឧទាហរណ៍៖ ជំពូកទី ១)"
+            value="${escapeHTML(audioTitle)}"
+          />
+          <input
+            type="text"
+            class="audio-url-field w-full px-3 py-1.5 rounded-lg border border-stone-200 bg-white focus:border-emerald-600 text-xs outline-none"
+            placeholder="audio/ch1.mp3 ឬ https://..."
+            value="${escapeHTML(audioUrl)}"
+          />
+        </div>
+        <div>
+          <input
+            type="file"
+            accept="audio/*,.mp3,.wav,.ogg,.m4a"
+            class="audio-file-picker block w-full text-xs text-slate-600 file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-100 file:text-amber-800 hover:file:bg-amber-200 cursor-pointer"
+          />
+        </div>
+      `;
+
+      const filePicker = block.querySelector('.audio-file-picker');
+      const urlField = block.querySelector('.audio-url-field');
+      const titleField = block.querySelector('.audio-title-field');
+
+      filePicker.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const rawBaseName = file.name.replace(/\.[^/.]+$/, '');
+        const cleanName = sanitizePdfFileName(file.name) || 'audio.mp3';
+        urlField.value = `audio/${cleanName}`;
+        if (!titleField.value.trim()) {
+          titleField.value = rawBaseName;
+        }
+        showToast(`បានកំណត់ path: audio/${cleanName}`);
+      });
+
+      container.appendChild(block);
+      renumberAudioBlocks();
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    };
+
+    window.removeAudioInputBlock = function(btn) {
+      const block = btn.closest('.audio-input-block');
+      if (block) {
+        block.remove();
+        renumberAudioBlocks();
+      }
+    };
+
+    function renumberAudioBlocks() {
+      const blocks = document.querySelectorAll('#audios-builder-container .audio-input-block');
+      blocks.forEach((blk, i) => {
+        const badge = blk.querySelector('.audio-number-badge');
+        if (badge) {
+          badge.textContent = `Audio ទី ${toKhmerNum(i + 1)}`;
         }
       });
     }
@@ -1467,6 +1641,7 @@
         const gradient = book.coverGradient || 'from-emerald-800 via-teal-900 to-slate-900';
         const stats = getBookStats(book.id);
         const pdfList = getBookPdfList(book);
+        const audioList = getBookAudioList(book);
 
         const coverVisual = book.coverUrl
           ? `<img src="${escapeHTML(book.coverUrl)}" alt="${escapeHTML(book.title)}" onerror="this.style.display='none'" class="w-full h-full object-contain bg-stone-900 group-hover:scale-105 transition-transform duration-500" />`
@@ -1532,6 +1707,58 @@
             </div>`;
         }
 
+        let audioActionBtn = '';
+        if (audioList.length === 1) {
+          const isPlayingThis = playingCardAudioKey === `${book.id}::0` && !cardAudioPlayer.paused;
+          audioActionBtn = `
+            <button 
+              type="button"
+              onclick="toggleCardAudioPlay(event, '${book.id}', 0)" 
+              title="${isPlayingThis ? 'ផ្អាកសំឡេង' : escapeHTML(audioList[0].title)}"
+              class="inline-flex items-center justify-center gap-1 px-2.5 py-2.5 rounded-xl ${isPlayingThis ? 'bg-amber-500 text-white border border-amber-600' : 'bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200'} text-xs font-semibold transition"
+            >
+              <i data-lucide="${isPlayingThis ? 'pause' : 'headphones'}" class="w-4 h-4"></i>
+              <span>${isPlayingThis ? 'ផ្អាក' : 'Audio'}</span>
+            </button>`;
+        } else if (audioList.length > 1) {
+          const hasPlayingInBook = playingCardAudioKey && playingCardAudioKey.startsWith(`${book.id}::`) && !cardAudioPlayer.paused;
+          audioActionBtn = `
+            <div class="relative" onclick="event.stopPropagation()">
+              <button 
+                type="button"
+                onclick="toggleCardAudioMenu(event, '${book.id}')" 
+                title="ជ្រើសរើស Audio (${toKhmerNum(audioList.length)})"
+                class="inline-flex items-center justify-center gap-1 px-2.5 py-2.5 rounded-xl ${hasPlayingInBook ? 'bg-amber-500 text-white border border-amber-600' : 'bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200'} text-xs font-semibold transition"
+              >
+                <i data-lucide="${hasPlayingInBook ? 'volume-2' : 'headphones'}" class="w-4 h-4"></i>
+                <span>Audio (${toKhmerNum(audioList.length)})</span>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+              </button>
+              <div id="card-audio-menu-${book.id}" class="card-pdf-dropdown hidden absolute right-0 bottom-full mb-2 w-56 rounded-xl bg-white border border-stone-200 shadow-xl py-1.5 z-30">
+                <div class="px-3 py-1 text-[11px] font-bold text-slate-400 border-b border-stone-100">
+                  ជ្រើសរើស Audio (${toKhmerNum(audioList.length)})
+                </div>
+                <div class="max-h-48 overflow-y-auto py-1">
+                  ${audioList.map((aud, idx) => {
+                    const isItemPlaying = playingCardAudioKey === `${book.id}::${idx}` && !cardAudioPlayer.paused;
+                    return `
+                      <button 
+                        type="button"
+                        onclick="toggleCardAudioPlay(event, '${book.id}', ${idx})" 
+                        class="w-full flex items-center justify-between gap-2 px-3 py-2 text-xs font-medium text-left ${isItemPlaying ? 'bg-amber-50 text-amber-800 font-bold' : 'text-slate-700 hover:bg-amber-50 hover:text-amber-800'} transition"
+                      >
+                        <span class="flex items-center gap-2 truncate">
+                          <i data-lucide="${isItemPlaying ? 'pause' : 'play'}" class="w-3.5 h-3.5 text-amber-700 shrink-0"></i>
+                          <span class="truncate">${escapeHTML(aud.title || `Audio ទី ${toKhmerNum(idx + 1)}`)}</span>
+                        </span>
+                      </button>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            </div>`;
+        }
+
         const adminActions = isAdmin
           ? `<div class="flex items-center gap-1.5 pt-3 mt-3 border-t border-stone-100" onclick="event.stopPropagation()">
                <button onclick="openBookEditorModal('${book.id}')" class="flex-1 inline-flex items-center justify-center gap-1 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-semibold transition">
@@ -1590,7 +1817,7 @@
               </div>
 
               <div class="mt-4 pt-3 border-t border-stone-100">
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
                   <button 
                     onclick="event.stopPropagation(); openBook('${book.id}', 0)" 
                     class="flex-1 inline-flex items-center justify-center gap-2 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white font-semibold text-xs sm:text-sm py-2.5 px-3 rounded-xl transition"
@@ -1598,6 +1825,7 @@
                     <i data-lucide="book-open" class="w-4 h-4"></i>
                     <span>អានឥឡូវនេះ</span>
                   </button>
+                  ${audioActionBtn}
                   ${pdfActionBtn}
                   <button 
                     onclick="event.stopPropagation(); openBookDetailModal('${book.id}', true)" 
@@ -1873,8 +2101,10 @@
       const titleEl = document.getElementById('editor-modal-title');
       const container = document.getElementById('chapters-builder-container');
       const pdfsContainer = document.getElementById('pdfs-builder-container');
+      const audiosContainer = document.getElementById('audios-builder-container');
       container.innerHTML = '';
       if (pdfsContainer) pdfsContainer.innerHTML = '';
+      if (audiosContainer) audiosContainer.innerHTML = '';
 
       if (bookId) {
         const book = allBooks.find(b => b.id === bookId);
@@ -1896,6 +2126,15 @@
           addPdfInputBlock('', '');
         }
 
+        const existingAudios = getBookAudioList(book);
+        if (existingAudios.length > 0) {
+          existingAudios.forEach(aud => {
+            addAudioInputBlock(aud.title, aud.url);
+          });
+        } else {
+          addAudioInputBlock('', '');
+        }
+
         if (book.chapters && book.chapters.length > 0) {
           book.chapters.forEach(ch => {
             addChapterInputBlock(ch.title, ch.contentUrl || '');
@@ -1906,6 +2145,7 @@
         document.getElementById('edit-book-id').value = '';
         document.getElementById('book-editor-form').reset();
         addPdfInputBlock('', '');
+        addAudioInputBlock('', '');
         addChapterInputBlock('ជំពូកទី ១៖ ', '');
       }
 
@@ -1975,7 +2215,7 @@
     ];
 
     // ==========================================
-    // មុខងារ Save Book ជាមួយ GitHub Raw URL & Multiple PDFs
+    // មុខងារ Save Book ជាមួយ GitHub Raw URL, Multiple PDFs & Audio
     // ==========================================
     window.handleSaveBook = async function(e) {
       e.preventDefault();
@@ -2002,6 +2242,20 @@
       });
       const pdfUrl = pdfFiles.length > 0 ? pdfFiles[0].url : '';
 
+      const audioBlocks = document.querySelectorAll('#audios-builder-container .audio-input-block');
+      const audioFiles = [];
+      audioBlocks.forEach((blk, idx) => {
+        const aTitle = blk.querySelector('.audio-title-field').value.trim();
+        const aUrl = blk.querySelector('.audio-url-field').value.trim();
+        if (aUrl) {
+          audioFiles.push({
+            title: aTitle || `Audio ទី ${toKhmerNum(idx + 1)}`,
+            url: aUrl
+          });
+        }
+      });
+      const audioUrl = audioFiles.length > 0 ? audioFiles[0].url : '';
+
       const chapterBlocks = document.querySelectorAll('#chapters-builder-container .chapter-input-block');
       const chapters = [];
       
@@ -2025,13 +2279,13 @@
         if (!useLocalFallback && db) {
           if (editId) {
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'books', editId), {
-              title, author, category, coverUrl, pdfUrl, pdfFiles, description, chapters, updatedAt: Date.now()
+              title, author, category, coverUrl, pdfUrl, pdfFiles, audioUrl, audioFiles, description, chapters, updatedAt: Date.now()
             });
             showToast('បានកែសម្រួលសៀវភៅជោគជ័យ!');
           } else {
             const randomGrad = COVER_GRADIENTS[Math.floor(Math.random() * COVER_GRADIENTS.length)];
             await addDoc(getBooksCollection(), {
-              title, author, category, coverUrl, pdfUrl, pdfFiles, description, chapters,
+              title, author, category, coverUrl, pdfUrl, pdfFiles, audioUrl, audioFiles, description, chapters,
               coverGradient: randomGrad,
               createdAt: Date.now()
             });
@@ -2041,14 +2295,14 @@
           if (editId) {
             const idx = allBooks.findIndex(b => b.id === editId);
             if (idx !== -1) {
-              allBooks[idx] = { ...allBooks[idx], title, author, category, coverUrl, pdfUrl, pdfFiles, description, chapters };
+              allBooks[idx] = { ...allBooks[idx], title, author, category, coverUrl, pdfUrl, pdfFiles, audioUrl, audioFiles, description, chapters };
             }
             showToast('បានកែសម្រួលសៀវភៅជោគជ័យ!');
           } else {
             const randomGrad = COVER_GRADIENTS[Math.floor(Math.random() * COVER_GRADIENTS.length)];
             allBooks.unshift({
               id: 'local_book_' + Date.now(),
-              title, author, category, coverUrl, pdfUrl, pdfFiles, description, chapters,
+              title, author, category, coverUrl, pdfUrl, pdfFiles, audioUrl, audioFiles, description, chapters,
               coverGradient: randomGrad,
               createdAt: Date.now()
             });
