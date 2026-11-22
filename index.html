@@ -215,43 +215,35 @@
       </div>
 
       <!-- Loading Skeleton State -->
-      <div id="loading-state" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <div class="bg-white rounded-xl border border-stone-200 h-64 animate-pulse p-3.5 flex flex-col justify-between">
-          <div class="h-32 bg-stone-200 rounded-lg"></div>
-          <div class="space-y-2">
-            <div class="h-3.5 bg-stone-200 rounded w-3/4"></div>
+      <div id="loading-state" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="bg-white rounded-2xl border border-stone-200 h-80 animate-pulse p-5 flex flex-col justify-between">
+          <div class="h-40 bg-stone-200 rounded-xl"></div>
+          <div class="space-y-2.5">
+            <div class="h-4 bg-stone-200 rounded w-3/4"></div>
             <div class="h-3 bg-stone-100 rounded w-full"></div>
-            <div class="h-8 bg-stone-200 rounded-lg mt-2"></div>
+            <div class="h-9 bg-stone-200 rounded-xl mt-3"></div>
           </div>
         </div>
-        <div class="bg-white rounded-xl border border-stone-200 h-64 animate-pulse p-3.5 hidden sm:flex flex-col justify-between">
-          <div class="h-32 bg-stone-200 rounded-lg"></div>
-          <div class="space-y-2">
-            <div class="h-3.5 bg-stone-200 rounded w-3/4"></div>
+        <div class="bg-white rounded-2xl border border-stone-200 h-80 animate-pulse p-5 hidden sm:flex flex-col justify-between">
+          <div class="h-40 bg-stone-200 rounded-xl"></div>
+          <div class="space-y-2.5">
+            <div class="h-4 bg-stone-200 rounded w-3/4"></div>
             <div class="h-3 bg-stone-100 rounded w-full"></div>
-            <div class="h-8 bg-stone-200 rounded-lg mt-2"></div>
+            <div class="h-9 bg-stone-200 rounded-xl mt-3"></div>
           </div>
         </div>
-        <div class="bg-white rounded-xl border border-stone-200 h-64 animate-pulse p-3.5 hidden md:flex flex-col justify-between">
-          <div class="h-32 bg-stone-200 rounded-lg"></div>
-          <div class="space-y-2">
-            <div class="h-3.5 bg-stone-200 rounded w-3/4"></div>
+        <div class="bg-white rounded-2xl border border-stone-200 h-80 animate-pulse p-5 hidden lg:flex flex-col justify-between">
+          <div class="h-40 bg-stone-200 rounded-xl"></div>
+          <div class="space-y-2.5">
+            <div class="h-4 bg-stone-200 rounded w-3/4"></div>
             <div class="h-3 bg-stone-100 rounded w-full"></div>
-            <div class="h-8 bg-stone-200 rounded-lg mt-2"></div>
-          </div>
-        </div>
-        <div class="bg-white rounded-xl border border-stone-200 h-64 animate-pulse p-3.5 hidden lg:flex flex-col justify-between">
-          <div class="h-32 bg-stone-200 rounded-lg"></div>
-          <div class="space-y-2">
-            <div class="h-3.5 bg-stone-200 rounded w-3/4"></div>
-            <div class="h-3 bg-stone-100 rounded w-full"></div>
-            <div class="h-8 bg-stone-200 rounded-lg mt-2"></div>
+            <div class="h-9 bg-stone-200 rounded-xl mt-3"></div>
           </div>
         </div>
       </div>
 
-      <!-- Book Grid (៤ កាតក្នុង ១ ជួរលើកុំព្យូទ័រ) -->
-      <div id="books-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <!-- Book Grid -->
+      <div id="books-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Book cards injected dynamically -->
       </div>
 
@@ -356,82 +348,6 @@
 
 
   <!-- ==========================================
-        PDF PICKER MODAL (ជ្រើសរើស File PDF ពេលមានច្រើនក្នុង Card តែមួយ)
-  =========================================== -->
-  <div id="pdf-picker-modal" onclick="if (event.target === this) closePdfPickerModal()" class="hidden fixed inset-0 z-[57] flex items-center justify-center p-4 bg-slate-900/65 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[82vh] flex flex-col overflow-hidden">
-      <div class="px-5 py-4 border-b border-stone-100 flex items-center justify-between bg-stone-50/80 shrink-0">
-        <div class="min-w-0 pr-2">
-          <h3 id="pdf-picker-title" class="text-base font-bold text-slate-900 truncate">ជ្រើសរើសឯកសារ PDF</h3>
-          <p id="pdf-picker-count" class="text-xs text-slate-500 mt-0.5"></p>
-        </div>
-        <button type="button" onclick="closePdfPickerModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-stone-200/70 transition shrink-0">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-      <div id="pdf-picker-list" class="p-4 overflow-y-auto space-y-2">
-        <!-- PDF list items injected via JS -->
-      </div>
-    </div>
-  </div>
-
-
-  <!-- ==========================================
-        PDF VIEWER MODAL (បើកអាន PDF ក្នុងវេបសាយ + Button Back | លាក់ Download & Tab ថ្មី)
-  =========================================== -->
-  <div id="pdf-viewer-modal" class="hidden fixed inset-0 z-[58] flex flex-col bg-slate-900/90 backdrop-blur-sm">
-    <div class="bg-white border-b border-stone-200 px-3 sm:px-6 py-3 flex items-center justify-between gap-3 shrink-0 shadow-sm">
-      <div class="flex items-center gap-2.5 min-w-0">
-        <button
-          type="button"
-          onclick="closePdfViewerModal()"
-          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 active:scale-95 text-slate-800 text-xs sm:text-sm font-semibold transition shrink-0"
-        >
-          <i data-lucide="arrow-left" class="w-4 h-4"></i>
-          <span>ត្រឡប់ក្រោយ (Back)</span>
-        </button>
-        <div class="h-5 w-px bg-stone-200 shrink-0"></div>
-        <h3 id="pdf-viewer-title" class="text-sm sm:text-base font-bold text-slate-900 truncate">
-          ឯកសារ PDF
-        </h3>
-      </div>
-
-      <!-- លាក់ប៊ូតុង Download និង Tab ថ្មី (រក្សាកូដទុកដដែល) -->
-      <div class="hidden items-center gap-2 shrink-0">
-        <a
-          id="pdf-download-link"
-          href="#"
-          download
-          class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs sm:text-sm font-semibold transition"
-        >
-          <i data-lucide="download" class="w-4 h-4"></i>
-          <span class="hidden sm:inline">ទាញយក</span>
-        </a>
-        <a
-          id="pdf-external-link"
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs sm:text-sm font-semibold transition"
-        >
-          <i data-lucide="external-link" class="w-4 h-4"></i>
-          <span class="hidden sm:inline">បើក Tab ថ្មី</span>
-        </a>
-      </div>
-    </div>
-
-    <div class="flex-1 bg-stone-800 p-2 sm:p-4 overflow-hidden">
-      <iframe
-        id="pdf-viewer-frame"
-        src=""
-        class="w-full h-full rounded-xl bg-white shadow-inner"
-        title="PDF Viewer"
-      ></iframe>
-    </div>
-  </div>
-
-
-  <!-- ==========================================
         BOOK DETAILS & LIVE COMMENTS MODAL
   =========================================== -->
   <div id="book-detail-modal" class="hidden fixed inset-0 z-40 flex items-center justify-center p-3 sm:p-5 bg-slate-900/65 backdrop-blur-sm">
@@ -481,10 +397,7 @@
                 <i data-lucide="book-open" class="w-4 h-4"></i>
                 <span>ចាប់ផ្តើមអានពីជំពូកទី ១</span>
               </button>
-              <button type="button" id="detail-pdf-btn" class="hidden inline-flex items-center gap-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-semibold text-sm px-4 py-3 rounded-xl transition">
-                <i data-lucide="file-text" class="w-4 h-4"></i>
-                <span id="detail-pdf-btn-text">អាន PDF</span>
-              </button>
+              <div id="detail-pdf-list" class="hidden flex flex-wrap items-center gap-2"></div>
               <button id="detail-bookmark-btn" class="inline-flex items-center gap-2 border border-stone-200 hover:bg-stone-50 text-slate-700 font-medium text-sm px-4 py-3 rounded-xl transition">
                 <i data-lucide="bookmark" class="w-4 h-4"></i>
                 <span>រក្សាទុក</span>
@@ -679,10 +592,7 @@
             <span id="reader-chapter-badge" class="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-emerald-600/15 text-emerald-700">
               ជំពូកទី ១
             </span>
-            <button type="button" id="reader-pdf-btn" class="hidden inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition">
-              <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-              <span id="reader-pdf-btn-text">អាន PDF</span>
-            </button>
+            <div id="reader-pdf-list" class="hidden flex flex-wrap items-center gap-1.5"></div>
           </div>
           <h1 id="reader-chapter-title" class="text-2xl sm:text-3xl font-bold font-serif leading-snug">
             ចំណងជើងជំពូក
@@ -812,7 +722,7 @@
 
 
   <!-- ==========================================
-        ADMIN BOOK EDITOR MODAL (បន្ថែម / កែសម្រួលសៀវភៅ - GitHub Raw URL & Multi-PDF)
+        ADMIN BOOK EDITOR MODAL (បន្ថែម / កែសម្រួលសៀវភៅ - GitHub Raw URL & PDF)
   =========================================== -->
   <div id="book-editor-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/65 backdrop-blur-sm">
     <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden">
@@ -825,7 +735,7 @@
           </div>
           <div>
             <h3 id="editor-modal-title" class="text-base sm:text-lg font-bold">បង្ហោះសៀវភៅថ្មី (ប្រើ GitHub Raw URL &amp; PDF)</h3>
-            <p class="text-xs text-emerald-300/80">ដាក់តំណភ្ជាប់ GitHub Raw URL របស់ជំពូកនីមួយៗ និង file PDF (អាចដាក់ PDF ច្រើនក្នុង ១ កាត)</p>
+            <p class="text-xs text-emerald-300/80">ដាក់តំណភ្ជាប់ GitHub Raw URL របស់ជំពូកនីមួយៗ និង file PDF (ឥតគិតថ្លៃ ១០០%)</p>
           </div>
         </div>
         <button onclick="closeBookEditorModal()" class="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-white/10 transition">
@@ -864,32 +774,23 @@
           </div>
         </div>
 
-        <!-- Multi-PDF Upload / Path Section (១ បន្ទាត់ ១ file ឬ ឈ្មោះបង្ហាញ | pdf/file.pdf) -->
-        <div class="p-4 rounded-2xl bg-rose-50/60 border border-rose-200/80 space-y-2.5">
-          <div class="flex items-center justify-between gap-2">
-            <label for="book-pdf-url-input" class="text-sm font-semibold text-slate-800 flex items-center gap-1.5">
-              <i data-lucide="file-text" class="w-4 h-4 text-rose-600"></i>
-              <span>ឯកសារ PDF (អាចដាក់ច្រើនបន្ទាត់ក្នុង ១ កាត)</span>
-            </label>
-            <span class="text-[11px] font-medium text-rose-700 bg-rose-100 px-2 py-0.5 rounded-full">១ បន្ទាត់ = ១ PDF</span>
+        <!-- Multiple PDF Upload / Path Section (Auto-fill path pdf/...) -->
+        <div class="p-4 rounded-2xl bg-rose-50/60 border border-rose-200/80 space-y-3">
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <div>
+              <span class="text-sm font-semibold text-slate-800 flex items-center gap-1.5">
+                <i data-lucide="file-text" class="w-4 h-4 text-rose-600"></i>
+                <span>ឯកសារ PDF ភ្ជាប់ជាមួយសៀវភៅ (អាចដាក់បានច្រើន File)</span>
+              </span>
+              <p class="text-xs text-slate-500 mt-0.5">ជ្រើសរើស File PDF ពីឧបករណ៍ (បំពេញ path <code class="text-rose-700 font-mono">pdf/...</code> ស្វ័យប្រវត្តិ) ឬដាក់ Link URL</p>
+            </div>
+            <button type="button" onclick="addPdfInputBlock()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-800 text-xs font-semibold border border-rose-200 transition">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>បន្ថែម PDF</span>
+            </button>
           </div>
-          <textarea
-            id="book-pdf-url-input"
-            rows="3"
-            placeholder="ដាក់ PDF 1 ឬច្រើនបន្ទាត់ ឧទាហរណ៍៖&#10;pdf/file-1.pdf&#10;ភាគទី 2 | pdf/file-2.pdf"
-            class="w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition"
-          ></textarea>
-          <div>
-            <label for="pdf-file-input" class="block text-xs font-medium text-slate-600 mb-1">
-              ជ្រើសរើស File PDF ពីឧបករណ៍ (អាចជ្រើសម្តងច្រើន files — បន្ថែម path <code class="text-rose-700 font-mono">pdf/...</code> ចូលបន្ទាត់បន្ទាប់ដោយស្វ័យប្រវត្តិ)
-            </label>
-            <input
-              id="pdf-file-input"
-              type="file"
-              accept="application/pdf,.pdf"
-              multiple
-              class="block w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-rose-100 file:text-rose-700 hover:file:bg-rose-200 cursor-pointer"
-            />
+          <div id="pdfs-builder-container" class="space-y-2.5">
+            <!-- PDF input blocks injected dynamically -->
           </div>
         </div>
 
@@ -903,7 +804,7 @@
           <div class="flex items-center justify-between mb-3">
             <div>
               <h4 class="text-sm font-bold text-slate-800">ជំពូកសៀវភៅ (Chapters &amp; GitHub Raw Links)</h4>
-              <p class="text-xs text-slate-500">បញ្ចូលតំណភ្ជាប់ GitHub Raw URL របស់ហ្វាលអត្ថបទ `.txt` នីមួយៗ (ស្រេចចិត្តបើមានតែ PDF)</p>
+              <p class="text-xs text-slate-500">បញ្ចូលតំណភ្ជាប់ GitHub Raw URL របស់ហ្វាលអត្ថបទ `.txt` នីមួយៗ</p>
             </div>
             <button type="button" onclick="addChapterInputBlock()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold border border-emerald-200 transition">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
@@ -959,7 +860,7 @@
 
 
   <!-- ==========================================
-        FIREBASE & APPLICATION LOGIC (GitHub Raw URL + Multi-PDF)
+        FIREBASE & APPLICATION LOGIC (GitHub Raw URL + Multiple PDFs)
   =========================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -996,6 +897,7 @@
         coverGradient: "from-amber-800 via-orange-900 to-stone-900",
         coverUrl: "",
         pdfUrl: "",
+        pdfFiles: [],
         description: "ស្វែងយល់ពីបច្ចេកទេសសាងសង់ ប្រព័ន្ធធារាសាស្ត្រដ៏អស្ចារ្យ និងសិល្បៈចម្លាក់ក្បាច់រចនានៃប្រាសាទអង្គរវត្តក្នុងសម័យមហានគរ។",
         createdAt: Date.now() - 40000,
         chapters: [
@@ -1054,127 +956,7 @@
     }
 
     // ==========================================
-    // MULTI-PDF PARSER & VIEWER MODAL
-    // ==========================================
-    function getBookPdfList(book) {
-      if (!book || !book.pdfUrl) return [];
-      const raw = Array.isArray(book.pdfUrl) ? book.pdfUrl.join('\n') : String(book.pdfUrl);
-      return raw
-        .split(/\r?\n/)
-        .map(line => line.trim())
-        .filter(Boolean)
-        .map((line, idx) => {
-          let customLabel = '';
-          let url = line;
-          const pipeIndex = line.indexOf('|');
-          if (pipeIndex !== -1) {
-            customLabel = line.slice(0, pipeIndex).trim();
-            url = line.slice(pipeIndex + 1).trim();
-          }
-          let derivedName = '';
-          try {
-            derivedName = decodeURIComponent(url.split('/').pop() || '').replace(/\.pdf$/i, '');
-          } catch (_) {
-            derivedName = (url.split('/').pop() || '').replace(/\.pdf$/i, '');
-          }
-          return {
-            url,
-            label: customLabel || derivedName || `ឯកសារ PDF ទី ${toKhmerNum(idx + 1)}`
-          };
-        })
-        .filter(item => item.url);
-    }
-
-    window.handleOpenBookPdfs = function(bookId) {
-      const book = allBooks.find(b => b.id === bookId);
-      if (!book) return;
-      const pdfList = getBookPdfList(book);
-      if (pdfList.length === 0) return;
-
-      if (pdfList.length === 1) {
-        openPdfViewerModal(pdfList[0].url, `${book.title} - ${pdfList[0].label}`);
-        return;
-      }
-
-      openPdfPickerModal(book.title, pdfList);
-    };
-
-    window.openPdfPickerModal = function(bookTitle, pdfList) {
-      const modal = document.getElementById('pdf-picker-modal');
-      const titleEl = document.getElementById('pdf-picker-title');
-      const countEl = document.getElementById('pdf-picker-count');
-      const listEl = document.getElementById('pdf-picker-list');
-      if (!modal || !listEl) return;
-
-      if (titleEl) titleEl.textContent = bookTitle;
-      if (countEl) countEl.textContent = `មានឯកសារ PDF ចំនួន ${toKhmerNum(pdfList.length)} ហ្វាល — ចុចលើហ្វាលណាមួយដើម្បីអាន`;
-
-      listEl.innerHTML = pdfList.map((pdf, i) => `
-        <button
-          type="button"
-          data-pdf-url="${escapeHTML(pdf.url)}"
-          data-pdf-title="${escapeHTML(`${bookTitle} - ${pdf.label}`)}"
-          onclick="closePdfPickerModal(); openPdfViewerModal(this.getAttribute('data-pdf-url'), this.getAttribute('data-pdf-title'))"
-          class="w-full flex items-center justify-between gap-3 p-3.5 rounded-xl border border-stone-200 hover:border-rose-400 hover:bg-rose-50/50 text-left transition group"
-        >
-          <div class="flex items-center gap-3 min-w-0">
-            <span class="w-8 h-8 rounded-lg bg-rose-100 text-rose-700 font-bold text-xs flex items-center justify-center shrink-0">
-              ${toKhmerNum(i + 1)}
-            </span>
-            <div class="min-w-0">
-              <div class="text-sm font-semibold text-slate-800 truncate group-hover:text-rose-700">${escapeHTML(pdf.label)}</div>
-              <div class="text-[11px] text-slate-400 truncate">${escapeHTML(pdf.url)}</div>
-            </div>
-          </div>
-          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-rose-600 shrink-0"></i>
-        </button>
-      `).join('');
-
-      modal.classList.remove('hidden');
-      if (window.lucide) lucide.createIcons();
-    };
-
-    window.closePdfPickerModal = function() {
-      const modal = document.getElementById('pdf-picker-modal');
-      if (modal) modal.classList.add('hidden');
-    };
-
-    window.openPdfViewerModal = function(pdfUrl, title = 'ឯកសារ PDF') {
-      if (!pdfUrl) return;
-      const modal = document.getElementById('pdf-viewer-modal');
-      const frame = document.getElementById('pdf-viewer-frame');
-      const titleEl = document.getElementById('pdf-viewer-title');
-      const extLink = document.getElementById('pdf-external-link');
-      const dlLink = document.getElementById('pdf-download-link');
-
-      if (titleEl) titleEl.textContent = title;
-      if (extLink) extLink.href = pdfUrl;
-      if (dlLink) dlLink.href = pdfUrl;
-      if (frame) frame.src = pdfUrl;
-
-      if (modal) {
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        if (window.lucide) {
-          lucide.createIcons();
-        }
-      }
-    };
-
-    window.closePdfViewerModal = function() {
-      const modal = document.getElementById('pdf-viewer-modal');
-      const frame = document.getElementById('pdf-viewer-frame');
-      if (frame) frame.src = '';
-      if (modal) modal.classList.add('hidden');
-      const readerHidden = document.getElementById('reader-view')?.classList.contains('hidden');
-      const detailHidden = document.getElementById('book-detail-modal')?.classList.contains('hidden');
-      if (readerHidden && detailHidden) {
-        document.body.style.overflow = '';
-      }
-    };
-
-    // ==========================================
-    // PDF FILE AUTO-FILL HELPER (បន្ថែមចូលបន្ទាត់បន្ទាប់ដោយមិនលុបរបស់ចាស់)
+    // MULTIPLE PDF HELPER FUNCTIONS
     // ==========================================
     function sanitizePdfFileName(name) {
       return name
@@ -1184,27 +966,116 @@
         .replace(/[^a-z0-9._-]/g, '');
     }
 
-    const pdfFileInput = document.getElementById('pdf-file-input');
-    const bookPdfUrlInput = document.getElementById('book-pdf-url-input');
+    function getBookPdfList(book) {
+      if (!book) return [];
+      if (Array.isArray(book.pdfFiles) && book.pdfFiles.length > 0) {
+        return book.pdfFiles
+          .filter(item => item && item.url)
+          .map((item, idx) => ({
+            title: (item.title || '').trim() || `ឯកសារ PDF ទី ${toKhmerNum(idx + 1)}`,
+            url: item.url.trim()
+          }));
+      }
+      if (book.pdfUrl && book.pdfUrl.trim()) {
+        return [{ title: 'ឯកសារ PDF', url: book.pdfUrl.trim() }];
+      }
+      return [];
+    }
 
-    if (pdfFileInput && bookPdfUrlInput) {
-      pdfFileInput.addEventListener('change', (e) => {
-        const files = Array.from(e.target.files || []);
-        if (files.length === 0) return;
+    window.toggleCardPdfMenu = function(event, bookId) {
+      event.stopPropagation();
+      const targetMenu = document.getElementById(`card-pdf-menu-${bookId}`);
+      if (!targetMenu) return;
+      const isHidden = targetMenu.classList.contains('hidden');
+      document.querySelectorAll('.card-pdf-dropdown').forEach(menu => menu.classList.add('hidden'));
+      if (isHidden) {
+        targetMenu.classList.remove('hidden');
+      }
+    };
 
-        const addedPaths = files.map(file => {
-          const cleanName = sanitizePdfFileName(file.name) || 'document.pdf';
-          const finalName = cleanName.endsWith('.pdf') ? cleanName : `${cleanName}.pdf`;
-          return `pdf/${finalName}`;
-        });
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.card-pdf-dropdown').forEach(menu => menu.classList.add('hidden'));
+    });
 
-        const existing = bookPdfUrlInput.value.trim();
-        bookPdfUrlInput.value = existing
-          ? `${existing}\n${addedPaths.join('\n')}`
-          : addedPaths.join('\n');
+    window.addPdfInputBlock = function(pdfTitle = '', pdfUrl = '') {
+      const container = document.getElementById('pdfs-builder-container');
+      if (!container) return;
+      const index = container.children.length + 1;
 
-        bookPdfUrlInput.dispatchEvent(new Event('input', { bubbles: true }));
-        showToast(`បានបន្ថែម ${toKhmerNum(addedPaths.length)} PDF: ${addedPaths.join(', ')}`);
+      const block = document.createElement('div');
+      block.className = 'pdf-input-block p-3 rounded-xl bg-white border border-rose-200/80 space-y-2';
+      block.innerHTML = `
+        <div class="flex items-center justify-between gap-2">
+          <span class="pdf-number-badge text-[11px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded-md">
+            PDF ទី ${toKhmerNum(index)}
+          </span>
+          <button type="button" onclick="removePdfInputBlock(this)" class="text-xs text-rose-500 hover:text-rose-700 font-medium flex items-center gap-1">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            <span>លុប</span>
+          </button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <input
+            type="text"
+            class="pdf-title-field w-full px-3 py-1.5 rounded-lg border border-stone-200 bg-white focus:border-emerald-600 text-xs font-medium outline-none"
+            placeholder="ឈ្មោះបង្ហាញ (ឧទាហរណ៍៖ ភាគទី ១)"
+            value="${escapeHTML(pdfTitle)}"
+          />
+          <input
+            type="text"
+            class="pdf-url-field w-full px-3 py-1.5 rounded-lg border border-stone-200 bg-white focus:border-emerald-600 text-xs outline-none"
+            placeholder="pdf/book-part1.pdf ឬ https://..."
+            value="${escapeHTML(pdfUrl)}"
+          />
+        </div>
+        <div>
+          <input
+            type="file"
+            accept="application/pdf,.pdf"
+            class="pdf-file-picker block w-full text-xs text-slate-600 file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-rose-100 file:text-rose-700 hover:file:bg-rose-200 cursor-pointer"
+          />
+        </div>
+      `;
+
+      const filePicker = block.querySelector('.pdf-file-picker');
+      const urlField = block.querySelector('.pdf-url-field');
+      const titleField = block.querySelector('.pdf-title-field');
+
+      filePicker.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const rawBaseName = file.name.replace(/\.pdf$/i, '');
+        const cleanName = sanitizePdfFileName(file.name) || 'document.pdf';
+        const finalName = cleanName.endsWith('.pdf') ? cleanName : `${cleanName}.pdf`;
+        urlField.value = `pdf/${finalName}`;
+        if (!titleField.value.trim()) {
+          titleField.value = rawBaseName;
+        }
+        showToast(`បានកំណត់ path: pdf/${finalName}`);
+      });
+
+      container.appendChild(block);
+      renumberPdfBlocks();
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    };
+
+    window.removePdfInputBlock = function(btn) {
+      const block = btn.closest('.pdf-input-block');
+      if (block) {
+        block.remove();
+        renumberPdfBlocks();
+      }
+    };
+
+    function renumberPdfBlocks() {
+      const blocks = document.querySelectorAll('#pdfs-builder-container .pdf-input-block');
+      blocks.forEach((blk, i) => {
+        const badge = blk.querySelector('.pdf-number-badge');
+        if (badge) {
+          badge.textContent = `PDF ទី ${toKhmerNum(i + 1)}`;
+        }
       });
     }
 
@@ -1593,94 +1464,94 @@
       grid.innerHTML = filtered.map(book => {
         const isFav = favorites.includes(book.id);
         const chaptersCount = (book.chapters || []).length;
-        const pdfList = getBookPdfList(book);
         const gradient = book.coverGradient || 'from-emerald-800 via-teal-900 to-slate-900';
         const stats = getBookStats(book.id);
+        const pdfList = getBookPdfList(book);
 
         const coverVisual = book.coverUrl
           ? `<img src="${escapeHTML(book.coverUrl)}" alt="${escapeHTML(book.title)}" onerror="this.style.display='none'" class="w-full h-full object-contain bg-stone-900 group-hover:scale-105 transition-transform duration-500" />`
-          : `<div class="w-full h-full bg-gradient-to-br ${gradient} p-3.5 flex flex-col justify-between relative overflow-hidden">
-               <div class="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-white/10"></div>
+          : `<div class="w-full h-full bg-gradient-to-br ${gradient} p-5 flex flex-col justify-between relative overflow-hidden">
+               <div class="absolute -right-6 -bottom-6 w-28 h-28 rounded-full bg-white/10"></div>
                <div class="flex items-center justify-between relative z-10">
-                 <span class="px-2 py-0.5 rounded-md bg-black/25 backdrop-blur-sm text-white/95 text-[11px] font-medium">
+                 <span class="px-2.5 py-1 rounded-lg bg-black/25 backdrop-blur-sm text-white/95 text-xs font-medium">
                    ${escapeHTML(book.category || 'ទូទៅ')}
                  </span>
                </div>
-               <div class="relative z-10 my-auto pt-2">
-                 <h3 class="text-white font-serif font-bold text-base leading-snug line-clamp-2 drop-shadow-sm">
+               <div class="relative z-10 my-auto pt-3">
+                 <h3 class="text-white font-serif font-bold text-lg sm:text-xl leading-snug line-clamp-2 drop-shadow-sm">
                    ${escapeHTML(book.title)}
                  </h3>
                </div>
              </div>`;
 
-        const hasChapters = chaptersCount > 0;
-        const hasPdfs = pdfList.length > 0;
-        const pdfBadgeText = pdfList.length > 1 ? `អាន PDF (${toKhmerNum(pdfList.length)})` : 'អាន PDF';
-
-        const cardClickAction = (!hasChapters && hasPdfs)
-          ? `handleOpenBookPdfs('${book.id}')`
-          : `openBookDetailModal('${book.id}')`;
-
-        const primaryActionBtn = hasChapters
-          ? `<button 
-               onclick="event.stopPropagation(); openBook('${book.id}', 0)" 
-               class="flex-1 inline-flex items-center justify-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white font-semibold text-xs py-2 px-2.5 rounded-lg transition"
-             >
-               <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
-               <span>អានឥឡូវនេះ</span>
-             </button>`
-          : (hasPdfs
-              ? `<button 
-                   onclick="event.stopPropagation(); handleOpenBookPdfs('${book.id}')" 
-                   class="flex-1 inline-flex items-center justify-center gap-1.5 bg-rose-600 hover:bg-rose-700 active:scale-[0.98] text-white font-semibold text-xs py-2 px-2.5 rounded-lg transition"
-                 >
-                   <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-                   <span>${pdfBadgeText}</span>
-                 </button>`
-              : `<button 
-                   onclick="event.stopPropagation(); openBookDetailModal('${book.id}')" 
-                   class="flex-1 inline-flex items-center justify-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white font-semibold text-xs py-2 px-2.5 rounded-lg transition"
-                 >
-                   <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
-                   <span>មើលលម្អិត</span>
-                 </button>`);
-
-        const pdfActionBtn = (hasChapters && hasPdfs)
-          ? `<button 
-               type="button"
-               onclick="event.stopPropagation(); handleOpenBookPdfs('${book.id}')" 
-               title="អាន PDF"
-               class="inline-flex items-center justify-center gap-1 px-2 py-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold transition"
-             >
-               <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-               <span>${pdfList.length > 1 ? `PDF (${toKhmerNum(pdfList.length)})` : 'PDF'}</span>
-             </button>`
-          : '';
-
-        const countInfoLabel = hasChapters
-          ? `${toKhmerNum(chaptersCount)} ជំពូក`
-          : (hasPdfs ? `${toKhmerNum(pdfList.length)} PDF` : '០ ជំពូក');
+        let pdfActionBtn = '';
+        if (pdfList.length === 1) {
+          pdfActionBtn = `
+            <a 
+              href="${escapeHTML(pdfList[0].url)}" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              onclick="event.stopPropagation()" 
+              title="${escapeHTML(pdfList[0].title)}"
+              class="inline-flex items-center justify-center gap-1 px-2.5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold transition"
+            >
+              <i data-lucide="file-text" class="w-4 h-4"></i>
+              <span>PDF</span>
+            </a>`;
+        } else if (pdfList.length > 1) {
+          pdfActionBtn = `
+            <div class="relative" onclick="event.stopPropagation()">
+              <button 
+                type="button"
+                onclick="toggleCardPdfMenu(event, '${book.id}')" 
+                title="ជ្រើសរើសឯកសារ PDF (${toKhmerNum(pdfList.length)})"
+                class="inline-flex items-center justify-center gap-1 px-2.5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold transition"
+              >
+                <i data-lucide="file-text" class="w-4 h-4"></i>
+                <span>PDF (${toKhmerNum(pdfList.length)})</span>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+              </button>
+              <div id="card-pdf-menu-${book.id}" class="card-pdf-dropdown hidden absolute right-0 bottom-full mb-2 w-56 rounded-xl bg-white border border-stone-200 shadow-xl py-1.5 z-30">
+                <div class="px-3 py-1 text-[11px] font-bold text-slate-400 border-b border-stone-100">
+                  ជ្រើសរើសឯកសារ PDF (${toKhmerNum(pdfList.length)})
+                </div>
+                <div class="max-h-48 overflow-y-auto py-1">
+                  ${pdfList.map((pdf, idx) => `
+                    <a 
+                      href="${escapeHTML(pdf.url)}" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      class="flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-rose-50 hover:text-rose-700 transition"
+                    >
+                      <i data-lucide="file-text" class="w-3.5 h-3.5 text-rose-600 shrink-0"></i>
+                      <span class="truncate">${escapeHTML(pdf.title || `PDF ទី ${toKhmerNum(idx + 1)}`)}</span>
+                    </a>
+                  `).join('')}
+                </div>
+              </div>
+            </div>`;
+        }
 
         const adminActions = isAdmin
-          ? `<div class="flex items-center gap-1.5 pt-2.5 mt-2.5 border-t border-stone-100" onclick="event.stopPropagation()">
-               <button onclick="openBookEditorModal('${book.id}')" class="flex-1 inline-flex items-center justify-center gap-1 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-semibold transition">
-                 <i data-lucide="edit-3" class="w-3 h-3"></i>
+          ? `<div class="flex items-center gap-1.5 pt-3 mt-3 border-t border-stone-100" onclick="event.stopPropagation()">
+               <button onclick="openBookEditorModal('${book.id}')" class="flex-1 inline-flex items-center justify-center gap-1 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-semibold transition">
+                 <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                  <span>កែសម្រួល</span>
                </button>
-               <button onclick="confirmDeleteBook('${book.id}', '${escapeHTML(book.title)}')" class="inline-flex items-center justify-center p-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition" title="លុបសៀវភៅ">
-                 <i data-lucide="trash-2" class="w-3 h-3"></i>
+               <button onclick="confirmDeleteBook('${book.id}', '${escapeHTML(book.title)}')" class="inline-flex items-center justify-center p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition" title="លុបសៀវភៅ">
+                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                </button>
              </div>`
           : '';
 
         return `
-          <div onclick="${cardClickAction}" class="group cursor-pointer bg-white rounded-xl border border-stone-200/90 hover:border-emerald-300 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col overflow-hidden">
-            <div class="aspect-[16/10] w-full relative overflow-hidden bg-stone-100">
+          <div onclick="openBookDetailModal('${book.id}')" class="group cursor-pointer bg-white rounded-2xl border border-stone-200/90 hover:border-emerald-300 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col">
+            <div class="aspect-[16/10] w-full relative overflow-hidden rounded-t-2xl bg-stone-100">
               ${coverVisual}
-              ${book.coverUrl ? `<span class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/55 backdrop-blur-sm text-white text-[11px] font-medium">${escapeHTML(book.category)}</span>` : ''}
+              ${book.coverUrl ? `<span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-black/55 backdrop-blur-sm text-white text-xs font-medium">${escapeHTML(book.category)}</span>` : ''}
               
               ${stats.count > 0 ? `
-                <div class="absolute bottom-2 left-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-amber-300 text-[11px] font-bold">
+                <div class="absolute bottom-3 left-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-black/60 backdrop-blur-sm text-amber-300 text-xs font-bold">
                   <i data-lucide="star" class="w-3 h-3 fill-amber-400 text-amber-400"></i>
                   <span>${toKhmerNum(stats.avg)}</span>
                 </div>
@@ -1689,45 +1560,51 @@
               <button 
                 onclick="toggleFavorite(event, '${book.id}')" 
                 title="${isFav ? 'ដកចេញពីបញ្ជីរក្សាទុក' : 'រក្សាទុកសៀវភៅ'}"
-                class="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-sm text-white flex items-center justify-center transition"
+                class="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-sm text-white flex items-center justify-center transition"
               >
-                <i data-lucide="bookmark" class="w-3.5 h-3.5 ${isFav ? 'fill-amber-400 text-amber-400' : ''}"></i>
+                <i data-lucide="bookmark" class="w-4 h-4 ${isFav ? 'fill-amber-400 text-amber-400' : ''}"></i>
               </button>
             </div>
 
-            <div class="p-3.5 flex-1 flex flex-col justify-between">
+            <div class="p-5 flex-1 flex flex-col justify-between">
               <div>
-                <div class="flex items-center gap-1.5 text-[11px] text-slate-500 mb-1 flex-wrap">
-                  <span class="font-medium text-emerald-800 flex items-center gap-1 truncate max-w-[110px]">
-                    <i data-lucide="pen-tool" class="w-3 h-3 shrink-0"></i>
+                <div class="flex items-center gap-2 text-xs text-slate-500 mb-1.5 flex-wrap">
+                  <span class="font-medium text-emerald-800 flex items-center gap-1">
+                    <i data-lucide="pen-tool" class="w-3 h-3"></i>
                     ${escapeHTML(book.author)}
                   </span>
                   <span>•</span>
-                  <span>${countInfoLabel}</span>
+                  <span>${toKhmerNum(chaptersCount)} ជំពូក</span>
                   <span>•</span>
-                  <span class="inline-flex items-center gap-0.5 text-slate-500">
+                  <span class="inline-flex items-center gap-1 text-slate-500">
                     <i data-lucide="message-square" class="w-3 h-3"></i>
                     ${toKhmerNum(stats.count)} មតិ
                   </span>
                 </div>
-                <h4 class="font-bold text-slate-900 text-sm mb-1 line-clamp-1 group-hover:text-emerald-800 transition-colors">
+                <h4 class="font-bold text-slate-900 text-base mb-1.5 line-clamp-1 group-hover:text-emerald-800 transition-colors">
                   ${escapeHTML(book.title)}
                 </h4>
-                <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                <p class="text-xs sm:text-sm text-slate-500 line-clamp-2 leading-relaxed">
                   ${escapeHTML(book.description || '')}
                 </p>
               </div>
 
-              <div class="mt-3 pt-2.5 border-t border-stone-100">
-                <div class="flex items-center gap-1.5">
-                  ${primaryActionBtn}
+              <div class="mt-4 pt-3 border-t border-stone-100">
+                <div class="flex items-center gap-2">
+                  <button 
+                    onclick="event.stopPropagation(); openBook('${book.id}', 0)" 
+                    class="flex-1 inline-flex items-center justify-center gap-2 bg-emerald-700 hover:bg-emerald-800 active:scale-[0.98] text-white font-semibold text-xs sm:text-sm py-2.5 px-3 rounded-xl transition"
+                  >
+                    <i data-lucide="book-open" class="w-4 h-4"></i>
+                    <span>អានឥឡូវនេះ</span>
+                  </button>
                   ${pdfActionBtn}
                   <button 
                     onclick="event.stopPropagation(); openBookDetailModal('${book.id}', true)" 
                     title="មើលមតិយោបល់"
-                    class="inline-flex items-center justify-center gap-1 px-2.5 py-2 rounded-lg border border-stone-200 hover:bg-stone-50 text-slate-600 text-xs font-medium transition"
+                    class="inline-flex items-center justify-center gap-1 px-3 py-2.5 rounded-xl border border-stone-200 hover:bg-stone-50 text-slate-600 text-xs font-medium transition"
                   >
-                    <i data-lucide="message-square" class="w-3.5 h-3.5 text-emerald-700"></i>
+                    <i data-lucide="message-square" class="w-4 h-4 text-emerald-700"></i>
                     <span>មតិ</span>
                   </button>
                 </div>
@@ -1749,7 +1626,6 @@
 
       activeDetailBookId = bookId;
       const stats = getBookStats(bookId);
-      const pdfList = getBookPdfList(book);
 
       document.getElementById('detail-category-badge').textContent = book.category || 'ទូទៅ';
       document.getElementById('detail-title').textContent = book.title;
@@ -1773,71 +1649,52 @@
           </div>`;
       }
 
-      const chapters = book.chapters || [];
       const startBtn = document.getElementById('detail-start-read-btn');
-      if (chapters.length > 0) {
-        startBtn.classList.remove('hidden');
-        startBtn.onclick = () => {
-          closeBookDetailModal();
-          openBook(bookId, 0);
-        };
-      } else {
-        startBtn.classList.add('hidden');
-      }
+      startBtn.onclick = () => {
+        closeBookDetailModal();
+        openBook(bookId, 0);
+      };
 
-      const detailPdfBtn = document.getElementById('detail-pdf-btn');
-      const detailPdfBtnText = document.getElementById('detail-pdf-btn-text');
+      const detailPdfList = document.getElementById('detail-pdf-list');
+      const pdfList = getBookPdfList(book);
       if (pdfList.length > 0) {
-        detailPdfBtn.classList.remove('hidden');
-        if (detailPdfBtnText) {
-          detailPdfBtnText.textContent = pdfList.length > 1
-            ? `អាន PDF (${toKhmerNum(pdfList.length)} ហ្វាល)`
-            : 'អាន PDF';
-        }
-        detailPdfBtn.onclick = () => handleOpenBookPdfs(bookId);
+        detailPdfList.innerHTML = pdfList.map((pdf, idx) => `
+          <a 
+            href="${escapeHTML(pdf.url)}" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="inline-flex items-center gap-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-semibold text-sm px-4 py-3 rounded-xl transition"
+          >
+            <i data-lucide="file-text" class="w-4 h-4"></i>
+            <span>${escapeHTML(pdfList.length === 1 ? 'បើក / ទាញយក PDF' : (pdf.title || `PDF ទី ${toKhmerNum(idx + 1)}`))}</span>
+          </a>
+        `).join('');
+        detailPdfList.classList.remove('hidden');
       } else {
-        detailPdfBtn.classList.add('hidden');
+        detailPdfList.innerHTML = '';
+        detailPdfList.classList.add('hidden');
       }
 
       const bookmarkBtn = document.getElementById('detail-bookmark-btn');
       bookmarkBtn.onclick = (e) => toggleFavorite(e, bookId);
       updateDetailBookmarkButton(bookId);
 
+      const chapters = book.chapters || [];
       document.getElementById('detail-chapters-count').textContent = toKhmerNum(chapters.length);
-      document.getElementById('detail-chapters-list').innerHTML = chapters.length > 0
-        ? chapters.map((ch, idx) => `
-            <button 
-              onclick="closeBookDetailModal(); openBook('${bookId}', ${idx})" 
-              class="flex items-center justify-between p-3 rounded-xl border border-stone-200 hover:border-emerald-500 hover:bg-emerald-50/50 text-left transition group"
-            >
-              <div class="flex items-center gap-2.5 min-w-0">
-                <span class="w-7 h-7 rounded-lg bg-stone-100 group-hover:bg-emerald-700 group-hover:text-white text-slate-600 text-xs font-bold flex items-center justify-center shrink-0 transition">
-                  ${toKhmerNum(idx + 1)}
-                </span>
-                <span class="text-sm font-medium text-slate-800 truncate">${escapeHTML(ch.title)}</span>
-              </div>
-              <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-emerald-700 shrink-0"></i>
-            </button>
-          `).join('')
-        : (pdfList.length > 0
-            ? pdfList.map((pdf, idx) => `
-                <button 
-                  type="button"
-                  data-pdf-url="${escapeHTML(pdf.url)}"
-                  data-pdf-title="${escapeHTML(`${book.title} - ${pdf.label}`)}"
-                  onclick="openPdfViewerModal(this.getAttribute('data-pdf-url'), this.getAttribute('data-pdf-title'))" 
-                  class="flex items-center justify-between p-3 rounded-xl border border-rose-200/80 hover:border-rose-400 hover:bg-rose-50/50 text-left transition group"
-                >
-                  <div class="flex items-center gap-2.5 min-w-0">
-                    <span class="w-7 h-7 rounded-lg bg-rose-100 group-hover:bg-rose-600 group-hover:text-white text-rose-700 text-xs font-bold flex items-center justify-center shrink-0 transition">
-                      ${toKhmerNum(idx + 1)}
-                    </span>
-                    <span class="text-sm font-medium text-slate-800 truncate">${escapeHTML(pdf.label)}</span>
-                  </div>
-                  <i data-lucide="file-text" class="w-4 h-4 text-rose-400 group-hover:text-rose-700 shrink-0"></i>
-                </button>
-              `).join('')
-            : `<p class="text-xs text-slate-500 col-span-2">មិនទាន់មានជំពូក ឬឯកសារ PDF នៅឡើយទេ។</p>`);
+      document.getElementById('detail-chapters-list').innerHTML = chapters.map((ch, idx) => `
+        <button 
+          onclick="closeBookDetailModal(); openBook('${bookId}', ${idx})" 
+          class="flex items-center justify-between p-3 rounded-xl border border-stone-200 hover:border-emerald-500 hover:bg-emerald-50/50 text-left transition group"
+        >
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="w-7 h-7 rounded-lg bg-stone-100 group-hover:bg-emerald-700 group-hover:text-white text-slate-600 text-xs font-bold flex items-center justify-center shrink-0 transition">
+              ${toKhmerNum(idx + 1)}
+            </span>
+            <span class="text-sm font-medium text-slate-800 truncate">${escapeHTML(ch.title)}</span>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-emerald-700 shrink-0"></i>
+        </button>
+      `).join('');
 
       setCommentRating(5);
       renderDetailComments(bookId);
@@ -2015,8 +1872,9 @@
       const modal = document.getElementById('book-editor-modal');
       const titleEl = document.getElementById('editor-modal-title');
       const container = document.getElementById('chapters-builder-container');
+      const pdfsContainer = document.getElementById('pdfs-builder-container');
       container.innerHTML = '';
-      if (pdfFileInput) pdfFileInput.value = '';
+      if (pdfsContainer) pdfsContainer.innerHTML = '';
 
       if (bookId) {
         const book = allBooks.find(b => b.id === bookId);
@@ -2027,20 +1885,27 @@
         document.getElementById('book-author-input').value = book.author || '';
         document.getElementById('book-category-input').value = book.category || 'រឿងប្រលោមលោក';
         document.getElementById('book-cover-url-input').value = book.coverUrl || '';
-        document.getElementById('book-pdf-url-input').value = Array.isArray(book.pdfUrl) ? book.pdfUrl.join('\n') : (book.pdfUrl || '');
         document.getElementById('book-desc-input').value = book.description || '';
+
+        const existingPdfs = getBookPdfList(book);
+        if (existingPdfs.length > 0) {
+          existingPdfs.forEach(pdf => {
+            addPdfInputBlock(pdf.title, pdf.url);
+          });
+        } else {
+          addPdfInputBlock('', '');
+        }
 
         if (book.chapters && book.chapters.length > 0) {
           book.chapters.forEach(ch => {
             addChapterInputBlock(ch.title, ch.contentUrl || '');
           });
-        } else {
-          addChapterInputBlock('ជំពូកទី ១៖ ', '');
         }
       } else {
         titleEl.textContent = 'បង្ហោះសៀវភៅថ្មី (ប្រើ GitHub Raw URL & PDF)';
         document.getElementById('edit-book-id').value = '';
         document.getElementById('book-editor-form').reset();
+        addPdfInputBlock('', '');
         addChapterInputBlock('ជំពូកទី ១៖ ', '');
       }
 
@@ -2071,10 +1936,10 @@
           </button>
         </div>
         <div>
-          <input type="text" class="chapter-title-field w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm font-medium outline-none" placeholder="ចំណងជើងជំពូក (ឧទាហរណ៍៖ ជំពូកទី ១៖ ការចាប់ផ្តើម)" value="${escapeHTML(chTitle)}" />
+          <input type="text" class="chapter-title-field w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm font-medium outline-none" required placeholder="ចំណងជើងជំពូក (ឧទាហរណ៍៖ ជំពូកទី ១៖ ការចាប់ផ្តើម)" value="${escapeHTML(chTitle)}" />
         </div>
         <div>
-          <input type="url" class="chapter-url-field w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm outline-none" placeholder="ដាក់ GitHub Raw URL (ស្រេចចិត្ត បើមានតែ PDF)" value="${escapeHTML(chUrl)}" />
+          <input type="url" class="chapter-url-field w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm outline-none" required placeholder="ដាក់ GitHub Raw URL (ឧទាហរណ៍៖ https://raw.githubusercontent.com/.../ch1.txt)" value="${escapeHTML(chUrl)}" />
         </div>
       `;
       container.appendChild(block);
@@ -2110,7 +1975,7 @@
     ];
 
     // ==========================================
-    // មុខងារ Save Book ជាមួយ GitHub Raw URL & Multi-PDF
+    // មុខងារ Save Book ជាមួយ GitHub Raw URL & Multiple PDFs
     // ==========================================
     window.handleSaveBook = async function(e) {
       e.preventDefault();
@@ -2121,12 +1986,21 @@
       const author = document.getElementById('book-author-input').value.trim();
       const category = document.getElementById('book-category-input').value;
       const coverUrl = document.getElementById('book-cover-url-input').value.trim();
-      const pdfUrl = document.getElementById('book-pdf-url-input').value
-        .split(/\r?\n/)
-        .map(line => line.trim())
-        .filter(Boolean)
-        .join('\n');
       const description = document.getElementById('book-desc-input').value.trim();
+
+      const pdfBlocks = document.querySelectorAll('#pdfs-builder-container .pdf-input-block');
+      const pdfFiles = [];
+      pdfBlocks.forEach((blk, idx) => {
+        const pTitle = blk.querySelector('.pdf-title-field').value.trim();
+        const pUrl = blk.querySelector('.pdf-url-field').value.trim();
+        if (pUrl) {
+          pdfFiles.push({
+            title: pTitle || `PDF ទី ${toKhmerNum(idx + 1)}`,
+            url: pUrl
+          });
+        }
+      });
+      const pdfUrl = pdfFiles.length > 0 ? pdfFiles[0].url : '';
 
       const chapterBlocks = document.querySelectorAll('#chapters-builder-container .chapter-input-block');
       const chapters = [];
@@ -2139,8 +2013,8 @@
         }
       });
 
-      if (chapters.length === 0 && !pdfUrl) {
-        showToast('សូមបំពេញ GitHub Raw URL ជំពូក ឬបញ្ចូល file PDF យ៉ាងតិច ១!');
+      if (chapters.length === 0) {
+        showToast('សូមបំពេញចំណងជើង និង GitHub Raw URL យ៉ាងតិច ១!');
         return;
       }
 
@@ -2151,13 +2025,13 @@
         if (!useLocalFallback && db) {
           if (editId) {
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'books', editId), {
-              title, author, category, coverUrl, pdfUrl, description, chapters, updatedAt: Date.now()
+              title, author, category, coverUrl, pdfUrl, pdfFiles, description, chapters, updatedAt: Date.now()
             });
             showToast('បានកែសម្រួលសៀវភៅជោគជ័យ!');
           } else {
             const randomGrad = COVER_GRADIENTS[Math.floor(Math.random() * COVER_GRADIENTS.length)];
             await addDoc(getBooksCollection(), {
-              title, author, category, coverUrl, pdfUrl, description, chapters,
+              title, author, category, coverUrl, pdfUrl, pdfFiles, description, chapters,
               coverGradient: randomGrad,
               createdAt: Date.now()
             });
@@ -2167,14 +2041,14 @@
           if (editId) {
             const idx = allBooks.findIndex(b => b.id === editId);
             if (idx !== -1) {
-              allBooks[idx] = { ...allBooks[idx], title, author, category, coverUrl, pdfUrl, description, chapters };
+              allBooks[idx] = { ...allBooks[idx], title, author, category, coverUrl, pdfUrl, pdfFiles, description, chapters };
             }
             showToast('បានកែសម្រួលសៀវភៅជោគជ័យ!');
           } else {
             const randomGrad = COVER_GRADIENTS[Math.floor(Math.random() * COVER_GRADIENTS.length)];
             allBooks.unshift({
               id: 'local_book_' + Date.now(),
-              title, author, category, coverUrl, pdfUrl, description, chapters,
+              title, author, category, coverUrl, pdfUrl, pdfFiles, description, chapters,
               coverGradient: randomGrad,
               createdAt: Date.now()
             });
@@ -2231,12 +2105,12 @@
         return;
       }
       const book = allBooks.find(b => b.id === lastRead.bookId);
-      if (!book || !book.chapters || book.chapters.length === 0) {
+      if (!book) {
         section.classList.add('hidden');
         return;
       }
 
-      const chapterIdx = Math.min(lastRead.chapterIndex || 0, book.chapters.length - 1);
+      const chapterIdx = Math.min(lastRead.chapterIndex || 0, (book.chapters || []).length - 1);
       const chapter = book.chapters[chapterIdx];
 
       document.getElementById('continue-book-title').textContent = book.title;
@@ -2257,14 +2131,7 @@
     // ==========================================
     window.openBook = async function(bookId, chapterIndex = 0) {
       const book = allBooks.find(b => b.id === bookId);
-      if (!book) return;
-
-      if (!book.chapters || book.chapters.length === 0) {
-        if (getBookPdfList(book).length > 0) {
-          handleOpenBookPdfs(bookId);
-        }
-        return;
-      }
+      if (!book || !book.chapters || book.chapters.length === 0) return;
 
       activeReaderBook = book;
       activeChapterIndex = Math.max(0, Math.min(chapterIndex, book.chapters.length - 1));
@@ -2272,20 +2139,25 @@
       document.getElementById('reader-book-title').textContent = book.title;
       document.getElementById('reader-book-author').textContent = book.author;
 
-      const readerPdfBtn = document.getElementById('reader-pdf-btn');
-      const readerPdfBtnText = document.getElementById('reader-pdf-btn-text');
-      const pdfList = getBookPdfList(book);
-      if (readerPdfBtn) {
+      const readerPdfList = document.getElementById('reader-pdf-list');
+      if (readerPdfList) {
+        const pdfList = getBookPdfList(book);
         if (pdfList.length > 0) {
-          readerPdfBtn.classList.remove('hidden');
-          if (readerPdfBtnText) {
-            readerPdfBtnText.textContent = pdfList.length > 1
-              ? `អាន PDF (${toKhmerNum(pdfList.length)})`
-              : 'អាន PDF';
-          }
-          readerPdfBtn.onclick = () => handleOpenBookPdfs(bookId);
+          readerPdfList.innerHTML = pdfList.map((pdf, idx) => `
+            <a 
+              href="${escapeHTML(pdf.url)}" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition"
+            >
+              <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+              <span>${escapeHTML(pdfList.length === 1 ? 'បើក PDF' : (pdf.title || `PDF ទី ${toKhmerNum(idx + 1)}`))}</span>
+            </a>
+          `).join('');
+          readerPdfList.classList.remove('hidden');
         } else {
-          readerPdfBtn.classList.add('hidden');
+          readerPdfList.innerHTML = '';
+          readerPdfList.classList.add('hidden');
         }
       }
 
@@ -2466,16 +2338,6 @@
       }
 
       if (e.key === 'Escape') {
-        const pdfModal = document.getElementById('pdf-viewer-modal');
-        if (pdfModal && !pdfModal.classList.contains('hidden')) {
-          closePdfViewerModal();
-          return;
-        }
-        const pdfPickerModal = document.getElementById('pdf-picker-modal');
-        if (pdfPickerModal && !pdfPickerModal.classList.contains('hidden')) {
-          closePdfPickerModal();
-          return;
-        }
         const copyrightModal = document.getElementById('copyright-modal');
         if (copyrightModal && !copyrightModal.classList.contains('hidden')) {
           closeCopyrightModal();
