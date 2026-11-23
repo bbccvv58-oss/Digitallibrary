@@ -126,7 +126,7 @@
             >
               <i data-lucide="bookmark" class="w-4 h-4 text-amber-500"></i>
               <span class="hidden lg:inline">រក្សាទុក</span>
-              <span id="fav-count-badge" class="bg-stone-100 text-slate-600 text-xs px-1.5 py-0.5 rounded-full font-semibold">០</span>
+              <span id="fav-count-badge" class="bg-stone-100 text-slate-600 text-xs px-1.5 py-0.5 rounded-full font-semibold">0</span>
             </button>
 
             <!-- Desktop Admin Controls (Shown ONLY when logged in as Admin) -->
@@ -187,7 +187,7 @@
                 <span>បន្តការអានចុងក្រោយ</span>
               </div>
               <h3 id="continue-book-title" class="text-base sm:text-lg font-bold text-slate-900 leading-snug">ចំណងជើងសៀវភៅ</h3>
-              <p id="continue-chapter-info" class="text-xs sm:text-sm text-slate-500">ជំពូកទី ១ • អ្នកនិពន្ធ</p>
+              <p id="continue-chapter-info" class="text-xs sm:text-sm text-slate-500">ជំពូកទី 1 • អ្នកនិពន្ធ</p>
             </div>
           </div>
 
@@ -395,7 +395,7 @@
             <div class="mt-6 pt-4 border-t border-stone-100 flex flex-wrap items-center gap-3">
               <button id="detail-start-read-btn" class="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white font-semibold text-sm px-6 py-3 rounded-xl shadow-sm transition">
                 <i data-lucide="book-open" class="w-4 h-4"></i>
-                <span>ចាប់ផ្តើមអានពីជំពូកទី ១</span>
+                <span>ចាប់ផ្តើមអានពីជំពូកទី 1</span>
               </button>
               <div id="detail-pdf-list" class="hidden flex flex-wrap items-center gap-2"></div>
               <button id="detail-bookmark-btn" class="inline-flex items-center gap-2 border border-stone-200 hover:bg-stone-50 text-slate-700 font-medium text-sm px-4 py-3 rounded-xl transition">
@@ -410,7 +410,7 @@
         <div>
           <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
             <i data-lucide="list-ordered" class="w-5 h-5 text-emerald-700"></i>
-            <span>មាតិកាជំពូកទាំងអស់ (<span id="detail-chapters-count">០</span> ជំពូក)</span>
+            <span>មាតិកាជំពូកទាំងអស់ (<span id="detail-chapters-count">0</span> ជំពូក)</span>
           </h3>
           <div id="detail-chapters-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <!-- Chapter items injected via JS -->
@@ -422,7 +422,7 @@
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
               <i data-lucide="message-square" class="w-5 h-5 text-emerald-700"></i>
-              <span>មតិយោបល់របស់អ្នកអាន (<span id="detail-comments-count">០</span>)</span>
+              <span>មតិយោបល់របស់អ្នកអាន (<span id="detail-comments-count">0</span>)</span>
             </h3>
             <span class="text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full font-medium">ផ្ទាល់ (Real-time)</span>
           </div>
@@ -590,7 +590,7 @@
         <div class="mb-8 pb-6 border-b border-current/10">
           <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
             <span id="reader-chapter-badge" class="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-emerald-600/15 text-emerald-700">
-              ជំពូកទី ១
+              ជំពូកទី 1
             </span>
             <div id="reader-pdf-list" class="hidden flex flex-wrap items-center gap-1.5"></div>
           </div>
@@ -615,7 +615,7 @@
           </button>
 
           <span id="bottom-chapter-indicator" class="text-xs sm:text-sm opacity-60 font-medium">
-            ១ / ៣
+            1 / 3
           </span>
 
           <button 
@@ -706,7 +706,7 @@
             id="new-admin-password-input" 
             required 
             minlength="4"
-            placeholder="បញ្ចូលលេខសម្ងាត់ថ្មី (យ៉ាងតិច ៤ ខ្ទង់)..." 
+            placeholder="បញ្ចូលលេខសម្ងាត់ថ្មី (យ៉ាងតិច 4 ខ្ទង់)..." 
             class="w-full px-4 py-2.5 rounded-xl border border-stone-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 text-sm outline-none transition"
           />
         </div>
@@ -735,7 +735,7 @@
           </div>
           <div>
             <h3 id="editor-modal-title" class="text-base sm:text-lg font-bold">បង្ហោះសៀវភៅថ្មី (ប្រើ GitHub Raw URL &amp; PDF)</h3>
-            <p class="text-xs text-emerald-300/80">ដាក់តំណភ្ជាប់ GitHub Raw URL របស់ជំពូកនីមួយៗ និង file PDF (ឥតគិតថ្លៃ ១០០%)</p>
+            <p class="text-xs text-emerald-300/80">ដាក់តំណភ្ជាប់ GitHub Raw URL របស់ជំពូកនីមួយៗ និង file PDF (ឥតគិតថ្លៃ 100%)</p>
           </div>
         </div>
         <button onclick="closeBookEditorModal()" class="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-white/10 transition">
@@ -885,7 +885,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, collection, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const appId = "digitallibrary-4a135";
 
@@ -920,11 +920,13 @@
         pdfFiles: [],
         audioUrl: "",
         audioFiles: [],
+        views: 0,
+        likes: 0,
         description: "ស្វែងយល់ពីបច្ចេកទេសសាងសង់ ប្រព័ន្ធធារាសាស្ត្រដ៏អស្ចារ្យ និងសិល្បៈចម្លាក់ក្បាច់រចនានៃប្រាសាទអង្គរវត្តក្នុងសម័យមហានគរ។",
         createdAt: Date.now() - 40000,
         chapters: [
           {
-            title: "ជំពូកទី ១៖ ការជ្រើសរើសទីតាំង និងគ្រឹះប្រាសាទ",
+            title: "ជំពូកទី 1៖ ការជ្រើសរើសទីតាំង និងគ្រឹះប្រាសាទ",
             contentUrl: "https://raw.githubusercontent.com/username/repo/main/novels/sample_ch1.txt"
           }
         ]
@@ -937,6 +939,7 @@
     let searchQuery = '';
     let showOnlyFavorites = false;
     let favorites = JSON.parse(localStorage.getItem('khmer_lib_favorites') || '[]');
+    let likedBooks = JSON.parse(localStorage.getItem('khmer_lib_liked_books') || '[]');
     let lastRead = JSON.parse(localStorage.getItem('khmer_lib_last_read') || 'null');
 
     let isAdmin = sessionStorage.getItem('khmer_lib_is_admin') === 'true';
@@ -957,9 +960,8 @@
       lineHeight: '2.05'
     }));
 
-    const KHMER_DIGITS = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
     function toKhmerNum(num) {
-      return String(num).replace(/\d/g, d => KHMER_DIGITS[d]);
+      return String(num);
     }
 
     function escapeHTML(str) {
@@ -980,6 +982,97 @@
         toast.classList.add('translate-y-20', 'opacity-0');
       }, 3000);
     }
+
+    // ==========================================
+    // VIEW COUNTER, LIKE & SHARE FUNCTIONS
+    // ==========================================
+    async function incrementBookViews(bookId) {
+      if (!bookId) return;
+      const viewedKey = `khmer_lib_viewed_${bookId}`;
+      if (sessionStorage.getItem(viewedKey)) return;
+      sessionStorage.setItem(viewedKey, '1');
+
+      const book = allBooks.find(b => b.id === bookId);
+      if (book) {
+        book.views = (Number(book.views) || 0) + 1;
+      }
+
+      try {
+        if (!useLocalFallback && db) {
+          await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'books', bookId), {
+            views: increment(1)
+          });
+        } else {
+          localStorage.setItem('khmer_lib_local_books', JSON.stringify(allBooks));
+          renderLibrary();
+        }
+      } catch (err) {
+        console.warn("មិនអាចបង្កើនចំនួនអ្នកចូលមើល:", err);
+      }
+    }
+
+    window.toggleBookLike = async function(event, bookId) {
+      if (event) event.stopPropagation();
+      if (!bookId) return;
+
+      const index = likedBooks.indexOf(bookId);
+      const alreadyLiked = index !== -1;
+      const delta = alreadyLiked ? -1 : 1;
+
+      if (alreadyLiked) {
+        likedBooks.splice(index, 1);
+      } else {
+        likedBooks.push(bookId);
+      }
+      localStorage.setItem('khmer_lib_liked_books', JSON.stringify(likedBooks));
+
+      const book = allBooks.find(b => b.id === bookId);
+      if (book) {
+        book.likes = Math.max(0, (Number(book.likes) || 0) + delta);
+      }
+
+      if (useLocalFallback || !db) {
+        localStorage.setItem('khmer_lib_local_books', JSON.stringify(allBooks));
+        renderLibrary();
+      } else {
+        try {
+          await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'books', bookId), {
+            likes: increment(delta)
+          });
+        } catch (err) {
+          console.warn("មិនអាចធ្វើបច្ចុប្បន្នភាព Like:", err);
+          renderLibrary();
+        }
+      }
+
+      showToast(alreadyLiked ? 'បានដក Like ចេញ' : 'បាន Like សៀវភៅនេះ!');
+    };
+
+    window.shareBook = async function(event, bookId) {
+      if (event) event.stopPropagation();
+      const book = allBooks.find(b => b.id === bookId);
+      const shareUrl = `${window.location.origin}${window.location.pathname}?book=${encodeURIComponent(bookId)}`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: book ? book.title : document.title,
+            url: shareUrl
+          });
+          return;
+        } catch (_) {}
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          showToast('បានចម្លងតំណភ្ជាប់សៀវភៅ!');
+          return;
+        } catch (_) {}
+      }
+
+      showToast('មិនអាចចម្លងតំណភ្ជាប់បានទេ');
+    };
 
     // ==========================================
     // MULTIPLE PDF HELPER FUNCTIONS
@@ -1111,7 +1204,7 @@
           <input
             type="text"
             class="pdf-title-field w-full px-3 py-1.5 rounded-lg border border-stone-200 bg-white focus:border-emerald-600 text-xs font-medium outline-none"
-            placeholder="ឈ្មោះបង្ហាញ (ឧទាហរណ៍៖ ភាគទី ១)"
+            placeholder="ឈ្មោះបង្ហាញ (ឧទាហរណ៍៖ ភាគទី 1)"
             value="${escapeHTML(pdfTitle)}"
           />
           <input
@@ -1193,7 +1286,7 @@
           <input
             type="text"
             class="audio-title-field w-full px-3 py-1.5 rounded-lg border border-stone-200 bg-white focus:border-emerald-600 text-xs font-medium outline-none"
-            placeholder="ឈ្មោះបង្ហាញ (ឧទាហរណ៍៖ ជំពូកទី ១)"
+            placeholder="ឈ្មោះបង្ហាញ (ឧទាហរណ៍៖ ជំពូកទី 1)"
             value="${escapeHTML(audioTitle)}"
           />
           <input
@@ -1637,6 +1730,9 @@
 
       grid.innerHTML = filtered.map(book => {
         const isFav = favorites.includes(book.id);
+        const isLiked = likedBooks.includes(book.id);
+        const likesCount = Number(book.likes) || 0;
+        const viewsCount = Number(book.views) || 0;
         const chaptersCount = (book.chapters || []).length;
         const gradient = book.coverGradient || 'from-emerald-800 via-teal-900 to-slate-900';
         const stats = getBookStats(book.id);
@@ -1827,15 +1923,53 @@
                   </button>
                   ${audioActionBtn}
                   ${pdfActionBtn}
-                  <button 
-                    onclick="event.stopPropagation(); openBookDetailModal('${book.id}', true)" 
-                    title="មើលមតិយោបល់"
-                    class="inline-flex items-center justify-center gap-1 px-3 py-2.5 rounded-xl border border-stone-200 hover:bg-stone-50 text-slate-600 text-xs font-medium transition"
-                  >
-                    <i data-lucide="message-square" class="w-4 h-4 text-emerald-700"></i>
-                    <span>មតិ</span>
-                  </button>
                 </div>
+
+                <!-- Bottom Social Action Bar: Like · Comments · Share · Viewer -->
+                <div class="mt-3 pt-2.5 border-t border-stone-100 grid grid-cols-4 items-center text-center gap-1" onclick="event.stopPropagation()">
+                  <button
+                    type="button"
+                    onclick="toggleBookLike(event, '${book.id}')"
+                    title="${isLiked ? 'ដក Like ចេញ' : 'Like'}"
+                    class="inline-flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-semibold transition ${
+                      isLiked ? 'text-rose-600 bg-rose-50' : 'text-slate-600 hover:bg-stone-100'
+                    }"
+                  >
+                    <i data-lucide="thumbs-up" class="w-4 h-4 shrink-0 ${isLiked ? 'fill-rose-500 text-rose-500' : ''}"></i>
+                    <span>${toKhmerNum(likesCount)}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onclick="openBookDetailModal('${book.id}', true)"
+                    title="មតិយោបល់"
+                    class="inline-flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-stone-100 transition"
+                  >
+                    <i data-lucide="message-circle" class="w-4 h-4 shrink-0"></i>
+                    <span>${toKhmerNum(stats.count)}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onclick="shareBook(event, '${book.id}')"
+                    title="ចែករំលែក"
+                    class="inline-flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-stone-100 transition"
+                  >
+                    <svg viewBox="0 0 24 24" class="w-4 h-4 shrink-0 fill-none stroke-current" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M15 17l5-5-5-5" />
+                      <path d="M4 18v-2a4 4 0 0 1 4-4h12" />
+                    </svg>
+                  </button>
+
+                  <div
+                    title="ចំនួនអ្នកមើល"
+                    class="inline-flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-semibold text-slate-500"
+                  >
+                    <i data-lucide="eye" class="w-4 h-4 shrink-0"></i>
+                    <span>${toKhmerNum(viewsCount)}</span>
+                  </div>
+                </div>
+
                 ${adminActions}
               </div>
             </div>
@@ -1852,6 +1986,7 @@
       const book = allBooks.find(b => b.id === bookId);
       if (!book) return;
 
+      incrementBookViews(bookId);
       activeDetailBookId = bookId;
       const stats = getBookStats(bookId);
 
@@ -1862,7 +1997,7 @@
 
       const ratingSummary = document.getElementById('detail-rating-summary');
       ratingSummary.innerHTML = stats.count > 0
-        ? `<i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400 text-amber-400"></i><span>${toKhmerNum(stats.avg)} / ៥ (${toKhmerNum(stats.count)} មតិ)</span>`
+        ? `<i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400 text-amber-400"></i><span>${toKhmerNum(stats.avg)} / 5 (${toKhmerNum(stats.count)} មតិ)</span>`
         : `<i data-lucide="star" class="w-3.5 h-3.5 text-amber-400"></i><span>មិនទាន់មានពិន្ទុ</span>`;
 
       const gradient = book.coverGradient || 'from-emerald-700 to-teal-900';
@@ -2146,7 +2281,7 @@
         document.getElementById('book-editor-form').reset();
         addPdfInputBlock('', '');
         addAudioInputBlock('', '');
-        addChapterInputBlock('ជំពូកទី ១៖ ', '');
+        addChapterInputBlock('ជំពូកទី 1៖ ', '');
       }
 
       modal.classList.remove('hidden');
@@ -2176,7 +2311,7 @@
           </button>
         </div>
         <div>
-          <input type="text" class="chapter-title-field w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm font-medium outline-none" required placeholder="ចំណងជើងជំពូក (ឧទាហរណ៍៖ ជំពូកទី ១៖ ការចាប់ផ្តើម)" value="${escapeHTML(chTitle)}" />
+          <input type="text" class="chapter-title-field w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm font-medium outline-none" required placeholder="ចំណងជើងជំពូក (ឧទាហរណ៍៖ ជំពូកទី 1៖ ការចាប់ផ្តើម)" value="${escapeHTML(chTitle)}" />
         </div>
         <div>
           <input type="url" class="chapter-url-field w-full px-3.5 py-2 rounded-xl border border-stone-200 bg-white focus:border-emerald-600 text-sm outline-none" required placeholder="ដាក់ GitHub Raw URL (ឧទាហរណ៍៖ https://raw.githubusercontent.com/.../ch1.txt)" value="${escapeHTML(chUrl)}" />
@@ -2192,7 +2327,7 @@
     window.removeChapterInputBlock = function(btn) {
       const container = document.getElementById('chapters-builder-container');
       if (container.children.length <= 1) {
-        showToast('សៀវភៅត្រូវមានយ៉ាងហោចណាស់ ១ ជំពូក!');
+        showToast('សៀវភៅត្រូវមានយ៉ាងហោចណាស់ 1 ជំពូក!');
         return;
       }
       btn.closest('.chapter-input-block').remove();
@@ -2268,7 +2403,7 @@
       });
 
       if (chapters.length === 0) {
-        showToast('សូមបំពេញចំណងជើង និង GitHub Raw URL យ៉ាងតិច ១!');
+        showToast('សូមបំពេញចំណងជើង និង GitHub Raw URL យ៉ាងតិច 1!');
         return;
       }
 
@@ -2286,6 +2421,8 @@
             const randomGrad = COVER_GRADIENTS[Math.floor(Math.random() * COVER_GRADIENTS.length)];
             await addDoc(getBooksCollection(), {
               title, author, category, coverUrl, pdfUrl, pdfFiles, audioUrl, audioFiles, description, chapters,
+              views: 0,
+              likes: 0,
               coverGradient: randomGrad,
               createdAt: Date.now()
             });
@@ -2303,6 +2440,8 @@
             allBooks.unshift({
               id: 'local_book_' + Date.now(),
               title, author, category, coverUrl, pdfUrl, pdfFiles, audioUrl, audioFiles, description, chapters,
+              views: 0,
+              likes: 0,
               coverGradient: randomGrad,
               createdAt: Date.now()
             });
@@ -2368,7 +2507,7 @@
       const chapter = book.chapters[chapterIdx];
 
       document.getElementById('continue-book-title').textContent = book.title;
-      document.getElementById('continue-chapter-info').textContent = `${chapter ? chapter.title : 'ជំពូកទី ១'} • ${book.author}`;
+      document.getElementById('continue-chapter-info').textContent = `${chapter ? chapter.title : 'ជំពូកទី 1'} • ${book.author}`;
       document.getElementById('continue-read-btn').onclick = () => openBook(book.id, chapterIdx);
 
       section.classList.remove('hidden');
@@ -2387,6 +2526,7 @@
       const book = allBooks.find(b => b.id === bookId);
       if (!book || !book.chapters || book.chapters.length === 0) return;
 
+      incrementBookViews(bookId);
       activeReaderBook = book;
       activeChapterIndex = Math.max(0, Math.min(chapterIndex, book.chapters.length - 1));
 
