@@ -1738,9 +1738,9 @@
         const stats = getBookStats(book.id);
         const pdfList = getBookPdfList(book);
         const audioList = getBookAudioList(book);
-
-        const coverVisual = book.coverUrl
-          ? `<img src="${escapeHTML(book.coverUrl)}" alt="${escapeHTML(book.title)}" onerror="this.style.display='none'" class="w-full h-full object-contain bg-stone-900 group-hover:scale-105 transition-transform duration-500" />`
+        
+const coverVisual = book.coverUrl
+  ? `<img src="${escapeHTML(book.coverUrl)}" alt="${escapeHTML(book.title)}" onerror="this.style.display='none'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />`
           : `<div class="w-full h-full bg-gradient-to-br ${gradient} p-5 flex flex-col justify-between relative overflow-hidden">
                <div class="absolute -right-6 -bottom-6 w-28 h-28 rounded-full bg-white/10"></div>
                <div class="flex items-center justify-between relative z-10">
